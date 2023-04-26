@@ -4,7 +4,11 @@
  */
 package views;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -15,13 +19,15 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  * @author ASUS RG
  */
 public class MainForm extends javax.swing.JFrame {
-    File inputFile, outputFile;
+    File inputFile;
+    File outputFile = new File("outputfile");
 
     /**
      * Creates new form MainForm
      */
     public MainForm() {
         initComponents();
+        ProgressBarConvert.setVisible(false);
     }
 
     /**
@@ -38,9 +44,16 @@ public class MainForm extends javax.swing.JFrame {
         btnConvertFile = new javax.swing.JButton();
         btnSaveFile = new javax.swing.JButton();
         btnExitApp = new javax.swing.JButton();
+        txtPathFileInput = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        ProgressBarConvert = new javax.swing.JProgressBar();
+        txtPathFileInput1 = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Convert Application");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        setResizable(false);
 
         btnChooseFile.setText("Choose File");
         btnChooseFile.addActionListener(new java.awt.event.ActionListener() {
@@ -73,40 +86,65 @@ public class MainForm extends javax.swing.JFrame {
             }
         });
 
+        jLabel2.setText("Path file input:");
+
+        jLabel3.setText("Path file output:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(76, 76, 76)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(22, 22, 22)
-                        .addComponent(btnChooseFile)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(14, 14, 14)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnExitApp, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(12, 12, 12)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(ProgressBarConvert, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtPathFileInput, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txtPathFileInput1)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
+                                .addContainerGap(257, Short.MAX_VALUE)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(17, 17, 17))
+                            .addGroup(layout.createSequentialGroup()
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(btnConvertFile)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btnSaveFile, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addContainerGap(19, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                        .addComponent(btnSaveFile, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnExitApp, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnChooseFile))
+                .addGap(26, 26, 26))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(18, 18, 18)
+                .addGap(17, 17, 17)
                 .addComponent(jLabel1)
-                .addGap(40, 40, 40)
+                .addGap(49, 49, 49)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtPathFileInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2)
+                    .addComponent(btnChooseFile))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtPathFileInput1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSaveFile)
                     .addComponent(btnConvertFile)
-                    .addComponent(btnChooseFile)
-                    .addComponent(btnSaveFile))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
-                .addComponent(btnExitApp)
-                .addContainerGap())
+                    .addComponent(btnExitApp))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(ProgressBarConvert, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -119,12 +157,16 @@ public class MainForm extends javax.swing.JFrame {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new FileNameExtensionFilter("CSV files", "csv"));
         int result = fileChooser.showOpenDialog(null);
-        if (result == JFileChooser.APPROVE_OPTION) {
+        if (result == JFileChooser.APPROVE_OPTION) 
+        {
             inputFile = fileChooser.getSelectedFile();
             String filename = inputFile.getName();
-            if (filename.endsWith(".csv")) {
+            if (filename.endsWith(".csv")) 
+            {
                 JOptionPane.showMessageDialog(null, "Selected file: \n" + inputFile.getAbsolutePath(), "Notification", JOptionPane.INFORMATION_MESSAGE);
-            } else {
+                txtPathFileInput.setText(inputFile.getAbsolutePath());
+            } 
+            else {
                 JOptionPane.showMessageDialog(null, "Please select a CSV file", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
@@ -139,27 +181,66 @@ public class MainForm extends javax.swing.JFrame {
     private void btnConvertFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConvertFileActionPerformed
         try 
         {
-            convertFile();
-            System.out.println(inputFile.getAbsolutePath());
+            String filename = inputFile.getName();
+            if (filename.endsWith(".csv"))
+            {
+                convertFile();
+                System.out.println(inputFile.getAbsolutePath());
+                ProgressBarConvert.setVisible(true);
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(null, "There is no selected CSV file!", "Warning", JOptionPane.WARNING_MESSAGE);
+            }
         } 
         catch (Exception e) 
         {
-            JOptionPane.showMessageDialog(null, "There is no selected CSV file!", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "There is no selected CSV file!", "Warning", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_btnConvertFileActionPerformed
 
+//    private void writeDataToOutPutFile(File input) {
+//        
+//        String inputFilePath = input.getAbsolutePath();
+//        String outputFilePath = inputFilePath.replace(".csv", ".xml");
+//        outputFile.renameTo(new File(outputFilePath));
+//
+//        try (BufferedReader reader = new BufferedReader(new FileReader(inputFilePath)); BufferedWriter writer = new BufferedWriter(new FileWriter(outputFilePath))) {
+//
+//            String line;
+//            while ((line = reader.readLine()) != null) {
+//                writer.write(line);
+//                writer.newLine();
+//            }
+//
+//            JOptionPane.showMessageDialog(null, "Write data to xml successfully!", "Notification", JOptionPane.INFORMATION_MESSAGE);
+//
+//        } catch (Exception e) {
+//            JOptionPane.showMessageDialog(null, "Failed to write data to xml file!", "Error", JOptionPane.ERROR_MESSAGE);
+//        }
+//
+//    }
+
     //button save file converted
     private void btnSaveFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveFileActionPerformed
-        // TODO add your handling code here:
+
+//        try {
+//            writeDataToOutPutFile(inputFile);
+//            String inputFilePath = inputFile.getAbsolutePath();
+//            String outputFilePath = inputFilePath.replace(".csv", ".xml");
+//            JOptionPane.showMessageDialog(null, "File saved as:\n" + outputFilePath);
+//
+//        } catch (Exception e) {
+//            JOptionPane.showMessageDialog(null, "Please choose file first!", "Warning", JOptionPane.WARNING_MESSAGE);
+//
+//        }
+
     }//GEN-LAST:event_btnSaveFileActionPerformed
 
     private void btnExitAppActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExitAppActionPerformed
-        if (JOptionPane.showConfirmDialog(null,
-                "Are you sure to exit?", "Notification",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+        if (JOptionPane.showConfirmDialog(null, "Are you sure to exit?", "Notification", 
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) 
             System.exit(0);
-        }
     }//GEN-LAST:event_btnExitAppActionPerformed
 
     
@@ -199,10 +280,15 @@ public class MainForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JProgressBar ProgressBarConvert;
     private javax.swing.JButton btnChooseFile;
     private javax.swing.JButton btnConvertFile;
     private javax.swing.JButton btnExitApp;
     private javax.swing.JButton btnSaveFile;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JTextField txtPathFileInput;
+    private javax.swing.JTextField txtPathFileInput1;
     // End of variables declaration//GEN-END:variables
 }
