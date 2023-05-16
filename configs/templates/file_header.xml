@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<FileHeader>
+    <FormatVersion>*{FORMAT_VERSION}</FormatVersion>
+    <Sender>*{SENDER}</Sender>
+    <CreationDate>#{CURRENT_DATE}</CreationDate>
+    <CreationTime>#{CURRENT_TIME}</CreationTime>
+    <Number>*{NUMBER}</Number>
+    <Institution>*{INSTITUTION}</Institution>
+</FileHeader>

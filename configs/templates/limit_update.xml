@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Application>
+	<RegNumber>UCL#{REG_NUMBER}*{NUMBER}</RegNumber>
+	<OrderDprt>${ORDER_DPRT}</OrderDprt>
+	<ObjectType>Limit</ObjectType>
+	<ActionType>Update</ActionType>
+	<ObjectFor>
+		<ContractIDT>
+			<ContractNumber>${CONTRACT_NUMBER}</ContractNumber>
+			<Client>
+				<ClientInfo>
+					<ShortName>${SHORT_NAME}</ShortName>
+				</ClientInfo>
+			</Client>
+		</ContractIDT>
+	</ObjectFor>
+	<Data>
+		<SetLimit>
+			<FinanceLimit>
+				<Amount>${CREDIT_LIMIT}</Amount>
+				<Currency>${CURRENCY}</Currency>
+			</FinanceLimit>
+			<ReasonDetails>${DESCRIPTION}</ReasonDetails>
+		</SetLimit>
+	</Data>
+	<AddData>
+		<SourceFileName>#{SOURCE_FILE_NAME}</SourceFileName>
+	</AddData>
+</Application>
