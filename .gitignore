@@ -23,5 +23,8 @@
 hs_err_pid*
 replay_pid*
 
-# vscode
 .vscode/
+nbproject/
+build/
+build.*
+manifest.mf
