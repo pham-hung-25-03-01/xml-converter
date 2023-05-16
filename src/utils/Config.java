@@ -8,13 +8,28 @@ import java.util.Properties;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
-import org.ini4j.Ini;
 import org.ini4j.InvalidFileFormatException;
+import org.ini4j.Wini;
+
 
 public class Config {
 
-    public static Ini getConfigPath() throws InvalidFileFormatException, IOException{
-        return new Ini(new File("configs/path.ini"));
+    public static Wini getConfigPath() throws InvalidFileFormatException, IOException{
+        File file = new File("configs/path.ini");
+        file.getParentFile().mkdirs();
+        file.createNewFile();
+        
+        return new Wini(file) {{
+            setConfig(new org.ini4j.Config() {{
+                setStrictOperator(true);
+            }});
+        }};
+    }
+
+    public static void setConfigPath(String section, String key, String value) throws InvalidFileFormatException, IOException{
+        Wini ini = getConfigPath();
+        ini.put(section, key, value);
+        ini.store();
     }
 
     public static Properties getConfigDefaultValues() throws InvalidFileFormatException, IOException {
