@@ -8,8 +8,11 @@ public class Validator {
 
     public enum ValueType {
         NUMBER,
+        LETTERS,
         EMAIL,
         PHONE,
+        DATE,
+        TIME,
         DEFAULT
     }
 
@@ -68,10 +71,16 @@ public class Validator {
             switch (valueType) {
                 case NUMBER:
                     return isValidNumber(value);
+                case LETTERS:
+                    return isValidLetters(value);
                 case EMAIL:
                     return isValidEmail(value);
                 case PHONE:
                     return isValidPhone(value);
+                case DATE:
+                    return isValidDate(value);
+                case TIME:
+                    return isValidTime(value);
                 default:
                     return true;
             }
@@ -104,12 +113,24 @@ public class Validator {
         return value.matches("^[0-9]+$");
     }
 
+    private boolean isValidLetters(String value) {
+        return value.matches("^[a-zA-Z]+( [a-zA-Z]+)*$");
+    }
+
     private boolean isValidEmail(String value) {
         return value.matches("^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$");
     }
 
     private boolean isValidPhone(String value) {
         return value.matches("^0[0-9]{9,10}$");
+    }
+
+    private boolean isValidDate(String value) {
+        return value.matches("^19[0-9]{2}|2[0-9]{3}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$");
+    }
+
+    private boolean isValidTime(String value) {
+        return value.matches("^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$");
     }
     
 }
