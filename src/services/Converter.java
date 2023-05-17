@@ -43,7 +43,7 @@ public class Converter {
     private static Validator validator = new Validator();
     private static Generator generator = new Generator();
 
-    public String convertToXml(String sourceFilePath, String templateName, String prefix, String suffix) throws IOException {
+    public String convertToXml(String sourceFilePath, String templateName) throws IOException {
         try {
             CurrentValues.SourceFile = new File(sourceFilePath);
 
@@ -62,7 +62,7 @@ public class Converter {
 
             StringBuilder prettyPrintXml = formatXml(xmlCleaned);
 
-            String targetFileName = generator.generateTargetFileName(prefix, suffix);
+            String targetFileName = generator.generateTargetFileName(templateName);
             String targetFilePath = "logs/" + targetFileName;
             File file = new File(targetFilePath);
             file.getParentFile().mkdirs();
@@ -139,7 +139,7 @@ public class Converter {
                     break;
                 case FROM_GENERATOR:
                     dataNameExtracted = Data.extractDataName(expressionLanguage, Type.FROM_GENERATOR);
-                    data = generator.generateData(Generator.Type.valueOf(dataNameExtracted));
+                    data = generator.generateData(dataNameExtracted);
                     break;
                 case FROM_DEFAULT_VALUES:
                     dataNameExtracted = Data.extractDataName(expressionLanguage, Type.FROM_DEFAULT_VALUES);
@@ -231,7 +231,7 @@ public class Converter {
     public static void main(String[] args) {
         Converter converter = new Converter();
         try {
-            converter.convertToXml("/home/phamhung/Downloads/uwd_20022023_1.csv", "UpdwodsTemplate", "updwods", "xml");
+            converter.convertToXml("/home/phamhung/Downloads/ncc_27042023_8.csv", "NclictrTemplate");
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
