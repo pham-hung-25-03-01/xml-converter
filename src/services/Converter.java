@@ -64,19 +64,20 @@ public class Converter {
 
             String targetFileName = generator.generateTargetFileName(templateName);
             String targetFilePath = "logs/" + targetFileName;
-            File file = new File(targetFilePath);
-            file.getParentFile().mkdirs();
-            file.createNewFile();
+            File file = new File(targetFilePath) {{
+                getParentFile().mkdirs();
+                createNewFile();
+            }};
 
             Files.writeString(file.toPath(), prettyPrintXml, StandardCharsets.UTF_8);
 
             CurrentValues.SourceFile = null;
 
-            return targetFilePath;
+            return file.getAbsolutePath();
         } catch (Exception e) {
             String message = e.getMessage();
             LogWriter.writeLog(message, LogType.SEVERE);
-            return null;
+            return "";
         }
     }
 
@@ -161,7 +162,6 @@ public class Converter {
 
             if (event.isStartElement()) {
                 StartElement element = event.asStartElement();
-                writer.writeStartElement(element.getName().getLocalPart());
 
                 Iterator<Attribute> attributes = element.getAttributes();
                 while (attributes.hasNext()) {
@@ -171,7 +171,13 @@ public class Converter {
                     if (validator.validateAttribute(attributeName, attributeValue)) {
                         CurrentValues.Attributes.put(attributeName, attributeValue);
                     }
-                }  
+                }
+
+                writer.writeStartElement(element.getName().getLocalPart());
+
+                if (!validator.validateRefArray(headers, rowData)) {
+                    skipChildTags(template);
+                }
 
                 continue;
             }
@@ -202,6 +208,25 @@ public class Converter {
                 writer.writeEndElement();
 
                 continue;
+            }
+        }
+    }
+
+    private void skipChildTags(XMLEventReader template) throws XMLStreamException {
+        int count = 0;
+        while (template.hasNext()) {
+            XMLEvent event = template.nextEvent();
+
+            if (event.isStartElement()) {
+                count++;
+            }
+
+            if (event.isEndElement()) {
+                count--;
+            }
+
+            if (count == 0) {
+                break;
             }
         }
     }
