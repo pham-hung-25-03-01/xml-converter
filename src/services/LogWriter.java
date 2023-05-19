@@ -20,9 +20,10 @@ public class LogWriter {
     }
 
     public static void writeLog(String message, LogType logType) throws IOException {
-        File file = new File(logFilePath);
-        file.getParentFile().mkdirs();
-        file.createNewFile();
+        new File(logFilePath) {{
+            getParentFile().mkdirs();
+            createNewFile();
+        }};
 
         boolean append = false;
         
