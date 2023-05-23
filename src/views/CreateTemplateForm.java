@@ -4,23 +4,39 @@
  */
 package views;
 
-import java.io.File;
-import java.io.FileWriter;
-import javax.swing.JFileChooser;
+import java.awt.Window;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.SwingUtilities;
+import services.FileTemplate;
 
 /**
  *
  * @author ASUS RG
  */
 public class CreateTemplateForm extends javax.swing.JFrame {
+    private FileTemplate fileTemplate = new FileTemplate();
+    
+    
 
     /**
      * Creates new form CreateTemplateForm
      */
     public CreateTemplateForm() {
         initComponents();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        
+        addWindowListener(new WindowAdapter(){
+            public void windowClosing(WindowEvent e)
+                {
+                    new MainForm().setVisible(true);
+                }
+        });
     }
 
     /**
@@ -37,6 +53,7 @@ public class CreateTemplateForm extends javax.swing.JFrame {
         btnSaveTemplate = new javax.swing.JButton();
         txtFileNameTemplate = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
+        btnBackToMain = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Create Template");
@@ -55,6 +72,13 @@ public class CreateTemplateForm extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel1.setText("File name:");
 
+        btnBackToMain.setText("Back");
+        btnBackToMain.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBackToMainActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -65,9 +89,12 @@ public class CreateTemplateForm extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtFileNameTemplate, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 427, Short.MAX_VALUE)
-                        .addComponent(btnSaveTemplate))
+                        .addComponent(txtFileNameTemplate, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnSaveTemplate, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnBackToMain, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(jScrollPane1))
                 .addGap(17, 17, 17))
         );
@@ -77,11 +104,14 @@ public class CreateTemplateForm extends javax.swing.JFrame {
                 .addGap(32, 32, 32)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 419, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnSaveTemplate)
-                    .addComponent(txtFileNameTemplate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(12, 12, 12))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(txtFileNameTemplate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnBackToMain)
+                        .addComponent(btnSaveTemplate)))
+                .addGap(13, 13, 13))
         );
 
         pack();
@@ -100,36 +130,39 @@ public class CreateTemplateForm extends javax.swing.JFrame {
  
         if (!checkEmptyText(txtAreaCreateTemplate.getText(), txtFileNameTemplate.getText())) 
         {
-              JOptionPane.showMessageDialog(this, "Please fill the file and the file name", "Error", JOptionPane.ERROR_MESSAGE);
+              JOptionPane.showMessageDialog(this, "Please fill content and the file name", "Error", JOptionPane.ERROR_MESSAGE);
         } 
         else 
         {
-            String text = txtAreaCreateTemplate.getText();
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setFileFilter(new FileNameExtensionFilter("xml", "xml"));
-            fileChooser.setDialogTitle("Save File");
-
-            int userSelection = fileChooser.showSaveDialog(this);
-
-            if (userSelection == JFileChooser.APPROVE_OPTION);
+            try 
             {
-                File fileToSave = fileChooser.getSelectedFile();
-                if (!fileToSave.getName().endsWith(".xml")) {
-                    fileToSave = new File(fileToSave.getAbsolutePath() + ".xml");
+                if (fileTemplate.saveFileTemplate(txtFileNameTemplate.getText(), txtAreaCreateTemplate.getText())) 
+                {
+                    JOptionPane.showMessageDialog(null, "Create template xml success!", "Notification", JOptionPane.INFORMATION_MESSAGE);
+                    new MainForm().setVisible(true);
+                    this.dispose();
                 }
-                try {
-                    FileWriter writer = new FileWriter(fileToSave);
-                    writer.write(text);
-                    writer.close();
-                    JOptionPane.showMessageDialog(this, "File saved successfully");
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(this, "Can't save this file!", "Error", JOptionPane.ERROR_MESSAGE);
+                else
+                {
+                    JOptionPane.showMessageDialog(null, "Fail to create template xml!", "Notification", JOptionPane.ERROR_MESSAGE);
                 }
+            }
+            catch (IOException ex)
+            {
+                Logger.getLogger(CreateTemplateForm.class.getName()).log(Level.SEVERE, null, ex);
             }
 
         }
+        
+        
+        
 
     }//GEN-LAST:event_btnSaveTemplateActionPerformed
+
+    private void btnBackToMainActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackToMainActionPerformed
+       new MainForm().setVisible(true);
+       this.dispose();
+    }//GEN-LAST:event_btnBackToMainActionPerformed
 
     /**
      * @param args the command line arguments
@@ -167,6 +200,7 @@ public class CreateTemplateForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBackToMain;
     private javax.swing.JButton btnSaveTemplate;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;

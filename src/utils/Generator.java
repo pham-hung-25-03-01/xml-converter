@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.regex.Pattern;
 
 import org.ini4j.InvalidFileFormatException;
 
@@ -43,6 +44,15 @@ public class Generator {
         String number = Config.getConfigDefaultValues().getProperty("NUMBER");
         String dayOfYear = String.valueOf(Calendar.getInstance().get(Calendar.DAY_OF_YEAR));
         return prefix + sender + "_" + number + "." + dayOfYear + "." + suffix;
+    }
+    
+    public String generateTemplateName(String fileName)
+    {
+        
+        String prefix = Pattern.compile("^.").matcher(fileName).replaceFirst(m -> m.group().toUpperCase());
+        String suffix = "Template";
+        
+        return prefix + suffix;
     }
 
     private String generateCurrentDate() {
