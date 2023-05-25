@@ -4,26 +4,32 @@
  */
 package views;
 
+import java.awt.BorderLayout;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import org.ini4j.Wini;
+import services.Converter;
+import utils.Config;
 
 /**
  *
  * @author ASUS RG
  */
 public class MainForm extends javax.swing.JFrame {
-    File inputFile;
-    File outputFile = new File("outputfile");
-    String selectedFileExtension;
+    private File inputFile;
+    private String selectedFileExtension;
+    private Converter converter;
 
     /**
      * Creates new form MainForm
@@ -33,12 +39,29 @@ public class MainForm extends javax.swing.JFrame {
         loadDataCBB();
         checkChooseFileExtension();
     }
+    
+    public void getHeaderIni() throws IOException 
+    {
+        Wini ini = Config.getConfigPath();
+        for (String sectionName : ini.keySet()) {
+            if (!sectionName.equals("DefaultValues") && !sectionName.equals("FileHeaderTemplate")) {
+                cbbTemplate.addItem(sectionName.replace("Template", ""));
+            }
+        }
+    }
 
     public void loadDataCBB()
     {
         String[] extensions = {"none","xlsx", "txt", "csv"};
         DefaultComboBoxModel cbm = new DefaultComboBoxModel(extensions);
         cbbFileExtension.setModel(cbm);
+        try 
+        {
+            getHeaderIni();
+        }
+        catch (Exception e) {
+        }
+
     }
     
     public void checkChooseFileExtension()
@@ -66,14 +89,19 @@ public class MainForm extends javax.swing.JFrame {
         btnChooseFile = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         btnConvertFile = new javax.swing.JButton();
-        btnSaveFile = new javax.swing.JButton();
-        btnExitApp = new javax.swing.JButton();
         txtPathFileInput = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        txtPathFileInput1 = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
         cbbFileExtension = new javax.swing.JComboBox<>();
-        btnCreateTemplate = new javax.swing.JButton();
+        cbbTemplate = new javax.swing.JComboBox<>();
+        jMenuBar2 = new javax.swing.JMenuBar();
+        menuSystem = new javax.swing.JMenu();
+        menuExit = new javax.swing.JMenuItem();
+        menuConfig = new javax.swing.JMenu();
+        menuConnectDB = new javax.swing.JMenuItem();
+        menuDefaultValues = new javax.swing.JMenuItem();
+        menuOutput = new javax.swing.JMenu();
+        menuAddTemplate = new javax.swing.JMenuItem();
+        menuListTemplates = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Convert Application");
@@ -88,7 +116,8 @@ public class MainForm extends javax.swing.JFrame {
         });
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 3, 20)); // NOI18N
-        jLabel1.setText("XML converter");
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("XML Converter");
 
         btnConvertFile.setText("Convert File");
         btnConvertFile.addActionListener(new java.awt.event.ActionListener() {
@@ -97,23 +126,9 @@ public class MainForm extends javax.swing.JFrame {
             }
         });
 
-        btnSaveFile.setText("Save File");
-        btnSaveFile.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSaveFileActionPerformed(evt);
-            }
-        });
-
-        btnExitApp.setText("Exit App");
-        btnExitApp.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnExitAppActionPerformed(evt);
-            }
-        });
+        txtPathFileInput.setEditable(false);
 
         jLabel2.setText("Path file input:");
-
-        jLabel3.setText("Path file output:");
 
         cbbFileExtension.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -121,12 +136,64 @@ public class MainForm extends javax.swing.JFrame {
             }
         });
 
-        btnCreateTemplate.setText("Create Template");
-        btnCreateTemplate.addActionListener(new java.awt.event.ActionListener() {
+        menuSystem.setText("System");
+
+        menuExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.ALT_DOWN_MASK));
+        menuExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/exit.png"))); // NOI18N
+        menuExit.setText("Exit");
+        menuExit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCreateTemplateActionPerformed(evt);
+                menuExitActionPerformed(evt);
             }
         });
+        menuSystem.add(menuExit);
+
+        jMenuBar2.add(menuSystem);
+
+        menuConfig.setText(" Config");
+
+        menuConnectDB.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.ALT_DOWN_MASK));
+        menuConnectDB.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/database.png"))); // NOI18N
+        menuConnectDB.setText("Connect to DB");
+        menuConnectDB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuConnectDBActionPerformed(evt);
+            }
+        });
+        menuConfig.add(menuConnectDB);
+
+        menuDefaultValues.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.ALT_DOWN_MASK));
+        menuDefaultValues.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/arrows.png"))); // NOI18N
+        menuDefaultValues.setText("Default values");
+        menuDefaultValues.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuDefaultValuesActionPerformed(evt);
+            }
+        });
+        menuConfig.add(menuDefaultValues);
+
+        jMenuBar2.add(menuConfig);
+
+        menuOutput.setText("Output");
+
+        menuAddTemplate.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.ALT_DOWN_MASK));
+        menuAddTemplate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/new-file.png"))); // NOI18N
+        menuAddTemplate.setText("Add template");
+        menuAddTemplate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuAddTemplateActionPerformed(evt);
+            }
+        });
+        menuOutput.add(menuAddTemplate);
+
+        menuListTemplates.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.ALT_DOWN_MASK));
+        menuListTemplates.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/list.png"))); // NOI18N
+        menuListTemplates.setText("List templates");
+        menuOutput.add(menuListTemplates);
+
+        jMenuBar2.add(menuOutput);
+
+        setJMenuBar(jMenuBar2);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -134,53 +201,38 @@ public class MainForm extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(14, 14, 14)
+                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(12, 12, 12)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtPathFileInput, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(txtPathFileInput1)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(btnExitApp, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
-                        .addComponent(btnCreateTemplate)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(btnConvertFile)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnSaveFile, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cbbTemplate, 0, 100, Short.MAX_VALUE)
+                        .addGap(241, 241, 241))
+                    .addComponent(txtPathFileInput))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnChooseFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(cbbFileExtension, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnChooseFile)
+                    .addComponent(cbbFileExtension, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(266, 266, 266))
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(17, 17, 17)
+                .addGap(34, 34, 34)
                 .addComponent(jLabel1)
-                .addGap(49, 49, 49)
+                .addGap(32, 32, 32)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtPathFileInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
                     .addComponent(btnChooseFile))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtPathFileInput1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3)
-                    .addComponent(cbbFileExtension, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnSaveFile)
-                    .addComponent(btnConvertFile)
-                    .addComponent(btnExitApp)
-                    .addComponent(btnCreateTemplate))
-                .addContainerGap(29, Short.MAX_VALUE))
+                    .addComponent(cbbFileExtension, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbbTemplate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnConvertFile))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
 
         pack();
@@ -203,57 +255,61 @@ public class MainForm extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Selected file: \n" + inputFile.getAbsolutePath(), "Notification", JOptionPane.INFORMATION_MESSAGE);
                 txtPathFileInput.setText(inputFile.getAbsolutePath());
             } 
-            else {
+            else 
+            {
                 JOptionPane.showMessageDialog(null, "Please select a " + selectedFileExtension + " file", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }//GEN-LAST:event_btnChooseFileActionPerformed
 
-    private void convertFile()
-    {
-        
-    }
     
     //button convert csv to xml
     private void btnConvertFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConvertFileActionPerformed
         try 
         {
             String filename = inputFile.getName();
-            if (filename.endsWith(".csv"))
+            String selectedTemplate = cbbTemplate.getSelectedItem().toString() + "Template";
+            if (filename.endsWith(cbbFileExtension.getSelectedItem().toString()))
             {
-                convertFile();
+                System.out.println(inputFile.getAbsoluteFile());
                 System.out.println(inputFile.getAbsolutePath());
+                System.out.println(filename);
             }
             else
             {
-                JOptionPane.showMessageDialog(null, "There is no selected file!", "Warning", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Convert fail!", "Error", JOptionPane.ERROR_MESSAGE);
             }
         } 
         catch (Exception e)
         {
+            System.out.println(e.getClass());
             JOptionPane.showMessageDialog(null, "There is no selected file!", "Warning", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_btnConvertFileActionPerformed
 
 
-    //button save file converted
-    private void btnSaveFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveFileActionPerformed
-
-    }//GEN-LAST:event_btnSaveFileActionPerformed
-
-    private void btnExitAppActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExitAppActionPerformed
-        if (JOptionPane.showConfirmDialog(null, "Are you sure to exit?", "Notification", 
-                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) 
-            System.exit(0);
-    }//GEN-LAST:event_btnExitAppActionPerformed
-
     private void cbbFileExtensionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbFileExtensionActionPerformed
         checkChooseFileExtension();
     }//GEN-LAST:event_cbbFileExtensionActionPerformed
 
-    private void btnCreateTemplateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateTemplateActionPerformed
+    private void menuExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuExitActionPerformed
+        if (JOptionPane.showConfirmDialog(null, "Are you sure to exit?", "Notification",
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
+            System.exit(0);
+    }//GEN-LAST:event_menuExitActionPerformed
+
+    private void menuAddTemplateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAddTemplateActionPerformed
+        this.dispose();
         new CreateTemplateForm().setVisible(true);
-    }//GEN-LAST:event_btnCreateTemplateActionPerformed
+    }//GEN-LAST:event_menuAddTemplateActionPerformed
+
+    private void menuConnectDBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuConnectDBActionPerformed
+        new DBDialog(this, rootPaneCheckingEnabled).setVisible(true);
+    }//GEN-LAST:event_menuConnectDBActionPerformed
+
+    private void menuDefaultValuesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuDefaultValuesActionPerformed
+          new DefaultValuesDialog(this, rootPaneCheckingEnabled).setVisible(true);
+    }//GEN-LAST:event_menuDefaultValuesActionPerformed
 
     
     /**
@@ -294,14 +350,19 @@ public class MainForm extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnChooseFile;
     private javax.swing.JButton btnConvertFile;
-    private javax.swing.JButton btnCreateTemplate;
-    private javax.swing.JButton btnExitApp;
-    private javax.swing.JButton btnSaveFile;
     private javax.swing.JComboBox<String> cbbFileExtension;
+    private javax.swing.JComboBox<String> cbbTemplate;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
+    private javax.swing.JMenuBar jMenuBar2;
+    private javax.swing.JMenuItem menuAddTemplate;
+    private javax.swing.JMenu menuConfig;
+    private javax.swing.JMenuItem menuConnectDB;
+    private javax.swing.JMenuItem menuDefaultValues;
+    private javax.swing.JMenuItem menuExit;
+    private javax.swing.JMenuItem menuListTemplates;
+    private javax.swing.JMenu menuOutput;
+    private javax.swing.JMenu menuSystem;
     private javax.swing.JTextField txtPathFileInput;
-    private javax.swing.JTextField txtPathFileInput1;
     // End of variables declaration//GEN-END:variables
 }
