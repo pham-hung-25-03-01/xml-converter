@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ApplicationFile>
+    <FileHeader>
+        <FormatVersion>2.0</FormatVersion>
+        <Sender>000100</Sender>
+        <CreationDate>2023-05-25</CreationDate>
+        <CreationTime>11:50:29</CreationTime>
+        <Number>00003</Number>
+        <Institution>0001</Institution>
+    </FileHeader>
+    <ApplicationsList>
+        <Application>
+            <RegNumber>UWD2023052511502900003</RegNumber>
+            <OrderDprt>0101</OrderDprt>
+            <ObjectType>Event</ObjectType>
+            <ActionType>Add</ActionType>
+            <ObjectFor>
+                <ContractIDT>
+                    <ContractNumber>8863916364</ContractNumber>
+                    <Client>
+                        <ClientInfo>
+                            <ShortName>SIT_NAME_251</ShortName>
+                        </ClientInfo>
+                    </Client>
+                </ContractIDT>
+            </ObjectFor>
+            <Data>
+                <QueEvent>
+                    <ActionCode>STATUS_A624</ActionCode>
+                    <Comment>Test</Comment>
+                </QueEvent>
+            </Data>
+            <AddData>
+                <SourceFileName>uwd_20022023_1.csv</SourceFileName>
+            </AddData>
+        </Application>
+    </ApplicationsList>
+</ApplicationFile>

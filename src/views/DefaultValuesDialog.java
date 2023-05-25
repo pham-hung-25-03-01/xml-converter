@@ -6,6 +6,7 @@ package views;
 
 import java.io.IOException;
 
+import javax.swing.ImageIcon;
 import javax.swing.table.DefaultTableModel;
 
 import org.ini4j.InvalidFileFormatException;
@@ -29,9 +30,16 @@ public class DefaultValuesDialog extends javax.swing.JDialog {
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
+        loadImgApp("/img/openway-way4-logo.png");
     }
     
-    private void loadDefaultValues() throws InvalidFileFormatException, IOException 
+    private void loadImgApp(String path)
+    {
+        ImageIcon icon = new ImageIcon(this.getClass().getResource(path));
+        this.setIconImage(icon.getImage());
+    }
+    
+    private void loadDefaultValues() throws InvalidFileFormatException, IOException
     {
         DefaultTableModel tblDefaultValues = (DefaultTableModel) this.tblDefaultValues.getModel();
         tblDefaultValues.setRowCount(0);
@@ -64,6 +72,7 @@ public class DefaultValuesDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Default Values");
+        setResizable(false);
 
         tblDefaultValues.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -98,10 +107,28 @@ public class DefaultValuesDialog extends javax.swing.JDialog {
         txtValue.setToolTipText("Enter a value");
 
         btnAdd.setText("Add");
+        btnAdd.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddActionPerformed(evt);
+            }
+        });
 
         btnDelete.setText("Delete");
+        btnDelete.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
 
         btnUpdate.setText("Update");
+        btnUpdate.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpdateActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -157,6 +184,18 @@ public class DefaultValuesDialog extends javax.swing.JDialog {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAddActionPerformed
+
+    private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnUpdateActionPerformed
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnDeleteActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -182,6 +221,12 @@ public class DefaultValuesDialog extends javax.swing.JDialog {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(DefaultValuesDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 

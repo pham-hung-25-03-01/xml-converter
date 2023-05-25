@@ -1,42 +1,37 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
 package views;
 
-import java.awt.Window;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JFrame;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import services.FileTemplate;
 
 /**
  *
  * @author ASUS RG
  */
-public class CreateTemplateForm extends javax.swing.JFrame {
+public class CreateTemplateDialog extends javax.swing.JDialog {
     private FileTemplate fileTemplate = new FileTemplate();
-    
-    
-
     /**
-     * Creates new form CreateTemplateForm
+     * Creates new form CreateTemplateDialog
      */
-    public CreateTemplateForm() {
+    public CreateTemplateDialog(java.awt.Frame parent, boolean modal) {
+        super(parent, modal);
         initComponents();
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        
-        addWindowListener(new WindowAdapter(){
-            public void windowClosing(WindowEvent e)
-                {
-                    new MainForm().setVisible(true);
-                }
-        });
+    }
+    
+    public void dispose()
+    {
+        try {
+            ((MainForm) getParent()).getHeaderIni();
+        } catch (IOException ex) {
+            java.util.logging.Logger.getLogger(CreateTemplateDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        super.dispose();
     }
 
     /**
@@ -48,36 +43,33 @@ public class CreateTemplateForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        txtAreaCreateTemplate = new javax.swing.JTextArea();
         btnSaveTemplate = new javax.swing.JButton();
         txtFileNameTemplate = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
-        btnBackToMain = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        txtAreaCreateTemplate = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Create Template");
 
-        txtAreaCreateTemplate.setColumns(20);
-        txtAreaCreateTemplate.setRows(5);
-        jScrollPane1.setViewportView(txtAreaCreateTemplate);
-
         btnSaveTemplate.setText("Save");
+        btnSaveTemplate.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnSaveTemplate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSaveTemplateActionPerformed(evt);
             }
         });
 
+        txtFileNameTemplate.setToolTipText("Enter file name xml template");
+
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel1.setText("File name:");
 
-        btnBackToMain.setText("Back");
-        btnBackToMain.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnBackToMainActionPerformed(evt);
-            }
-        });
+        txtAreaCreateTemplate.setColumns(20);
+        txtAreaCreateTemplate.setRows(5);
+        txtAreaCreateTemplate.setToolTipText("Enter your xml template");
+        txtAreaCreateTemplate.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        jScrollPane1.setViewportView(txtAreaCreateTemplate);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -87,31 +79,25 @@ public class CreateTemplateForm extends javax.swing.JFrame {
                 .addGap(20, 20, 20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtFileNameTemplate, javax.swing.GroupLayout.PREFERRED_SIZE, 551, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnSaveTemplate, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnBackToMain, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1))
+                        .addComponent(txtFileNameTemplate)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnSaveTemplate, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 774, Short.MAX_VALUE))
                 .addGap(17, 17, 17))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(32, 32, 32)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 419, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtFileNameTemplate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnBackToMain)
-                        .addComponent(btnSaveTemplate)))
-                .addGap(13, 13, 13))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtFileNameTemplate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSaveTemplate))
+                .addGap(12, 12, 12))
         );
 
         pack();
@@ -125,18 +111,17 @@ public class CreateTemplateForm extends javax.swing.JFrame {
         return true;
     }
     
-    //button save template file
     private void btnSaveTemplateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveTemplateActionPerformed
- 
-        if (!checkEmptyText(txtAreaCreateTemplate.getText(), txtFileNameTemplate.getText())) 
+
+        if (!checkEmptyText(txtAreaCreateTemplate.getText(), txtFileNameTemplate.getText()))
         {
-              JOptionPane.showMessageDialog(this, "Please fill content and the file name", "Error", JOptionPane.ERROR_MESSAGE);
-        } 
-        else 
+            JOptionPane.showMessageDialog(this, "Please fill content and the file name", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        else
         {
-            try 
+            try
             {
-                if (fileTemplate.saveFileTemplate(txtFileNameTemplate.getText(), txtAreaCreateTemplate.getText())) 
+                if (fileTemplate.saveFileTemplate(txtFileNameTemplate.getText(), txtAreaCreateTemplate.getText()))
                 {
                     JOptionPane.showMessageDialog(null, "Create template xml success!", "Notification", JOptionPane.INFORMATION_MESSAGE);
                     new MainForm().setVisible(true);
@@ -149,20 +134,12 @@ public class CreateTemplateForm extends javax.swing.JFrame {
             }
             catch (IOException ex)
             {
-                Logger.getLogger(CreateTemplateForm.class.getName()).log(Level.SEVERE, null, ex);
+                //Logger.getLogger(CreateTemplateForm.class.getName()).log(Level.SEVERE, null, ex);
             }
 
         }
-        
-        
-        
 
     }//GEN-LAST:event_btnSaveTemplateActionPerformed
-
-    private void btnBackToMainActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackToMainActionPerformed
-       new MainForm().setVisible(true);
-       this.dispose();
-    }//GEN-LAST:event_btnBackToMainActionPerformed
 
     /**
      * @param args the command line arguments
@@ -181,26 +158,32 @@ public class CreateTemplateForm extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(CreateTemplateForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(CreateTemplateDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(CreateTemplateForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(CreateTemplateDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(CreateTemplateForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(CreateTemplateDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(CreateTemplateForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(CreateTemplateDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
-        /* Create and display the form */
+        /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CreateTemplateForm().setVisible(true);
+                CreateTemplateDialog dialog = new CreateTemplateDialog(new javax.swing.JFrame(), true);
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        System.exit(0);
+                    }
+                });
+                dialog.setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnBackToMain;
     private javax.swing.JButton btnSaveTemplate;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;

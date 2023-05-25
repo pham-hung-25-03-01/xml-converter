@@ -30,12 +30,18 @@ public class Config {
                 fos.close();
             }
         }};
+        
+        Wini ini = new Wini(file);
+        org.ini4j.Config cfg = ini.getConfig();
+        cfg.setStrictOperator(true);
+        ini.setConfig(cfg);
+        return ini;
 
-        return new Wini(file) {{
-            setConfig(new org.ini4j.Config() {{
-                setStrictOperator(true);
-            }});
-        }};
+//        return new Wini(file) {{
+//            setConfig(new org.ini4j.Config() {{
+//                setStrictOperator(true);
+//            }});
+//        }};
     }
 
     public static void setConfigPath(String section, String key, String value) throws InvalidFileFormatException, IOException{
