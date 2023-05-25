@@ -4,17 +4,9 @@
  */
 package views;
 
-import java.awt.BorderLayout;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -29,7 +21,7 @@ import utils.Config;
 public class MainForm extends javax.swing.JFrame {
     private File inputFile;
     private String selectedFileExtension;
-    private Converter converter;
+    private static Converter converter = new Converter();
 
     /**
      * Creates new form MainForm
@@ -44,7 +36,7 @@ public class MainForm extends javax.swing.JFrame {
     {
         Wini ini = Config.getConfigPath();
         for (String sectionName : ini.keySet()) {
-            if (!sectionName.equals("DefaultValues") && !sectionName.equals("FileHeaderTemplate")) {
+            if (sectionName.matches("^\\w+Template$") && !sectionName.equals("FileHeaderTemplate")) {
                 cbbTemplate.addItem(sectionName.replace("Template", ""));
             }
         }
@@ -52,7 +44,7 @@ public class MainForm extends javax.swing.JFrame {
 
     public void loadDataCBB()
     {
-        String[] extensions = {"none","xlsx", "txt", "csv"};
+        String[] extensions = {"none",".xlsx", ".txt", ".csv"};
         DefaultComboBoxModel cbm = new DefaultComboBoxModel(extensions);
         cbbFileExtension.setModel(cbm);
         try 
@@ -261,28 +253,33 @@ public class MainForm extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_btnChooseFileActionPerformed
-
     
     //button convert csv to xml
     private void btnConvertFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConvertFileActionPerformed
         try 
         {
             String filename = inputFile.getName();
-            String selectedTemplate = cbbTemplate.getSelectedItem().toString() + "Template";
+            String templateName = cbbTemplate.getSelectedItem().toString() + "Template";
             if (filename.endsWith(cbbFileExtension.getSelectedItem().toString()))
             {
-                System.out.println(inputFile.getAbsoluteFile());
-                System.out.println(inputFile.getAbsolutePath());
-                System.out.println(filename);
+                String sourceFilePath = inputFile.getAbsolutePath();
+                String targetFilePath = converter.convertToXml(sourceFilePath, templateName);
+                if (targetFilePath.equals("")){
+                    JOptionPane.showMessageDialog(null, "Error when converting file!\nSee log file for more details.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(null, "Converted file: \n" + targetFilePath, "Notification", JOptionPane.INFORMATION_MESSAGE);
+                }
             }
             else
             {
                 JOptionPane.showMessageDialog(null, "Convert fail!", "Error", JOptionPane.ERROR_MESSAGE);
             }
-        } 
-        catch (Exception e)
+        }
+        catch (NullPointerException | IOException e)
         {
-            System.out.println(e.getClass());
+            System.out.println(e.getMessage());
             JOptionPane.showMessageDialog(null, "There is no selected file!", "Warning", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_btnConvertFileActionPerformed

@@ -74,7 +74,7 @@ public class Config {
             createNewFile();
             if (length() == 0) {
                 FileOutputStream fos = new FileOutputStream(this);
-                fos.write("HOST=\nPORT=\nNAME=\nUSER=\nPASSWORD=".getBytes());
+                fos.write("DB_HOST=\nDB_PORT=\nDB_NAME=\nDB_USER=\nDB_PASSWORD=".getBytes());
                 fos.close();
             }
         }};

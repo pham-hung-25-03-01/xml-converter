@@ -4,7 +4,13 @@
  */
 package views;
 
+import java.io.IOException;
+
 import javax.swing.table.DefaultTableModel;
+
+import org.ini4j.InvalidFileFormatException;
+
+import utils.Config;
 
 /**
  *
@@ -18,29 +24,22 @@ public class DefaultValuesDialog extends javax.swing.JDialog {
     public DefaultValuesDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        loadDefaultValues();
+        try {
+            loadDefaultValues();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
     
-        private void loadDefaultValues() 
+    private void loadDefaultValues() throws InvalidFileFormatException, IOException 
     {
         DefaultTableModel tblDefaultValues = (DefaultTableModel) this.tblDefaultValues.getModel();
         tblDefaultValues.setRowCount(0);
 
-        Object[] row1 = {"FORMAT_VERSION", "2.0"};
-        Object[] row2 = {"SENDER", "000100"};
-        Object[] row3 = {"NUMBER", "00003"};
-        Object[] row4 = {"INSTITUTION", "0001"};
-        Object[] row5 = {"SHORT_NAME", "SIT_NAME_251"};
-        Object[] row6 = {"ORDER_DPRT", "0101"};
-
-        tblDefaultValues.addRow(row1);
-        tblDefaultValues.addRow(row2);
-        tblDefaultValues.addRow(row3);
-        tblDefaultValues.addRow(row4);
-        tblDefaultValues.addRow(row5);
-        tblDefaultValues.addRow(row6);
-        
-
+        Config.getConfigDefaultValues().forEach((key, value) -> {
+            Object[] row = {key, value};
+            tblDefaultValues.addRow(row);
+        });
     }
 
     /**
