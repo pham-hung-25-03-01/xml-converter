@@ -5,12 +5,13 @@
 package views;
 
 import java.io.IOException;
-
+import java.util.HashMap;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
-
 import org.ini4j.InvalidFileFormatException;
-
 import utils.Config;
 
 /**
@@ -18,6 +19,8 @@ import utils.Config;
  * @author ASUS RG
  */
 public class DefaultValuesDialog extends javax.swing.JDialog {
+    private HashMap<String, String> updateListDefaultValues = new HashMap<String, String>();
+    
 
     /**
      * Creates new form NewJDialog
@@ -31,6 +34,20 @@ public class DefaultValuesDialog extends javax.swing.JDialog {
             System.out.println(e.getMessage());
         }
         loadImgApp("/img/openway-way4-logo.png");
+
+        tblDefaultValues.getModel().addTableModelListener(
+                new TableModelListener() {
+            public void tableChanged(TableModelEvent evt) {
+                int selectedRow = tblDefaultValues.getSelectedRow();
+                if (selectedRow >= 0) {
+
+                    String key = tblDefaultValues.getValueAt(tblDefaultValues.getSelectedRow(), 0).toString();
+                    String value = tblDefaultValues.getValueAt(tblDefaultValues.getSelectedRow(), 1).toString();
+                    updateListDefaultValues.put(key, value);
+                }
+            }
+        });
+
     }
     
     private void loadImgApp(String path)
@@ -185,15 +202,105 @@ public class DefaultValuesDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        // TODO add your handling code here:
+
+        if (txtKey.getText().isEmpty() || txtValue.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter the key and value!", "Notification", JOptionPane.WARNING_MESSAGE);
+        } 
+        else 
+        {
+            try 
+            {
+                if (Config.getConfigDefaultValues().containsKey(txtKey.getText()))
+                    JOptionPane.showMessageDialog(this, txtKey.getText() + " already exists!", "Notification", JOptionPane.ERROR_MESSAGE);
+                else
+                {
+                    try
+                    {
+                        Config.setConfigDefaultValues(new HashMap<String, String>(){{
+                            put(txtKey.getText(), txtValue.getText());
+                        }});
+                        
+                        DefaultTableModel tblDefaultValues = (DefaultTableModel) this.tblDefaultValues.getModel();
+                        tblDefaultValues.addRow(new Object[]{txtKey.getText(), txtValue.getText()});
+                        
+                        JOptionPane.showMessageDialog(this, "Add " + txtKey.getText() + " success!", "Notification", JOptionPane.INFORMATION_MESSAGE);
+                        txtKey.setText("");
+                        txtValue.setText("");
+                    }
+                    catch (Exception e) {
+                        JOptionPane.showMessageDialog(this, "Add fail!", "Notification", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            } 
+            catch (IOException ex) {
+                System.out.println(ex.getMessage());
+            }
+
+        }
+
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
-        // TODO add your handling code here:
+        
+        if(tblDefaultValues.getCellEditor() != null)
+        {
+            tblDefaultValues.getCellEditor().stopCellEditing();
+        }
+        
+        if(updateListDefaultValues.size()<1)
+        {
+            JOptionPane.showMessageDialog(this, "Please select a row to update!", "Notification", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        int confirmResult = JOptionPane.showConfirmDialog(this, "Are you sure to update?", "Confirm", JOptionPane.YES_NO_OPTION);
+        if (confirmResult == JOptionPane.YES_OPTION) 
+        {
+            try {
+                Config.setConfigDefaultValues(updateListDefaultValues);
+                updateListDefaultValues.clear();
+                JOptionPane.showMessageDialog(this, "Update success!", "Notification", JOptionPane.INFORMATION_MESSAGE);
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Update fail!", "Notification", JOptionPane.ERROR_MESSAGE);
+                System.out.println(ex.getMessage());
+            }
+        }
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        // TODO add your handling code here:
+
+        if (tblDefaultValues.getSelectedRow() != -1 && tblDefaultValues.getSelectionModel().isSelectionEmpty()) {
+            // No row is selected by the user
+            JOptionPane.showMessageDialog(this, "Please select a row to delete!", "Notification", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        int selectedRow = tblDefaultValues.getSelectedRow();
+        if (selectedRow >= 0) {
+
+            String key = tblDefaultValues.getValueAt(tblDefaultValues.getSelectedRow(), 0).toString();
+            String value = tblDefaultValues.getValueAt(tblDefaultValues.getSelectedRow(), 1).toString();
+            // Show a confirmation dialog
+            int confirmResult = JOptionPane.showConfirmDialog(this, "Are you sure to delete " + key, "Confirmation", JOptionPane.YES_NO_OPTION);
+            if (confirmResult == JOptionPane.YES_OPTION) {
+                try {
+                    // User clicked "Yes", perform the deletion
+                    Config.removeConfigDefaultValues(new HashMap<String, String>(){{
+                        put(key, value);
+                    }});
+                    DefaultTableModel tblDefaultValues = (DefaultTableModel) this.tblDefaultValues.getModel();
+                    tblDefaultValues.removeRow(this.tblDefaultValues.getSelectedRow());
+                    
+                    JOptionPane.showMessageDialog(this, "Delete " + key + " success!", "Notification", JOptionPane.INFORMATION_MESSAGE);
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(this, "Delete " + key + " fail!", "Notification", JOptionPane.ERROR_MESSAGE);
+                    System.out.println(ex.getMessage());
+                }
+            }
+        } 
+        else {
+            JOptionPane.showMessageDialog(this, "Please select a row to delete!", "Notification", JOptionPane.WARNING_MESSAGE);
+        }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     /**

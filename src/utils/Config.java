@@ -62,6 +62,28 @@ public class Config {
             load(new FileInputStream(defaultValuesFilePath));
         }};
     }
+    
+    public static void setConfigDefaultValues(HashMap<String, String> configs) throws IOException {
+        String defaultValuesFilePath = getConfigPath().get("DefaultValues", "PATH");
+
+        Properties properties = getConfigDefaultValues();
+
+        for(Map.Entry<String, String> entry : configs.entrySet()) {
+            properties.put(entry.getKey(), entry.getValue());
+        }
+        properties.store(new FileOutputStream(defaultValuesFilePath), null);
+    }
+    
+    public static void removeConfigDefaultValues(HashMap<String, String> configs) throws IOException {
+        String defaultValuesFilePath = getConfigPath().get("DefaultValues", "PATH");
+
+        Properties properties = getConfigDefaultValues();
+
+        for(Map.Entry<String, String> entry : configs.entrySet()) {
+            properties.remove(entry.getKey());
+        }
+        properties.store(new FileOutputStream(defaultValuesFilePath), null);
+    }
 
     public static XMLEventReader getTemplate(String templateName) throws InvalidFileFormatException, IOException, XMLStreamException {
         String templateFilePath = getConfigPath().get(templateName, "PATH");
