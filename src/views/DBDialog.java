@@ -4,14 +4,24 @@
  */
 package views;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.util.HashMap;
+
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
+import services.Database;
+import utils.Config;
 
 /**
  *
  * @author ASUS RG
  */
 public class DBDialog extends javax.swing.JDialog {
-
+    private Thread connectionThread;
     /**
      * Creates new form DBDialog
      */
@@ -19,12 +29,25 @@ public class DBDialog extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         loadImgApp("/img/openway-way4-logo.png");
+        try {
+            loadDatabaseConfig();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
     
     private void loadImgApp(String path)
     {
         ImageIcon icon = new ImageIcon(this.getClass().getResource(path));
         this.setIconImage(icon.getImage());
+    }
+
+    private void loadDatabaseConfig() throws IOException{
+        txtHost.setText(Config.getConfigDatabase().getProperty("DB_HOST"));
+        txtPort.setText(Config.getConfigDatabase().getProperty("DB_PORT"));
+        txtDBName.setText(Config.getConfigDatabase().getProperty("DB_NAME"));
+        txtUsername.setText(Config.getConfigDatabase().getProperty("DB_USER"));
+        txtPassword.setText(Config.getConfigDatabase().getProperty("DB_PASSWORD"));
     }
 
     /**
@@ -157,7 +180,71 @@ public class DBDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnConnectDBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectDBActionPerformed
-        // TODO add your handling code here:
+        String host = txtHost.getText();
+        String port = txtPort.getText();
+        String dbName = txtDBName.getText();
+        String username = txtUsername.getText();
+        String password = new String(txtPassword.getPassword());
+
+        if (host.isEmpty() || port.isEmpty() || dbName.isEmpty() || username.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please fill all fields", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        JProgressBar progressBar = new JProgressBar(0, 100);
+        progressBar.setStringPainted(true);
+        progressBar.setString("Connecting...");
+        progressBar.setValue(0);
+        JOptionPane pane = new JOptionPane(progressBar);
+        pane.setOptions(new Object[]{});
+        JDialog dialog = pane.createDialog(this, "Connecting to database");
+        dialog.setModal(true);
+        dialog.setResizable(false);
+        //dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        dialog.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                connectionThread.interrupt();
+                dialog.dispose();
+            }
+        });
+        Thread dialogThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                dialog.setVisible(true);
+            }
+        });
+        dialogThread.start(); 
+        connectionThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    progressBar.setValue(20);
+                    if (Database.testConnection(host, port, dbName, username, password)) {
+                        progressBar.setValue(60);
+                        Config.setConfigDatabase(new HashMap<String, String>() {{
+                            put("DB_HOST", host);
+                            put("DB_PORT", port);
+                            put("DB_NAME", dbName);
+                            put("DB_USER", username);
+                            put("DB_PASSWORD", password);
+                        }});
+                        progressBar.setValue(100);
+                        dialog.dispose();
+                        DBDialog.this.dispose();
+                        JOptionPane.showMessageDialog(DBDialog.this, "Connection successful", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        dialog.dispose();
+                        JOptionPane.showMessageDialog(DBDialog.this, "Connection failed", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (IllegalArgumentException e) {
+                    JOptionPane.showMessageDialog(DBDialog.this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(DBDialog.this, "Cannot connect to database", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+        connectionThread.start();
     }//GEN-LAST:event_btnConnectDBActionPerformed
 
     private void cbShowPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbShowPasswordActionPerformed

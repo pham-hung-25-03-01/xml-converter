@@ -29,7 +29,7 @@ public class Validator {
 
         AttributeName attribute = AttributeName.valueOf(attributeName);
 
-        switch(attribute) {
+        switch (attribute) {
             case TYPE:
                 return validateValueType(attributeValue);
             case USE:
@@ -53,6 +53,17 @@ public class Validator {
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("INVALID USE TYPE: " + type);
         }
+    }
+
+    public boolean isHost(String host) {
+        return host.matches(
+                "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$")
+                || host.matches(
+                        "^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}");
+    }
+
+    public boolean isPort(String port) {
+        return port.matches("^([1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$");
     }
 
     public boolean validateValue(String type, String value) {
@@ -86,13 +97,28 @@ public class Validator {
 
     public boolean validateRefArray(HashMap<String, Integer> headers, String[] rowData) {
         if (!CurrentValues.Attributes.get("REF").equals("[]")) {
-            String ref = CurrentValues.Attributes.get("REF").replaceAll("\\[|\\]", "");
-            String[] listRef = ref.split(";");
-            for (String subRef : listRef) {
-                if (!headers.containsKey(subRef)) {
-                    throw new IllegalArgumentException("INVALID REFERENCE: " + subRef);
+            String[] listRef = CurrentValues.Attributes.get("REF").split(";", -1);
+            for (int i = 0; i < listRef.length-1; i++) {
+                String key = "";
+                String value = "";
+
+                String[] ref = listRef[i].split("=", -1);
+                key = ref[0];
+
+                if (!headers.containsKey(key)) {
+                    throw new IllegalArgumentException("INVALID REFERENCE: " + key);
                 }
-                if (rowData[headers.get(subRef)] == null || rowData[headers.get(subRef)].isBlank()) {
+
+                if (ref.length > 1) {
+                    value = ref[1];
+                    String data = rowData[headers.get(key)] == null || rowData[headers.get(key)].isBlank() ? "" : rowData[headers.get(key)];
+                    if (data.equals(value)) {
+                        return true;
+                    }
+                    return false;
+                }
+
+                if (rowData[headers.get(key)] == null || rowData[headers.get(key)].isBlank()) {
                     return false;
                 }
             }
@@ -131,7 +157,7 @@ public class Validator {
     }
 
     private boolean validateRef(String ref) {
-        if (ref.matches("^\\[\\w+((\\;| )+\\w+)*\\]$")) {
+        if (ref.matches("^(\\w+\\={0,1}\\w*\\;)+$")) {
             return true;
         }
 

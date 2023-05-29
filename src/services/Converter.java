@@ -8,6 +8,8 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -43,7 +45,7 @@ public class Converter {
     private static Validator validator = new Validator();
     private static Generator generator = new Generator();
 
-    public String convertToXml(String sourceFilePath, String templateName) throws IOException {
+    private String convertSingleFileToXml(String sourceFilePath, String templateName) throws IOException {
         try {
             CurrentValues.SourceFile = new File(sourceFilePath);
 
@@ -63,7 +65,7 @@ public class Converter {
             StringBuilder prettyPrintXml = formatXml(xmlCleaned);
 
             String targetFileName = generator.generateTargetFileName(templateName);
-            String targetFilePath = "logs/" + targetFileName;
+            String targetFilePath = "logs/foutputs/" + targetFileName;
             File file = new File(targetFilePath) {{
                 getParentFile().mkdirs();
                 createNewFile();
@@ -71,14 +73,45 @@ public class Converter {
 
             Files.writeString(file.toPath(), prettyPrintXml, StandardCharsets.UTF_8);
 
-            CurrentValues.SourceFile = null;
+            String fprocessPath = "logs/fprocesses/" + CurrentValues.SourceFile.getName();
+            File fprocess = new File(fprocessPath) {{
+                getParentFile().mkdirs();
+                createNewFile();
+            }};
+
+            Files.copy(CurrentValues.SourceFile.toPath(), fprocess.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
             return file.getAbsolutePath();
         } catch (Exception e) {
-            String message = e.getMessage();
+            e.printStackTrace();
+            String message = "Error=" + e.getMessage() + ";File=" + CurrentValues.SourceFile.getName() + ";";
             LogWriter.writeLog(message, LogType.SEVERE);
+            
+            String ferrorPath = "logs/ferrors/" + CurrentValues.SourceFile.getName();
+            File ferror = new File(ferrorPath) {{
+                getParentFile().mkdirs();
+                createNewFile();
+            }};
+
+            Files.copy(CurrentValues.SourceFile.toPath(), ferror.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            
             return "";
+        } finally {
+            CurrentValues.SourceFile = null;
         }
+    }
+
+    public List<String> convertToXml(List<String> sourceFilePaths, String templateName) throws IOException {
+        List<String> targetFilePaths = new ArrayList<String>();
+
+        LogWriter.cleanLog();
+
+        for (String sourceFilePath : sourceFilePaths) {
+            String targetFilePath = convertSingleFileToXml(sourceFilePath, templateName);
+            targetFilePaths.add(targetFilePath);
+        }
+
+        return targetFilePaths;
     }
 
     private void writeXml(String templateName, HashMap<String, Integer> headers, List<String[]> rows,
@@ -145,6 +178,9 @@ public class Converter {
                 case FROM_DEFAULT_VALUES:
                     dataNameExtracted = Data.extractDataName(expressionLanguage, Type.FROM_DEFAULT_VALUES);
                     data = Config.getConfigDefaultValues().getProperty(dataNameExtracted);
+                    if (data == null) {
+                        throw new IllegalArgumentException("INVALID DEFAULT VALUE TYPE: " + dataNameExtracted);
+                    }
                     break;
                 default:
                     data = "";
@@ -242,6 +278,17 @@ public class Converter {
         return xml;
     }
 
+    // private StringBuilder formatXml(StringBuilder xml) throws TransformerException {
+    //     TransformerFactory transformerFactory = TransformerFactory.newInstance();
+    //     Transformer transformer = transformerFactory.newTransformer();
+    //     transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+    //     transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
+    //     StreamSource source = new StreamSource(new StringReader(xml.toString()));
+    //     StringWriter output = new StringWriter();
+    //     transformer.transform(source, new StreamResult(output));
+    //     return new StringBuilder(output.toString());
+    // }
+
     private StringBuilder formatXml(StringBuilder xml) throws TransformerException {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
@@ -253,14 +300,4 @@ public class Converter {
         return new StringBuilder(output.toString());
     }
 
-    public static void main(String[] args) {
-        Converter converter = new Converter();
-        try {
-            converter.convertToXml("/home/phamhung/Downloads/ncc_27042023_8.csv", "NclictrTemplate");
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-    
 }

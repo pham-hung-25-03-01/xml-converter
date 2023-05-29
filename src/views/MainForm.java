@@ -6,6 +6,9 @@ package views;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import org.ini4j.Wini;
@@ -13,7 +16,6 @@ import utils.Config;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import services.Converter;
 import utils.FileTypeFilter;
 
@@ -22,8 +24,7 @@ import utils.FileTypeFilter;
  * @author ASUS RG
  */
 public class MainForm extends javax.swing.JFrame {
-    private File inputFile;
-    private File[] selectedFiles;
+    private List<String> selectedFilePaths = new ArrayList<String>();
     private static Converter converter = new Converter();
 
     /**
@@ -248,13 +249,13 @@ public class MainForm extends javax.swing.JFrame {
         int result = fileChooser.showOpenDialog(null);
         if (result == JFileChooser.APPROVE_OPTION)
         {
-            selectedFiles = fileChooser.getSelectedFiles();
+            File[] selectedFiles = fileChooser.getSelectedFiles();
             StringBuilder fileNames = new StringBuilder();
-            inputFile = selectedFiles[0];
             for(File file : selectedFiles)
             {
                 String filename = file.getName();
                 fileNames.append(filename).append(", ");
+                selectedFilePaths.add(file.getAbsolutePath());
             }
             if (fileNames.length() > 0) 
             {
@@ -269,22 +270,32 @@ public class MainForm extends javax.swing.JFrame {
     private void btnConvertFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConvertFileActionPerformed
         try 
         {
-            String filename = inputFile.getName();
             String templateName = cbbTemplate.getSelectedItem().toString() + "Template";
-            String sourceFilePath = inputFile.getAbsolutePath();
-            String targetFilePath = converter.convertToXml(sourceFilePath, templateName);
-            System.out.println(targetFilePath);
-            if (targetFilePath.equals("")) {
-                JOptionPane.showMessageDialog(null, "Error when converting file!\nSee log file for more details.", "Error", JOptionPane.ERROR_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(null, "Converted file: \n" + targetFilePath, "Notification", JOptionPane.INFORMATION_MESSAGE);
+            List<String> sourceFilePaths = selectedFilePaths;
+            List<String> targetFilePaths = converter.convertToXml(sourceFilePaths, templateName);
+            int countSuccess = 0;
+            for (String targetFilePath : targetFilePaths) {
+                if (!targetFilePath.equals("")) {
+                    countSuccess++;
+                }
             }
+
+            JOptionPane.showMessageDialog(null, "Convert " + countSuccess + "/" + targetFilePaths.size()
+                    + " files successfully!\nOutput files saved at: /logs/foutputs\nProcess files saved at: /logs/fprocesses\nError files saved at: /logs/ferrors",
+                    "Notification", JOptionPane.INFORMATION_MESSAGE);
+
             txtPathFileInput.setText("");
+            selectedFilePaths.clear();
         }
-        catch (NullPointerException | IOException e)
+        catch (NullPointerException  e)
         {
             System.out.println(e.getMessage());
             JOptionPane.showMessageDialog(null, "There is no selected file!\n" + e.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
+        }
+        catch (IOException e)
+        {
+            System.out.println(e.getMessage());
+            JOptionPane.showMessageDialog(null, "Error when converting file!\nSee log file for more details.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnConvertFileActionPerformed
 

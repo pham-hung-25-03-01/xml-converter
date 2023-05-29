@@ -39,7 +39,7 @@ public class DefaultValuesDialog extends javax.swing.JDialog {
                 new TableModelListener() {
             public void tableChanged(TableModelEvent evt) {
                 int selectedRow = tblDefaultValues.getSelectedRow();
-                if (selectedRow >= 0) {
+                if (selectedRow >= 0 && tblDefaultValues.isEditing()) {
 
                     String key = tblDefaultValues.getValueAt(tblDefaultValues.getSelectedRow(), 0).toString();
                     String value = tblDefaultValues.getValueAt(tblDefaultValues.getSelectedRow(), 1).toString();
@@ -249,7 +249,7 @@ public class DefaultValuesDialog extends javax.swing.JDialog {
         
         if(updateListDefaultValues.size()<1)
         {
-            JOptionPane.showMessageDialog(this, "Please select a row to update!", "Notification", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "No change!", "Notification", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
         
@@ -275,31 +275,31 @@ public class DefaultValuesDialog extends javax.swing.JDialog {
             return;
         }
         
-        int selectedRow = tblDefaultValues.getSelectedRow();
-        if (selectedRow >= 0) {
+        int confirmResult = JOptionPane.showConfirmDialog(this, "Are you sure to delete?", "Confirmation", JOptionPane.YES_NO_OPTION);
+        if (confirmResult == JOptionPane.YES_OPTION) {
+            try {
+                int[] selectedRows = tblDefaultValues.getSelectedRows();
+                HashMap<String, String> deleteListDefaultValues = new HashMap<>();
 
-            String key = tblDefaultValues.getValueAt(tblDefaultValues.getSelectedRow(), 0).toString();
-            String value = tblDefaultValues.getValueAt(tblDefaultValues.getSelectedRow(), 1).toString();
-            // Show a confirmation dialog
-            int confirmResult = JOptionPane.showConfirmDialog(this, "Are you sure to delete " + key, "Confirmation", JOptionPane.YES_NO_OPTION);
-            if (confirmResult == JOptionPane.YES_OPTION) {
-                try {
-                    // User clicked "Yes", perform the deletion
-                    Config.removeConfigDefaultValues(new HashMap<String, String>(){{
-                        put(key, value);
-                    }});
-                    DefaultTableModel tblDefaultValues = (DefaultTableModel) this.tblDefaultValues.getModel();
-                    tblDefaultValues.removeRow(this.tblDefaultValues.getSelectedRow());
-                    
-                    JOptionPane.showMessageDialog(this, "Delete " + key + " success!", "Notification", JOptionPane.INFORMATION_MESSAGE);
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(this, "Delete " + key + " fail!", "Notification", JOptionPane.ERROR_MESSAGE);
-                    System.out.println(ex.getMessage());
+                for (int selectedRow : selectedRows) {
+                    String key = tblDefaultValues.getValueAt(selectedRow, 0).toString();
+                    String value = tblDefaultValues.getValueAt(selectedRow, 1).toString();
+                    deleteListDefaultValues.put(key, value);
                 }
+
+                Config.removeConfigDefaultValues(deleteListDefaultValues);
+
+                DefaultTableModel tblDefaultValues = (DefaultTableModel) this.tblDefaultValues.getModel();
+
+                for (int i = selectedRows.length - 1; i >= 0; i--) {
+                    tblDefaultValues.removeRow(selectedRows[i]);
+                }
+
+                JOptionPane.showMessageDialog(this, "Delete success!", "Notification", JOptionPane.INFORMATION_MESSAGE);
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Delete fail!", "Notification", JOptionPane.ERROR_MESSAGE);
+                System.out.println(ex.getMessage());
             }
-        } 
-        else {
-            JOptionPane.showMessageDialog(this, "Please select a row to delete!", "Notification", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_btnDeleteActionPerformed
 

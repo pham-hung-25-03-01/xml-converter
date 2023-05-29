@@ -26,7 +26,9 @@ public class Config {
             createNewFile();
             if (length() == 0) {
                 FileOutputStream fos = new FileOutputStream(this);
-                fos.write("[DefaultValues]\nPATH=configs/default/values.properties\n\n[DatabaseConfig]\nPATH=configs/default/database.properties".getBytes());
+                fos.write(
+                    "[DefaultValues]\nPATH=configs/default/values.properties\n\n[DatabaseConfig]\nPATH=configs/default/database.properties\n\n[DefaultInputFolder]\nPATH=\n[FileHeaderTemplate]\nPATH=configs/templates/file_header.xml"
+                    .getBytes());
                 fos.close();
             }
         }};
@@ -87,6 +89,18 @@ public class Config {
 
     public static XMLEventReader getTemplate(String templateName) throws InvalidFileFormatException, IOException, XMLStreamException {
         String templateFilePath = getConfigPath().get(templateName, "PATH");
+
+        if (templateName.equals("FileHeaderTemplate")) {
+            new File(templateFilePath) {{
+                getParentFile().mkdirs();
+                createNewFile();
+                if (length() == 0) {
+                    FileOutputStream fos = new FileOutputStream(this);
+                    fos.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<FileHeader>\n</FileHeader>".getBytes());
+                    fos.close();
+                }
+            }};
+        }
 
         XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
         XMLEventReader reader = xmlInputFactory.createXMLEventReader(new FileInputStream(templateFilePath));

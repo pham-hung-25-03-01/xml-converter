@@ -1,6 +1,7 @@
 package services;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
@@ -25,7 +26,7 @@ public class LogWriter {
             createNewFile();
         }};
 
-        boolean append = false;
+        boolean append = true;
         
         try {
             FileHandler handler = new FileHandler(logFilePath, append);
@@ -54,7 +55,20 @@ public class LogWriter {
                     logger.finest(message);
                     break;
             }
+            handler.close();
         } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static void cleanLog() {
+        try {
+            File logFile = new File(logFilePath) {{
+                getParentFile().mkdirs();
+                createNewFile();
+            }};
+            new FileOutputStream(logFile).close();
+        } catch (IOException e) {
             System.out.println(e.getMessage());
         }
     }

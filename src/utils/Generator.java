@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Random;
 import java.util.regex.Pattern;
 
 import org.ini4j.InvalidFileFormatException;
@@ -39,11 +40,19 @@ public class Generator {
 
     public String generateTargetFileName(String sourceTemplateName) throws InvalidFileFormatException, IOException {
         String prefix = sourceTemplateName.replace("Template", "").toLowerCase();
-        String suffix = "xml";
         String sender = Config.getConfigDefaultValues().getProperty("SENDER");
         String number = Config.getConfigDefaultValues().getProperty("NUMBER");
         String dayOfYear = String.valueOf(Calendar.getInstance().get(Calendar.DAY_OF_YEAR));
-        return prefix + sender + "_" + number + "." + dayOfYear + "." + suffix;
+        // random unique string
+        int leftLimit = 97; // letter 'a'
+        int rightLimit = 122; // letter 'z'
+        int targetStringLength = 10;
+        Random random = new Random();
+        String generatedString = random.ints(leftLimit, rightLimit + 1)
+            .limit(targetStringLength)
+            .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+            .toString();
+        return prefix + sender + "_" + number + "." + dayOfYear + "." + generatedString;
     }
     
     public String generateTemplateName(String fileName)
