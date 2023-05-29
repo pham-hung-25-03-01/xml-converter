@@ -23,7 +23,7 @@ import utils.FileTypeFilter;
  */
 public class MainForm extends javax.swing.JFrame {
     private File inputFile;
-    private String selectedFileExtension;
+    private File[] selectedFiles;
     private static Converter converter = new Converter();
 
     /**
@@ -117,7 +117,8 @@ public class MainForm extends javax.swing.JFrame {
 
         txtPathFileInput.setEditable(false);
 
-        jLabel2.setText("Path file input:");
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel2.setText("File input:");
 
         cbbTemplate.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
@@ -192,15 +193,15 @@ public class MainForm extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(14, 14, 14)
-                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(20, 20, 20)
+                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(287, 287, 287)
+                        .addGap(299, 299, 299)
                         .addComponent(cbbTemplate, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtPathFileInput, javax.swing.GroupLayout.PREFERRED_SIZE, 458, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(12, 12, 12)
+                        .addComponent(txtPathFileInput)))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnChooseFile)
@@ -216,7 +217,7 @@ public class MainForm extends javax.swing.JFrame {
                 .addGap(32, 32, 32)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtPathFileInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnChooseFile))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -234,6 +235,7 @@ public class MainForm extends javax.swing.JFrame {
 
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setAcceptAllFileFilterUsed(false);
+        fileChooser.setMultiSelectionEnabled(true);
         
         FileFilter csvFilter = new FileTypeFilter(".csv", "CSV");
         FileFilter xlsxFilter = new FileTypeFilter(".xlsx", "Excel");
@@ -246,10 +248,20 @@ public class MainForm extends javax.swing.JFrame {
         int result = fileChooser.showOpenDialog(null);
         if (result == JFileChooser.APPROVE_OPTION)
         {
-            inputFile = fileChooser.getSelectedFile();
-            String filename = inputFile.getName();
-            JOptionPane.showMessageDialog(null, "Selected file: \n" + inputFile.getAbsolutePath(), "Notification", JOptionPane.INFORMATION_MESSAGE);
-            txtPathFileInput.setText(inputFile.getAbsolutePath());
+            selectedFiles = fileChooser.getSelectedFiles();
+            StringBuilder fileNames = new StringBuilder();
+            inputFile = selectedFiles[0];
+            for(File file : selectedFiles)
+            {
+                String filename = file.getName();
+                fileNames.append(filename).append(", ");
+            }
+            if (fileNames.length() > 0) 
+            {
+                fileNames.delete(fileNames.length() - 2, fileNames.length());
+            }
+            txtPathFileInput.setText(fileNames.toString());
+            JOptionPane.showMessageDialog(null, "Selected file: \n" + fileNames.toString(), "Notification", JOptionPane.INFORMATION_MESSAGE);
         }
     }//GEN-LAST:event_btnChooseFileActionPerformed
     
@@ -261,6 +273,7 @@ public class MainForm extends javax.swing.JFrame {
             String templateName = cbbTemplate.getSelectedItem().toString() + "Template";
             String sourceFilePath = inputFile.getAbsolutePath();
             String targetFilePath = converter.convertToXml(sourceFilePath, templateName);
+            System.out.println(targetFilePath);
             if (targetFilePath.equals("")) {
                 JOptionPane.showMessageDialog(null, "Error when converting file!\nSee log file for more details.", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
@@ -271,7 +284,7 @@ public class MainForm extends javax.swing.JFrame {
         catch (NullPointerException | IOException e)
         {
             System.out.println(e.getMessage());
-            JOptionPane.showMessageDialog(null, "There is no selected file!", "Warning", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, "There is no selected file!\n" + e.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_btnConvertFileActionPerformed
 
