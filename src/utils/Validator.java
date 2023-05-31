@@ -6,7 +6,8 @@ public class Validator {
     public enum AttributeName {
         TYPE,
         USE,
-        REF
+        REF,
+        FORMAT
     }
 
     public enum ValueType {
@@ -24,6 +25,11 @@ public class Validator {
         DEFAULT
     }
 
+    public enum FormatType {
+        TRUE,
+        FALSE
+    }
+
     public boolean validateAttribute(String attributeName, String attributeValue) {
         validateAttributeName(attributeName);
 
@@ -36,6 +42,8 @@ public class Validator {
                 return validateUseType(attributeValue);
             case REF:
                 return validateRef(attributeValue);
+            case FORMAT:
+                return validateFormatType(attributeValue);
         }
         return false;
     }
@@ -97,8 +105,8 @@ public class Validator {
 
     public boolean validateRefArray(HashMap<String, Integer> headers, String[] rowData) {
         if (!CurrentValues.Attributes.get("REF").equals("[]")) {
-            String[] listRef = CurrentValues.Attributes.get("REF").split(";", -1);
-            for (int i = 0; i < listRef.length-1; i++) {
+            String[] listRef = CurrentValues.Attributes.get("REF").split(";");
+            for (int i = 0; i < listRef.length; i++) {
                 String key = "";
                 String value = "";
 
@@ -153,6 +161,16 @@ public class Validator {
             return true;
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("INVALID USE TYPE: " + type);
+        }
+    }
+
+    private boolean validateFormatType(String type) {
+        try {
+            FormatType.valueOf(type);
+
+            return true;
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("INVALID FORMAT TYPE: " + type);
         }
     }
 

@@ -9,11 +9,13 @@ public class CurrentValues {
         put("TYPE", "DEFAULT");
         put("USE", "DEFAULT");
         put("REF", "[]");
+        put("FORMAT", "FALSE");
     }};
 
     public static void setDefaultAttributes() {
         Attributes.put("TYPE", "DEFAULT");
         Attributes.put("USE", "DEFAULT");
         Attributes.put("REF", "[]");
+        Attributes.put("FORMAT", "FALSE");
     }
 }

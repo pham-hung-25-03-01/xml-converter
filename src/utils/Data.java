@@ -68,4 +68,8 @@ public class Data {
         return matches;
     }
 
+    public static String format(String s){
+        return s.replaceAll("\\w+\\=\\;", "");
+    }
+
 }
