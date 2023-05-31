@@ -1,7 +1,9 @@
 package services;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
@@ -16,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -66,12 +70,12 @@ public class Converter {
 
             String targetFileName = generator.generateTargetFileName(templateName);
             String targetFilePath = "logs/foutputs/" + targetFileName;
-            File file = new File(targetFilePath) {{
+            File targetFile = new File(targetFilePath) {{
                 getParentFile().mkdirs();
                 createNewFile();
             }};
 
-            Files.writeString(file.toPath(), prettyPrintXml, StandardCharsets.UTF_8);
+            Files.writeString(targetFile.toPath(), prettyPrintXml, StandardCharsets.UTF_8);
 
             String fprocessPath = "logs/fprocesses/" + CurrentValues.SourceFile.getName();
             File fprocess = new File(fprocessPath) {{
@@ -81,7 +85,7 @@ public class Converter {
 
             Files.copy(CurrentValues.SourceFile.toPath(), fprocess.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-            return file.getAbsolutePath();
+            return targetFile.getAbsolutePath();
         } catch (Exception e) {
             e.printStackTrace();
             String message = "Error=" + e.getMessage() + ";File=" + CurrentValues.SourceFile.getName() + ";";
@@ -101,7 +105,7 @@ public class Converter {
         }
     }
 
-    public List<String> convertToXml(List<String> sourceFilePaths, String templateName) throws IOException {
+    public List<String> convertMultipleFilesToXml(List<String> sourceFilePaths, String templateName) throws IOException {
         List<String> targetFilePaths = new ArrayList<String>();
 
         LogWriter.cleanLog();
@@ -112,6 +116,77 @@ public class Converter {
         }
 
         return targetFilePaths;
+    }
+
+    public String convertJTreeToXml(JTree tree, String templateName) throws XMLStreamException, IOException, TransformerException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
+        XMLStreamWriter writer = outputFactory.createXMLStreamWriter(out);
+
+        writer.writeStartDocument("utf-8", "1.0");
+
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
+        traverseTree(writer, root);
+
+        writer.writeEndDocument();
+
+        writer.flush();
+        writer.close();
+
+        StringBuilder xml = new StringBuilder(new String(out.toByteArray(), StandardCharsets.UTF_8));
+
+        StringBuilder prettyPrintXml = formatXml(xml);
+
+        String targetFileName = templateName.toLowerCase();
+
+        String targetFilePath = "configs/templates/" + targetFileName + ".xml";
+        File targetFile = new File(targetFilePath) {{
+            getParentFile().mkdirs();
+            createNewFile();
+        }};
+
+        Files.writeString(targetFile.toPath(), prettyPrintXml, StandardCharsets.UTF_8);
+
+        templateName = templateName.substring(0, 1).toUpperCase() + templateName.substring(1);
+
+        Config.setConfigPath(templateName, "PATH", targetFilePath);
+
+        return targetFilePath;
+    }
+
+    private static void traverseTree(XMLStreamWriter writer, DefaultMutableTreeNode node) throws XMLStreamException {
+        String nodeText = node.getUserObject().toString();
+        
+        if (nodeText.matches("^tag \\(\\w+\\)$")) {
+            Pattern pattern = Pattern.compile("^tag \\((.+?)\\)$");
+            Matcher matcher = pattern.matcher(nodeText);
+            if (matcher.find()) {
+                writer.writeStartElement(matcher.group(1));
+            }
+        } else if (nodeText.matches("^attributes \\(.+\\)$")) {
+            Pattern pattern = Pattern.compile("^attributes \\((.+?)\\)$");
+            Matcher matcher = pattern.matcher(nodeText);
+            if (matcher.find()) {
+                String[] attributes = matcher.group(1).split(",");
+                for (String attribute : attributes) {
+                    String[] attributeParts = attribute.trim().split("=", -1);
+                    writer.writeAttribute(attributeParts[0], attributeParts[1].substring(1, attributeParts[1].length()-1));
+                }
+            }
+        } else if (nodeText.matches("^value \\(.+\\)$")) {
+            Pattern pattern = Pattern.compile("^value \\((.+?)\\)$");
+            Matcher matcher = pattern.matcher(nodeText);
+            if (matcher.find()) {
+                writer.writeCharacters(matcher.group(1));
+            }
+            writer.writeEndElement();
+        }
+
+        int childCount = node.getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) node.getChildAt(i);
+            traverseTree(writer, childNode);
+        }
     }
 
     private void writeXml(String templateName, HashMap<String, Integer> headers, List<String[]> rows,
@@ -186,6 +261,10 @@ public class Converter {
                     data = "";
             }
             s = s.replace(expressionLanguage, data);
+        }
+
+        if (CurrentValues.Attributes.get("FORMAT").equals("TRUE")) {
+            s = Data.format(s);
         }
         
         return s;
@@ -278,17 +357,6 @@ public class Converter {
         return xml;
     }
 
-    // private StringBuilder formatXml(StringBuilder xml) throws TransformerException {
-    //     TransformerFactory transformerFactory = TransformerFactory.newInstance();
-    //     Transformer transformer = transformerFactory.newTransformer();
-    //     transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-    //     transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
-    //     StreamSource source = new StreamSource(new StringReader(xml.toString()));
-    //     StringWriter output = new StringWriter();
-    //     transformer.transform(source, new StreamResult(output));
-    //     return new StringBuilder(output.toString());
-    // }
-
     private StringBuilder formatXml(StringBuilder xml) throws TransformerException {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
@@ -300,4 +368,38 @@ public class Converter {
         return new StringBuilder(output.toString());
     }
 
+
+    public static void main(String[] args) throws XMLStreamException, IOException, TransformerException {
+        DefaultMutableTreeNode fileHeader = new DefaultMutableTreeNode("tag (FileHeader)");
+        DefaultMutableTreeNode formatVersion = new DefaultMutableTreeNode("tag (FormatVersion)");
+        DefaultMutableTreeNode formatVersionValue = new DefaultMutableTreeNode("value (*{FORMAT_VERSION})");
+        DefaultMutableTreeNode sender = new DefaultMutableTreeNode("tag (Sender)");
+        DefaultMutableTreeNode senderValue = new DefaultMutableTreeNode("value (*{SENDER})");
+        DefaultMutableTreeNode creationDate = new DefaultMutableTreeNode("tag (CreationDate)");
+        DefaultMutableTreeNode creationDateValue = new DefaultMutableTreeNode("value (*{CURRENT_DATE})");
+        DefaultMutableTreeNode creationTime = new DefaultMutableTreeNode("tag (CreationTime)");
+        DefaultMutableTreeNode creationTimeValue = new DefaultMutableTreeNode("value (*{CURRENT_TIME})");
+        DefaultMutableTreeNode number = new DefaultMutableTreeNode("tag (Number)");
+        DefaultMutableTreeNode numberAtrr = new DefaultMutableTreeNode("attributes (type='number', use='required')");
+        DefaultMutableTreeNode numberValue = new DefaultMutableTreeNode("value (*{NUMBER})");
+        DefaultMutableTreeNode institution = new DefaultMutableTreeNode("tag (Institution)");
+        DefaultMutableTreeNode institutionValue = new DefaultMutableTreeNode("value (*{INSTITUTION})");
+        fileHeader.add(formatVersion);
+        formatVersion.add(formatVersionValue);
+        fileHeader.add(sender);
+        sender.add(senderValue);
+        fileHeader.add(creationDate);
+        creationDate.add(creationDateValue);
+        fileHeader.add(creationTime);
+        creationTime.add(creationTimeValue);
+        fileHeader.add(number);
+        number.add(numberAtrr);
+        number.add(numberValue);
+        fileHeader.add(institution);
+        institution.add(institutionValue);
+        JTree tree = new JTree(fileHeader);
+
+        Converter converter = new Converter();
+        converter.convertJTreeToXml(tree, "examplefileheader");
+    }
 }
