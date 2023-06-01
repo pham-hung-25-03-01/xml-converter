@@ -1,9 +1,7 @@
 package services;
 
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
@@ -88,7 +86,7 @@ public class Converter {
             return targetFile.getAbsolutePath();
         } catch (Exception e) {
             e.printStackTrace();
-            String message = "Error=" + e.getMessage() + ";File=" + CurrentValues.SourceFile.getName() + ";";
+            String message = e.getMessage() + "::" + CurrentValues.SourceFile.getName();
             LogWriter.writeLog(message, LogType.SEVERE);
             
             String ferrorPath = "logs/ferrors/" + CurrentValues.SourceFile.getName();
@@ -236,8 +234,7 @@ public class Converter {
                     dataNameExtracted = Data.extractDataName(expressionLanguage, Type.FROM_FILE);
                     Integer col = headers.get(dataNameExtracted);
                     if (col == null) {
-                        // throw new InvalidFileFormatException("Invalid data name: " + dataNameExtracted);
-                        data = "";
+                        throw new InvalidFileFormatException("Invalid data name: " + dataNameExtracted);
                     } else {
                         data = rowData[col] == null ? "" : rowData[col];
                     }
@@ -254,12 +251,17 @@ public class Converter {
                     dataNameExtracted = Data.extractDataName(expressionLanguage, Type.FROM_DEFAULT_VALUES);
                     data = Config.getConfigDefaultValues().getProperty(dataNameExtracted);
                     if (data == null) {
-                        throw new IllegalArgumentException("INVALID DEFAULT VALUE TYPE: " + dataNameExtracted);
+                        throw new IllegalArgumentException("Invalid default value type: " + dataNameExtracted);
                     }
                     break;
                 default:
                     data = "";
             }
+
+            if (validator.isRequired(CurrentValues.Attributes.get("USE")) && data.isBlank()) {
+                throw new InvalidFileFormatException("Required data is empty: " + dataNameExtracted);
+            }
+
             s = s.replace(expressionLanguage, data);
         }
 
@@ -303,14 +305,10 @@ public class Converter {
                 if (!characters.isWhiteSpace()) {
                     String data = getData(headers, rowData, characters.getData());
 
-                    if (validator.isRequired(CurrentValues.Attributes.get("USE")) && data.isBlank()) {
-                        throw new InvalidFileFormatException("REQUIRED DATA IS EMPTY");
-                    }
-
                     if (validator.validateValue(CurrentValues.Attributes.get("TYPE"), data)) {
                         writer.writeCharacters(data);
                     } else {
-                        throw new InvalidFileFormatException("DATA IS NOT " + CurrentValues.Attributes.get("TYPE") + " TYPE: " + data);
+                        throw new InvalidFileFormatException("Data is not " + CurrentValues.Attributes.get("TYPE") + " type: " + data);
                     }
                 }
 
