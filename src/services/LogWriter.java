@@ -6,8 +6,9 @@ import java.io.IOException;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
-public class LogWriter {
+import utils.LogFormatter;
 
+public class LogWriter {
     private static String logFilePath = "logs/default.log";
 
     public enum LogType {
@@ -30,7 +31,8 @@ public class LogWriter {
         
         try {
             FileHandler handler = new FileHandler(logFilePath, append);
-            Logger logger = Logger.getLogger("services");
+            handler.setFormatter(new LogFormatter());
+            Logger logger = Logger.getLogger("SERVICES");
             logger.addHandler(handler);
             switch (logType) {
                 case SEVERE:
