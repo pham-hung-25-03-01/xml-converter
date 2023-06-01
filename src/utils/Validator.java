@@ -59,7 +59,7 @@ public class Validator {
                     return false;
             }
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("INVALID USE TYPE: " + type);
+            throw new IllegalArgumentException("Invalid use type: " + type);
         }
     }
 
@@ -99,7 +99,7 @@ public class Validator {
                     return true;
             }
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("INVALID VALUE: " + value);
+            throw new IllegalArgumentException("Invalid value: " + value);
         }
     }
 
@@ -114,7 +114,7 @@ public class Validator {
                 key = ref[0];
 
                 if (!headers.containsKey(key)) {
-                    throw new IllegalArgumentException("INVALID REFERENCE: " + key);
+                    throw new IllegalArgumentException("Invalid references: " + key);
                 }
 
                 if (ref.length > 1) {
@@ -140,7 +140,7 @@ public class Validator {
 
             return true;
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("INVALID ATTRIBUTE NAME: " + attributeName);
+            throw new IllegalArgumentException("Invalid attribute name: " + attributeName);
         }
     }
 
@@ -150,7 +150,7 @@ public class Validator {
 
             return true;
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("INVALID VALUE TYPE: " + type);
+            throw new IllegalArgumentException("Invalid value type: " + type);
         }
     }
 
@@ -160,7 +160,7 @@ public class Validator {
 
             return true;
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("INVALID USE TYPE: " + type);
+            throw new IllegalArgumentException("Invalid use type: " + type);
         }
     }
 
@@ -170,7 +170,7 @@ public class Validator {
 
             return true;
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("INVALID FORMAT TYPE: " + type);
+            throw new IllegalArgumentException("Invalid format type: " + type);
         }
     }
 
@@ -179,7 +179,7 @@ public class Validator {
             return true;
         }
 
-        throw new IllegalArgumentException("INVALID REFERENCE FORMAT: " + ref);
+        throw new IllegalArgumentException("Invalid references format: " + ref);
     }
 
     private boolean isValidNumber(String value) {

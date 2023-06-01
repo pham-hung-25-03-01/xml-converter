@@ -34,7 +34,7 @@ public class Generator {
                     return "";
             }
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("INVALID GENERATE TYPE: " + dataName);
+            throw new IllegalArgumentException("Invalid generate type: " + dataName);
         }
     }
 
