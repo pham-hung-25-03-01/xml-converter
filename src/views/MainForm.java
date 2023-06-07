@@ -8,8 +8,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import org.ini4j.Wini;
 import utils.Config;
@@ -26,6 +24,7 @@ import utils.FileTypeFilter;
 public class MainForm extends javax.swing.JFrame {
     private List<String> selectedFilePaths = new ArrayList<String>();
     private static Converter converter = new Converter();
+    private String inputFolderPath;
 
     /**
      * Creates new form MainForm
@@ -55,8 +54,6 @@ public class MainForm extends javax.swing.JFrame {
 
     public void loadDataCBB()
     {
-        String[] extensions = {"none",".xlsx", ".txt", ".csv"};
-        DefaultComboBoxModel cbm = new DefaultComboBoxModel(extensions);
         try 
         {
             getHeaderIni();
@@ -87,6 +84,7 @@ public class MainForm extends javax.swing.JFrame {
         menuConfig = new javax.swing.JMenu();
         menuConnectDB = new javax.swing.JMenuItem();
         menuDefaultValues = new javax.swing.JMenuItem();
+        menuInputFolder = new javax.swing.JMenuItem();
         menuOutput = new javax.swing.JMenu();
         menuAddTemplate = new javax.swing.JMenuItem();
         menuListTemplates = new javax.swing.JMenuItem();
@@ -115,8 +113,6 @@ public class MainForm extends javax.swing.JFrame {
                 btnConvertFileActionPerformed(evt);
             }
         });
-
-        txtPathFileInput.setEditable(false);
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel2.setText("File input:");
@@ -164,6 +160,16 @@ public class MainForm extends javax.swing.JFrame {
         });
         menuConfig.add(menuDefaultValues);
 
+        menuInputFolder.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.ALT_DOWN_MASK));
+        menuInputFolder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/input-folder.png"))); // NOI18N
+        menuInputFolder.setText("Input folder");
+        menuInputFolder.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuInputFolderActionPerformed(evt);
+            }
+        });
+        menuConfig.add(menuInputFolder);
+
         menuBarMainForm.add(menuConfig);
 
         menuOutput.setText("Output");
@@ -193,22 +199,21 @@ public class MainForm extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(299, 299, 299)
-                        .addComponent(cbbTemplate, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(12, 12, 12)
-                        .addComponent(txtPathFileInput)))
-                .addGap(18, 18, 18)
+                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)
+                .addGap(12, 12, 12)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnChooseFile)
-                    .addComponent(btnConvertFile))
-                .addGap(25, 25, 25))
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(txtPathFileInput, javax.swing.GroupLayout.PREFERRED_SIZE, 464, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnChooseFile))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(cbbTemplate, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnConvertFile)))
+                .addGap(26, 26, 26))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -220,11 +225,11 @@ public class MainForm extends javax.swing.JFrame {
                     .addComponent(txtPathFileInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnChooseFile))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(15, 15, 15)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cbbTemplate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnConvertFile))
-                .addContainerGap(30, Short.MAX_VALUE))
+                    .addComponent(btnConvertFile)
+                    .addComponent(cbbTemplate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
 
         pack();
@@ -268,34 +273,35 @@ public class MainForm extends javax.swing.JFrame {
     
     //button convert csv to xml
     private void btnConvertFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConvertFileActionPerformed
-        try 
+
+        if (selectedFilePaths.size() < 1) {
+            JOptionPane.showMessageDialog(null, "There is no selected file!", "Warning", JOptionPane.WARNING_MESSAGE);
+        } 
+        else
         {
-            String templateName = cbbTemplate.getSelectedItem().toString() + "Template";
-            List<String> sourceFilePaths = selectedFilePaths;
-            List<String> targetFilePaths = converter.convertToXml(sourceFilePaths, templateName);
-            int countSuccess = 0;
-            for (String targetFilePath : targetFilePaths) {
-                if (!targetFilePath.equals("")) {
-                    countSuccess++;
+            try {
+                String templateName = cbbTemplate.getSelectedItem().toString() + "Template";
+                List<String> sourceFilePaths = selectedFilePaths;
+                List<String> targetFilePaths = converter.convertToXml(sourceFilePaths, templateName);
+                int countSuccess = 0;
+                for (String targetFilePath : targetFilePaths) {
+                    if (!targetFilePath.equals("")) {
+                        countSuccess++;
+                    }
                 }
+
+                JOptionPane.showMessageDialog(null, "Convert " + countSuccess + "/" + targetFilePaths.size()
+                        + " files successfully!\nOutput files saved at: /logs/foutputs\nProcess files saved at: /logs/fprocesses\nError files saved at: /logs/ferrors",
+                        "Notification", JOptionPane.INFORMATION_MESSAGE);
+
+                txtPathFileInput.setText("");
+                selectedFilePaths.clear();
+            } 
+            catch (IOException e) 
+            {
+                System.out.println(e.getMessage());
+                JOptionPane.showMessageDialog(null, "Error when converting file!\nSee log file for more details.", "Error", JOptionPane.ERROR_MESSAGE);
             }
-
-            JOptionPane.showMessageDialog(null, "Convert " + countSuccess + "/" + targetFilePaths.size()
-                    + " files successfully!\nOutput files saved at: /logs/foutputs\nProcess files saved at: /logs/fprocesses\nError files saved at: /logs/ferrors",
-                    "Notification", JOptionPane.INFORMATION_MESSAGE);
-
-            txtPathFileInput.setText("");
-            selectedFilePaths.clear();
-        }
-        catch (NullPointerException  e)
-        {
-            System.out.println(e.getMessage());
-            JOptionPane.showMessageDialog(null, "There is no selected file!\n" + e.getMessage(), "Warning", JOptionPane.WARNING_MESSAGE);
-        }
-        catch (IOException e)
-        {
-            System.out.println(e.getMessage());
-            JOptionPane.showMessageDialog(null, "Error when converting file!\nSee log file for more details.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnConvertFileActionPerformed
 
@@ -318,41 +324,19 @@ public class MainForm extends javax.swing.JFrame {
           new DefaultValuesDialog(this, rootPaneCheckingEnabled).setVisible(true);
     }//GEN-LAST:event_menuDefaultValuesActionPerformed
 
-    
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MainForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    private void menuInputFolderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuInputFolderActionPerformed
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new MainForm().setVisible(true);
-            }
-        });
-    }
+        int choice = fileChooser.showOpenDialog(this);
+        if (choice == JFileChooser.APPROVE_OPTION) {
+            File selectedDirectory = fileChooser.getSelectedFile();
+            // Save the chosen path
+            inputFolderPath = selectedDirectory.getAbsolutePath();
+            JOptionPane.showMessageDialog(this, "Path saved successfully:\n" + inputFolderPath, "Notification", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_menuInputFolderActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnChooseFile;
@@ -366,6 +350,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuConnectDB;
     private javax.swing.JMenuItem menuDefaultValues;
     private javax.swing.JMenuItem menuExit;
+    private javax.swing.JMenuItem menuInputFolder;
     private javax.swing.JMenuItem menuListTemplates;
     private javax.swing.JMenu menuOutput;
     private javax.swing.JMenu menuSystem;

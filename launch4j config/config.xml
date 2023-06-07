@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch4jConfig>
+  <dontWrapJar>false</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>C:\Users\ASUS RG\OneDrive\Máy tính\OpenWay\detai1\project\xml-converter\xml-converter.jar</jar>
+  <outfile>C:\Users\ASUS RG\OneDrive\Máy tính\OpenWay\detai1\project\xml-converter\Way4 Converter Tool.exe</outfile>
+  <errTitle>Please install JDK 19 or higher</errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl>https://download.oracle.com/java/19/archive/jdk-19_windows-x64_bin.exe</downloadUrl>
+  <supportUrl></supportUrl>
+  <stayAlive>false</stayAlive>
+  <restartOnCrash>false</restartOnCrash>
+  <manifest></manifest>
+  <icon>C:\Users\ASUS RG\Downloads\OpenWay-Way4.ico</icon>
+  <singleInstance>
+    <mutexName>XML-Converter</mutexName>
+    <windowTitle>XML-Converter</windowTitle>
+  </singleInstance>
+  <jre>
+    <path>%JAVA_HOME%;%PATH%</path>
+    <requiresJdk>true</requiresJdk>
+    <requires64Bit>false</requires64Bit>
+    <minVersion>19.0.2</minVersion>
+    <maxVersion></maxVersion>
+  </jre>
+  <versionInfo>
+    <fileVersion>1.0.0.0</fileVersion>
+    <txtFileVersion>1.0.0.0</txtFileVersion>
+    <fileDescription>Way4 Converter Tool</fileDescription>
+    <copyright>DTH</copyright>
+    <productVersion>1.0.0.0</productVersion>
+    <txtProductVersion>1.0.0.0</txtProductVersion>
+    <productName>Way4 Converter Tool</productName>
+    <companyName>OpenWayGroup</companyName>
+    <internalName>Way4 Converter Tool</internalName>
+    <originalFilename>Way4 Converter Tool.exe</originalFilename>
+    <trademarks></trademarks>
+    <language>ENGLISH_US</language>
+  </versionInfo>
+</launch4jConfig>

@@ -30,17 +30,17 @@
                 <LastName>${EMBOSSING_LAST_NAME}</LastName>
             </PlasticInfo>
             <PhoneList>
-                <Phone ref="[COMPANY_PHONE]">
+                <Phone ref="COMPANY_PHONE;">
                     <PhoneType>Work</PhoneType>
                     <PhoneNumber type="number" use="default">${COMPANY_PHONE}</PhoneNumber>
                 </Phone>
-                <Phone ref="[PHONE]">
+                <Phone ref="PHONE;">
                     <PhoneType>Home</PhoneType>
                     <PhoneNumber>${PHONE}</PhoneNumber>
                 </Phone>
-                <Phone ref="[MOBILE_PHONE]">
+                <Phone>
                     <PhoneType>Mobile</PhoneType>
-                    <PhoneNumber ref="[MOBILE_PHONE]" type="number" use="required">${MOBILE_PHONE}</PhoneNumber>
+                    <PhoneNumber type="number" use="required">${MOBILE_PHONE}</PhoneNumber>
                 </Phone>
             </PhoneList>
             <DateOpen>${OPEN_DATE}</DateOpen>
