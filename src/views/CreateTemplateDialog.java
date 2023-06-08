@@ -124,7 +124,7 @@ public class CreateTemplateDialog extends javax.swing.JDialog {
                 if (fileTemplate.saveFileTemplate(txtFileNameTemplate.getText(), txtAreaCreateTemplate.getText()))
                 {
                     JOptionPane.showMessageDialog(null, "Create template xml success!", "Notification", JOptionPane.INFORMATION_MESSAGE);
-                    new MainForm().setVisible(true);
+                    //new MainForm().setVisible(true);
                     this.dispose();
                 }
                 else

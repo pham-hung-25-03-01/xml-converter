@@ -19,7 +19,7 @@ public class FileTemplate {
     public boolean saveFileTemplate(String templateName, String content) throws IOException{
         try 
         {
-            String fileName = templateName.toLowerCase();
+            String fileName = templateName.toLowerCase().replaceAll("\\s", "");
             String filePath = "configs/templates/" + fileName + ".xml";
             File file = new File(filePath);
             file.getParentFile().mkdirs();

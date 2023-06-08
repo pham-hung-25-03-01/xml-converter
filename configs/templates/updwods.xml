@@ -5,7 +5,7 @@
     <ObjectType>Event</ObjectType>
     <ActionType>Add</ActionType>
     <ObjectFor>
-        <ContractIDT ref="[CONTRACT_NUMBER]">
+        <ContractIDT ref="CONTRACT_NUMBER;">
             <ContractNumber type="number" use="default">${CONTRACT_NUMBER}</ContractNumber>
             <Client>
                 <ClientInfo>
