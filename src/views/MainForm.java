@@ -4,15 +4,20 @@
  */
 package views;
 
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
+
 import org.ini4j.Wini;
 import utils.Config;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
 import javax.swing.filechooser.FileFilter;
 import services.Converter;
 import utils.FileTypeFilter;
@@ -25,6 +30,7 @@ public class MainForm extends javax.swing.JFrame {
     private List<String> selectedFilePaths = new ArrayList<String>();
     private static Converter converter = new Converter();
     private String inputFolderPath;
+    private Thread convertThread;
 
     /**
      * Creates new form MainForm
@@ -162,7 +168,7 @@ public class MainForm extends javax.swing.JFrame {
 
         menuInputFolder.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.ALT_DOWN_MASK));
         menuInputFolder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/input-folder.png"))); // NOI18N
-        menuInputFolder.setText("Input folder");
+        menuInputFolder.setText("Set input folder");
         menuInputFolder.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 menuInputFolderActionPerformed(evt);
@@ -175,7 +181,7 @@ public class MainForm extends javax.swing.JFrame {
         menuOutput.setText("Output");
 
         menuAddTemplate.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.ALT_DOWN_MASK));
-        menuAddTemplate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/new-file.png"))); // NOI18N
+        menuAddTemplate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/add-template.png"))); // NOI18N
         menuAddTemplate.setText("Add template");
         menuAddTemplate.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         menuAddTemplate.addActionListener(new java.awt.event.ActionListener() {
@@ -250,6 +256,17 @@ public class MainForm extends javax.swing.JFrame {
         fileChooser.addChoosableFileFilter(csvFilter);
         fileChooser.addChoosableFileFilter(xlsxFilter);
         fileChooser.addChoosableFileFilter(txtFilter);
+
+        String path = "";
+        try {
+            path = Config.getConfigPath().get("DefaultInputFolder", "PATH");
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+        if (path != null && !path.isBlank())
+        {
+            fileChooser.setCurrentDirectory(new File(path));
+        }
         
         int result = fileChooser.showOpenDialog(null);
         if (result == JFileChooser.APPROVE_OPTION)
@@ -279,29 +296,68 @@ public class MainForm extends javax.swing.JFrame {
         } 
         else
         {
-            try {
-                String templateName = cbbTemplate.getSelectedItem().toString() + "Template";
-                List<String> sourceFilePaths = selectedFilePaths;
-                List<String> targetFilePaths = converter.convertToXml(sourceFilePaths, templateName);
-                int countSuccess = 0;
-                for (String targetFilePath : targetFilePaths) {
-                    if (!targetFilePath.equals("")) {
-                        countSuccess++;
+            JProgressBar progressBar = new JProgressBar(0, 100);
+            progressBar.setStringPainted(true);
+            progressBar.setString("Converting...");
+            progressBar.setValue(0);
+            JOptionPane pane = new JOptionPane(progressBar);
+            pane.setOptions(new Object[]{});
+            JDialog dialog = pane.createDialog(this, "Convert to XML");
+            dialog.setModal(true);
+            dialog.setResizable(false);
+            //dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+            dialog.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    convertThread.interrupt();
+                    dialog.dispose();
+                }
+            });
+            Thread dialogThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    dialog.setVisible(true);
+                }
+            });
+            dialogThread.start(); 
+            convertThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        String templateName = cbbTemplate.getSelectedItem().toString() + "Template";
+                        List<String> sourceFilePaths = selectedFilePaths;
+
+                        progressBar.setValue(5);
+
+                        List<String> targetFilePaths = converter.convertMultipleFilesToXml(sourceFilePaths, templateName, progressBar);
+
+                        progressBar.setValue(95);
+
+                        int countSuccess = 0;
+                        for (String targetFilePath : targetFilePaths) {
+                            if (!targetFilePath.equals("")) {
+                                countSuccess++;
+                            }
+        
+                            JOptionPane.showMessageDialog(null, "Convert " + countSuccess + "/" + targetFilePaths.size()
+                                    + " files successfully!\nOutput files saved at: /logs/foutputs\nProcess files saved at: /logs/fprocesses\nError files saved at: /logs/ferrors",
+                                    "Notification", JOptionPane.INFORMATION_MESSAGE);
+        
+                            txtPathFileInput.setText("");
+                            selectedFilePaths.clear();
+                        }
+                        progressBar.setValue(100);
+                    }
+                    catch (IOException e) 
+                    {
+                        System.out.println(e.getMessage());
+                        JOptionPane.showMessageDialog(null, "Error when converting file!\nSee log file for more details.", "Error", JOptionPane.ERROR_MESSAGE);
+                    } finally {
+                        dialog.dispose();
                     }
                 }
-
-                JOptionPane.showMessageDialog(null, "Convert " + countSuccess + "/" + targetFilePaths.size()
-                        + " files successfully!\nOutput files saved at: /logs/foutputs\nProcess files saved at: /logs/fprocesses\nError files saved at: /logs/ferrors",
-                        "Notification", JOptionPane.INFORMATION_MESSAGE);
-
-                txtPathFileInput.setText("");
-                selectedFilePaths.clear();
-            } 
-            catch (IOException e) 
-            {
-                System.out.println(e.getMessage());
-                JOptionPane.showMessageDialog(null, "Error when converting file!\nSee log file for more details.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
+            });
+            convertThread.start();
         }
     }//GEN-LAST:event_btnConvertFileActionPerformed
 
@@ -325,15 +381,20 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_menuDefaultValuesActionPerformed
 
     private void menuInputFolderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuInputFolderActionPerformed
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
-        int choice = fileChooser.showOpenDialog(this);
-        if (choice == JFileChooser.APPROVE_OPTION) {
-            File selectedDirectory = fileChooser.getSelectedFile();
-            // Save the chosen path
-            inputFolderPath = selectedDirectory.getAbsolutePath();
-            JOptionPane.showMessageDialog(this, "Path saved successfully:\n" + inputFolderPath, "Notification", JOptionPane.INFORMATION_MESSAGE);
+        try {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+    
+            int choice = fileChooser.showOpenDialog(this);
+            if (choice == JFileChooser.APPROVE_OPTION) {
+                File selectedDirectory = fileChooser.getSelectedFile();
+                // Save the chosen path
+                inputFolderPath = selectedDirectory.getAbsolutePath();
+                Config.setConfigPath("DefaultInputFolder", "PATH", inputFolderPath);
+                JOptionPane.showMessageDialog(this, "Path saved successfully:\n" + inputFolderPath, "Notification", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error when saving path!", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_menuInputFolderActionPerformed
 

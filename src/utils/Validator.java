@@ -31,9 +31,12 @@ public class Validator {
     }
 
     public boolean validateAttribute(String attributeName, String attributeValue) {
-        validateAttributeName(attributeName);
-
-        AttributeName attribute = AttributeName.valueOf(attributeName);
+        AttributeName attribute;
+        try {
+            attribute = AttributeName.valueOf(attributeName);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid attribute name: " + attributeName);
+        }
 
         switch (attribute) {
             case TYPE:
@@ -44,8 +47,9 @@ public class Validator {
                 return validateRef(attributeValue);
             case FORMAT:
                 return validateFormatType(attributeValue);
+            default:
+                return false;
         }
-        return false;
     }
 
     public boolean isRequired(String type) {
@@ -132,16 +136,6 @@ public class Validator {
             }
         }
         return true;
-    }
-
-    private boolean validateAttributeName(String attributeName) {
-        try {
-            AttributeName.valueOf(attributeName);
-
-            return true;
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid attribute name: " + attributeName);
-        }
     }
 
     private boolean validateValueType(String type) {

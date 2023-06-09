@@ -28,4 +28,4 @@ nbproject/
 build/
 build.*
 manifest.mf
-/dist/
+logs/

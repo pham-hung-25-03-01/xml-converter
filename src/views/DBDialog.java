@@ -230,17 +230,17 @@ public class DBDialog extends javax.swing.JDialog {
                             put("DB_PASSWORD", password);
                         }});
                         progressBar.setValue(100);
-                        dialog.dispose();
                         DBDialog.this.dispose();
                         JOptionPane.showMessageDialog(DBDialog.this, "Connection successful", "Success", JOptionPane.INFORMATION_MESSAGE);
                     } else {
-                        dialog.dispose();
                         JOptionPane.showMessageDialog(DBDialog.this, "Connection failed", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (IllegalArgumentException e) {
                     JOptionPane.showMessageDialog(DBDialog.this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(DBDialog.this, "Cannot connect to database", "Error", JOptionPane.ERROR_MESSAGE);
+                } finally {
+                    dialog.dispose();
                 }
             }
         });
