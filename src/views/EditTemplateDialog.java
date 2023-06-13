@@ -5,9 +5,7 @@
 package views;
 
 import java.awt.Component;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.awt.Frame;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
@@ -25,19 +23,30 @@ import javax.swing.tree.TreeSelectionModel;
  *
  * @author ASUS RG
  */
-public class TestJTreeDialog extends javax.swing.JDialog {
+public class EditTemplateDialog extends javax.swing.JDialog {
 
+    private String tplName;
+    private String tplPath;
     /**
-     * Creates new form TestJTreeDialog
+     * Creates new form EditTemplateDialog
      */
-    public TestJTreeDialog(java.awt.Frame parent, boolean modal) {
+    public EditTemplateDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        loadCBB();
         btnAdd.setEnabled(false);
         btnEdit.setEnabled(false);
         btnDelete.setEnabled(false);
         setIconNode();
+    }
+
+    public EditTemplateDialog(Frame parentFrame, boolean modal, String tplName) {
+        super(parentFrame, modal);
+        initComponents();
+        btnAdd.setEnabled(false);
+        btnEdit.setEnabled(false);
+        btnDelete.setEnabled(false);
+        setIconNode();
+        this.tplName = tplName;
     }
 
     /**
@@ -49,19 +58,61 @@ public class TestJTreeDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTreeXML = new javax.swing.JTree();
         txtInput = new javax.swing.JTextField();
         btnAdd = new javax.swing.JButton();
         btnEdit = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         cbbOptionAdd = new javax.swing.JComboBox<>();
         btnSave = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        txtFileName = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTreeXML = new javax.swing.JTree();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Create Template");
+        setTitle("Edit Template");
+
+        btnAdd.setText("Add");
+        btnAdd.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddActionPerformed(evt);
+            }
+        });
+
+        btnEdit.setText("Edit");
+        btnEdit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditActionPerformed(evt);
+            }
+        });
+
+        btnDelete.setText("Delete");
+        btnDelete.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
+
+        cbbOptionAdd.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "none", "tag", "attributes", "value" }));
+        cbbOptionAdd.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        cbbOptionAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbbOptionAddActionPerformed(evt);
+            }
+        });
+
+        btnSave.setText("Save");
+        btnSave.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel2.setText("Input:");
 
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("tag (XML Document)");
         javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("tag (Application)");
@@ -86,95 +137,58 @@ public class TestJTreeDialog extends javax.swing.JDialog {
         });
         jScrollPane1.setViewportView(jTreeXML);
 
-        btnAdd.setText("Add");
-        btnAdd.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAddActionPerformed(evt);
-            }
-        });
-
-        btnEdit.setText("Edit");
-        btnEdit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEditActionPerformed(evt);
-            }
-        });
-
-        btnDelete.setText("Delete");
-        btnDelete.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDeleteActionPerformed(evt);
-            }
-        });
-
-        cbbOptionAdd.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbbOptionAddActionPerformed(evt);
-            }
-        });
-
-        btnSave.setText("Save");
-
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel1.setText("File Name:");
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(17, 17, 17)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 443, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(txtFileName)))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(16, 16, 16)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtInput, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(cbbOptionAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(btnDelete, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE)
-                            .addComponent(btnEdit, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE)
-                            .addComponent(btnAdd, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE)
-                            .addComponent(btnSave, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addGap(17, 17, 17))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtInput, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cbbOptionAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(23, 23, 23))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(22, 22, 22)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(txtInput, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(43, 43, 43)
-                        .addComponent(cbbOptionAdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 140, Short.MAX_VALUE)
-                        .addComponent(btnAdd)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(txtFileName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(11, 11, 11))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(cbbOptionAdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE, false)
+                            .addComponent(btnAdd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnDelete)
+                            .addComponent(btnEdit))))
+                .addGap(24, 24, 24))
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void setIconNode() {
+    private void setIconNode() 
+    {
         DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer() {
 
             @Override
@@ -207,76 +221,7 @@ public class TestJTreeDialog extends javax.swing.JDialog {
         
         jTreeXML.setCellRenderer(renderer);
     }
-
-    private void loadCBB()
-    {
-        String[] options = {"none", "tag", "attributes", "value"};
-        for(String option : options)
-        {
-            cbbOptionAdd.addItem(option);
-        }
-    }
     
-    private List<DefaultMutableTreeNode> getAllChildNodes(DefaultMutableTreeNode parent) {
-        List<DefaultMutableTreeNode> childNodes = new ArrayList<>();
-
-        int childCount = parent.getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) parent.getChildAt(i);
-            childNodes.add(childNode);
-        }
-        System.out.println(childNodes);
-        return childNodes;
-    }
-
-    private void sortChildNodes(List<DefaultMutableTreeNode> childNodes) {
-        childNodes.sort(new Comparator<DefaultMutableTreeNode>() {
-            @Override
-            public int compare(DefaultMutableTreeNode node1, DefaultMutableTreeNode node2) {
-                String value1 = node1.toString();
-                String value2 = node2.toString();
-                char firstChar1 = value1.charAt(0);
-                char firstChar2 = value2.charAt(0);
-
-                // Define the sorting order based on first character
-                if (firstChar1 == 'a' && firstChar2 != 'a') {
-                    return -1;
-                } else if (firstChar1 != 'a' && firstChar2 == 'a') {
-                    return 1;
-                } else if (firstChar1 == 'v' && firstChar2 != 'v') {
-                    return -1;
-                } else if (firstChar1 != 'v' && firstChar2 == 'v') {
-                    return 1;
-                } else if (firstChar1 == 't' && firstChar2 != 't') {
-                    return -1;
-                } else if (firstChar1 != 't' && firstChar2 == 't') {
-                    return 1;
-                } else {
-                    return value1.compareTo(value2);
-                }
-            }
-        });
-    }
-
-    private int compareFirstCharacter(String value1, String value2) {
-        char firstChar1 = value1.charAt(0);
-        char firstChar2 = value2.charAt(0);
-
-        if (firstChar1 == 'a' && firstChar2 != 'a') {
-            return -1;
-        } 
-        if (firstChar1 != 'a' && firstChar2 == 'a') {
-            return 1;
-        }
-        if (firstChar1 == 'v' && firstChar2 != 'v') {
-            return -1;
-        }
-        if (firstChar1 != 'v' && firstChar2 == 'v') {
-            return 1;
-        }
-        return 0;
-    }
-
     private void expandAllNodes(JTree tree, boolean expand) {
         TreeNode rootNode = (TreeNode) tree.getModel().getRoot();
         expandAllNodes(tree, new TreePath(rootNode), expand);
@@ -310,16 +255,10 @@ public class TestJTreeDialog extends javax.swing.JDialog {
         return false;
     }
     
+    
     private void redrawTree(DefaultMutableTreeNode currNode, TreePath selectionPath) {
         DefaultTreeModel model = (DefaultTreeModel) jTreeXML.getModel();
         model.nodeStructureChanged(currNode);
-        
- //       DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) currNode.getParent();
-//        List<DefaultMutableTreeNode> childNodes = getAllChildNodes(parentNode);
-//        sortChildNodes(childNodes);
-//        
-//        model.nodeStructureChanged(parentNode);
-
 
         TreePath parentPath = selectionPath.getParentPath();
         jTreeXML.expandPath(parentPath);
@@ -416,7 +355,8 @@ public class TestJTreeDialog extends javax.swing.JDialog {
         currNode.setUserObject(nodeName);
         return true;
     } 
-
+    
+    
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
         TreePath selectionPath = jTreeXML.getSelectionPath();
         if (selectionPath == null) {
@@ -426,35 +366,35 @@ public class TestJTreeDialog extends javax.swing.JDialog {
         DefaultMutableTreeNode currNode = (DefaultMutableTreeNode) selectionPath.getLastPathComponent();
         String input = txtInput.getText();
         String option = cbbOptionAdd.getSelectedItem().toString();
-        
+
         switch (option) {
             case "tag":
-                addTag(currNode, input);
-                break;
+            addTag(currNode, input);
+            break;
             case "attributes":
-                addAttributes(currNode, input);
-                break;
+            addAttributes(currNode, input);
+            break;
             case "value":
-                addValue(currNode, input);
-                break;
+            addValue(currNode, input);
+            break;
             default:
-                JOptionPane.showMessageDialog(this, "Can not add!", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
+            JOptionPane.showMessageDialog(this, "Can not add!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
-        
+
         redrawTree(currNode, selectionPath);
 
         cbbOptionAdd.setSelectedIndex(0);
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-    
+
         TreePath selectionPath = jTreeXML.getSelectionPath();
         if (selectionPath == null) {
             JOptionPane.showMessageDialog(this, "Please select a node to update!", "Warning", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
+
         DefaultMutableTreeNode currNode = (DefaultMutableTreeNode) selectionPath.getLastPathComponent();
         String nodeText = currNode.getUserObject().toString();
         boolean result = false;
@@ -468,6 +408,7 @@ public class TestJTreeDialog extends javax.swing.JDialog {
         if (result) {
             redrawTree(currNode, selectionPath);
             JOptionPane.showMessageDialog(this, "Update success!", "Update Success", JOptionPane.INFORMATION_MESSAGE);
+            txtInput.setText("");
         }
     }//GEN-LAST:event_btnEditActionPerformed
 
@@ -478,7 +419,7 @@ public class TestJTreeDialog extends javax.swing.JDialog {
             return;
         }
 
-        try 
+        try
         {
             int dialogResult = JOptionPane.showConfirmDialog(this, "Are you sure to delete?", "Confirm", JOptionPane.YES_NO_OPTION);
 
@@ -491,45 +432,21 @@ public class TestJTreeDialog extends javax.swing.JDialog {
                     if (parentNode != null) {
                         parentNode.remove(selectedNode);
                         redrawTree(parentNode, selectionPath.getParentPath());
+                        txtInput.setText("");
                     }
                 }
                 JOptionPane.showMessageDialog(this, "Delete success!", "Notification", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 return;
             }
-        } 
+        }
         catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Delete fail!", "Error", JOptionPane.ERROR_MESSAGE);
         }
-
     }//GEN-LAST:event_btnDeleteActionPerformed
 
-    private void jTreeXMLMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTreeXMLMouseClicked
-        TreeSelectionModel selectionModel = jTreeXML.getSelectionModel();
-        if(selectionModel.getSelectionCount() > 0)
-        {
-            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) jTreeXML.getSelectionPath().getLastPathComponent();
-            String nodeText = selectedNode.getUserObject().toString();
-            if (nodeText.contains("tag") && !cbbOptionAdd.getSelectedItem().toString().contains("none")) {
-                btnAdd.setEnabled(true);
-            } else {
-                btnAdd.setEnabled(false);
-            }
-            Pattern pattern = Pattern.compile("^\\w+ \\((.+?)\\)$");
-            Matcher matcher = pattern.matcher(nodeText);
-            if (matcher.find()) {
-                txtInput.setText(matcher.group(1));
-            }
-            btnEdit.setEnabled(true);
-            btnDelete.setEnabled(true);
-        } else {
-            btnEdit.setEnabled(false);
-            btnDelete.setEnabled(false);
-        }
-    }//GEN-LAST:event_jTreeXMLMouseClicked
-
     private void cbbOptionAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbOptionAddActionPerformed
-        if (cbbOptionAdd.getSelectedItem().toString().contains("none")) 
+        if (cbbOptionAdd.getSelectedItem().toString().contains("none"))
         {
             btnAdd.setEnabled(false);
         } else {
@@ -548,6 +465,43 @@ public class TestJTreeDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_cbbOptionAddActionPerformed
 
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnSaveActionPerformed
+
+    private void jTreeXMLMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTreeXMLMouseClicked
+        TreeSelectionModel selectionModel = jTreeXML.getSelectionModel();
+        if(selectionModel.getSelectionCount() > 0)
+        {
+            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) jTreeXML.getSelectionPath().getLastPathComponent();
+            String nodeText = selectedNode.getUserObject().toString();
+
+            if (nodeText.contains("XML Document")) {
+                btnEdit.setEnabled(false);
+                btnDelete.setEnabled(false);
+            } else {
+                btnEdit.setEnabled(true);
+                btnDelete.setEnabled(true);
+            }
+
+            if (nodeText.contains("tag") && !cbbOptionAdd.getSelectedItem().toString().contains("none")) {
+                btnAdd.setEnabled(true);
+            } else {
+                btnAdd.setEnabled(false);
+            }
+            Pattern pattern = Pattern.compile("^\\w+ \\((.+?)\\)$");
+            Matcher matcher = pattern.matcher(nodeText);
+            if (matcher.find()) {
+                txtInput.setText(matcher.group(1));
+            }
+            //            btnEdit.setEnabled(true);
+            //            btnDelete.setEnabled(true);
+        } else {
+            btnEdit.setEnabled(false);
+            btnDelete.setEnabled(false);
+        }
+    }//GEN-LAST:event_jTreeXMLMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -565,20 +519,20 @@ public class TestJTreeDialog extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(TestJTreeDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditTemplateDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(TestJTreeDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditTemplateDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(TestJTreeDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditTemplateDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(TestJTreeDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditTemplateDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                TestJTreeDialog dialog = new TestJTreeDialog(new javax.swing.JFrame(), true);
+                EditTemplateDialog dialog = new EditTemplateDialog(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -596,10 +550,9 @@ public class TestJTreeDialog extends javax.swing.JDialog {
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnSave;
     private javax.swing.JComboBox<String> cbbOptionAdd;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTree jTreeXML;
-    private javax.swing.JTextField txtFileName;
     private javax.swing.JTextField txtInput;
     // End of variables declaration//GEN-END:variables
 }

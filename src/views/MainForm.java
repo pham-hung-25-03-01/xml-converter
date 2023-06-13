@@ -189,6 +189,11 @@ public class MainForm extends javax.swing.JFrame {
         menuListTemplates.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/list-teamplates.png"))); // NOI18N
         menuListTemplates.setText("List templates");
         menuListTemplates.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        menuListTemplates.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuListTemplatesActionPerformed(evt);
+            }
+        });
         menuOutput.add(menuListTemplates);
 
         menuBarMainForm.add(menuOutput);
@@ -307,7 +312,7 @@ public class MainForm extends javax.swing.JFrame {
 
 
     private void menuExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuExitActionPerformed
-        if (JOptionPane.showConfirmDialog(null, "Are you sure to exit?", "Notification",
+        if (JOptionPane.showConfirmDialog(null, "Are you sure to exit?", "Confirm",
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
             System.exit(0);
     }//GEN-LAST:event_menuExitActionPerformed
@@ -336,6 +341,10 @@ public class MainForm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Path saved successfully:\n" + inputFolderPath, "Notification", JOptionPane.INFORMATION_MESSAGE);
         }
     }//GEN-LAST:event_menuInputFolderActionPerformed
+
+    private void menuListTemplatesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuListTemplatesActionPerformed
+        new ConfigTemplateDialog(this, rootPaneCheckingEnabled).setVisible(true);
+    }//GEN-LAST:event_menuListTemplatesActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
