@@ -4,6 +4,11 @@
  */
 
 
+import java.io.IOException;
+
+import javax.swing.JOptionPane;
+
+import services.InitResource;
 import views.MainForm;
 
 /**
@@ -21,6 +26,12 @@ public class Main {
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
+        try {
+            InitResource.init();
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Cannot init resource", "Error", JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
+        }
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {

@@ -5,16 +5,15 @@
 package views;
 
 import java.awt.Component;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.Frame;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JProgressBar;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -22,33 +21,47 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.transform.TransformerException;
+import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.Characters;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
 
-import oracle.net.aso.j;
-import services.Converter;
-import utils.Validator;
+import org.ini4j.InvalidFileFormatException;
+
+import oracle.net.aso.a;
+import utils.Config;
+import utils.CurrentValues;
 
 /**
  *
  * @author ASUS RG
  */
-public class CreateTemplateDialog extends javax.swing.JDialog {
-    private static Converter converter = new Converter();
-    private Thread convertThread;
+public class EditTemplateDialog extends javax.swing.JDialog {
 
+    private String templateName;
     /**
-     * Creates new form TestJTreeDialog
+     * Creates new form EditTemplateDialog
      */
-    public CreateTemplateDialog(java.awt.Frame parent, boolean modal) {
+    public EditTemplateDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        loadCBB();
         btnAdd.setEnabled(false);
         btnEdit.setEnabled(false);
         btnDelete.setEnabled(false);
-        jTreeXML.setSelectionRow(0);
         setIconNode();
+    }
+
+    public EditTemplateDialog(Frame parentFrame, boolean modal, String templateName) {
+        super(parentFrame, modal);
+        initComponents();
+        btnAdd.setEnabled(false);
+        btnEdit.setEnabled(false);
+        btnDelete.setEnabled(false);
+        setIconNode();
+        this.templateName = templateName;
+        loadXmlToTree(templateName);
     }
 
     /**
@@ -60,29 +73,18 @@ public class CreateTemplateDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTreeXML = new javax.swing.JTree();
         txtInput = new javax.swing.JTextField();
         btnAdd = new javax.swing.JButton();
         btnEdit = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         cbbOptionAdd = new javax.swing.JComboBox<>();
         btnSave = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        txtFileName = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTreeXML = new javax.swing.JTree();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Create Template");
-
-        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("tag (Application)");
-        jTreeXML.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
-        jTreeXML.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jTreeXMLMouseClicked(evt);
-            }
-        });
-        jScrollPane1.setViewportView(jTreeXML);
+        setTitle("Edit Template");
 
         btnAdd.setText("Add");
         btnAdd.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -108,6 +110,7 @@ public class CreateTemplateDialog extends javax.swing.JDialog {
             }
         });
 
+        cbbOptionAdd.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "none", "tag", "attributes", "value" }));
         cbbOptionAdd.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         cbbOptionAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -123,11 +126,31 @@ public class CreateTemplateDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel1.setText("Template name:");
-
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel2.setText("Input:");
+
+        // javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("tag (XML Document)");
+        // javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("tag (Application)");
+        // javax.swing.tree.DefaultMutableTreeNode treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("tag (RegNumber)");
+        // treeNode2.add(treeNode3);
+        // treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("tag (PhoneList)");
+        // javax.swing.tree.DefaultMutableTreeNode treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("attributes (ref='PHONE;')");
+        // treeNode3.add(treeNode4);
+        // treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("tag (Phone)");
+        // javax.swing.tree.DefaultMutableTreeNode treeNode5 = new javax.swing.tree.DefaultMutableTreeNode("attributes (type='number', use='required')");
+        // treeNode4.add(treeNode5);
+        // treeNode5 = new javax.swing.tree.DefaultMutableTreeNode("value (84${PHONE})");
+        // treeNode4.add(treeNode5);
+        // treeNode3.add(treeNode4);
+        // treeNode2.add(treeNode3);
+        // treeNode1.add(treeNode2);
+        // jTreeXML.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        jTreeXML.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTreeXMLMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(jTreeXML);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -137,31 +160,28 @@ public class CreateTemplateDialog extends javax.swing.JDialog {
                 .addGap(17, 17, 17)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jScrollPane1)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtFileName)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(27, 27, 27)
-                                .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(txtInput))
+                                .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtInput, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(cbbOptionAdd, 0, 102, Short.MAX_VALUE)
-                            .addComponent(btnSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addComponent(cbbOptionAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(23, 23, 23))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(22, 22, 22)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 332, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -170,24 +190,68 @@ public class CreateTemplateDialog extends javax.swing.JDialog {
                             .addComponent(cbbOptionAdd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(btnDelete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnEdit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(btnAdd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addGap(25, 25, 25)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtFileName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel1))
-                .addGap(20, 20, 20))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE, false)
+                            .addComponent(btnAdd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnDelete)
+                            .addComponent(btnEdit))))
+                .addGap(24, 24, 24))
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void setIconNode() {
+    private void loadXmlToTree(String templateName) {
+        try {
+            Stack<DefaultMutableTreeNode> stack = new Stack<DefaultMutableTreeNode>();
+            XMLEventReader template = Config.getTemplate(templateName);
+            while (template.hasNext()) {
+                XMLEvent event = template.nextEvent();
+
+                if (event.isStartElement()) {
+                    StartElement element = event.asStartElement();
+                    DefaultMutableTreeNode node = new DefaultMutableTreeNode("tag (" + element.getName().getLocalPart() + ")");
+                    stack.push(node);
+                    Iterator<Attribute> attributes = element.getAttributes();
+                    if (attributes.hasNext()) {
+                        String attr = "attributes (";
+                        while (attributes.hasNext()) {
+                            Attribute attribute = attributes.next();
+                            attr += attribute.getName().getLocalPart() + "='" + attribute.getValue() + "', ";
+                        }
+                        attr = attr.substring(0, attr.length() - 2) + ")";
+                        DefaultMutableTreeNode attrNode = new DefaultMutableTreeNode(attr);
+                        node.add(attrNode);
+                    }
+                    continue;
+                }
+
+                if (event.isCharacters()) {
+                    if (!event.asCharacters().isWhiteSpace()) {
+                        DefaultMutableTreeNode node = new DefaultMutableTreeNode("value (" + event.asCharacters().getData() + ")");
+                        stack.peek().add(node);
+                    }
+                    continue;
+                }
+
+                if (event.isEndElement()) {
+                    DefaultMutableTreeNode root = stack.pop();
+                    if (stack.isEmpty()) {
+                        this.jTreeXML.setModel(new DefaultTreeModel(root));
+                    } else {
+                        stack.peek().add(root);
+                    }
+                }
+            }
+            this.jTreeXML.setSelectionRow(0);
+        } catch (XMLStreamException | IOException e) {
+            JOptionPane.showMessageDialog(this, "Can't load template file", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void setIconNode() 
+    {
         DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer() {
 
             @Override
@@ -220,16 +284,7 @@ public class CreateTemplateDialog extends javax.swing.JDialog {
         
         jTreeXML.setCellRenderer(renderer);
     }
-
-    private void loadCBB()
-    {
-        String[] options = {"none", "tag", "attributes", "value"};
-        for(String option : options)
-        {
-            cbbOptionAdd.addItem(option);
-        }
-    }
-
+    
     private void expandAllNodes(JTree tree, boolean expand) {
         TreeNode rootNode = (TreeNode) tree.getModel().getRoot();
         expandAllNodes(tree, new TreePath(rootNode), expand);
@@ -263,9 +318,11 @@ public class CreateTemplateDialog extends javax.swing.JDialog {
         return false;
     }
     
+    
     private void redrawTree(DefaultMutableTreeNode currNode, TreePath selectionPath) {
         DefaultTreeModel model = (DefaultTreeModel) jTreeXML.getModel();
         model.nodeStructureChanged(currNode);
+
         TreePath parentPath = selectionPath.getParentPath();
         jTreeXML.expandPath(parentPath);
         expandAllNodes(jTreeXML, true);
@@ -280,7 +337,7 @@ public class CreateTemplateDialog extends javax.swing.JDialog {
         if (tagName.matches("^\\w+$")) {
             String nodeName = "tag (" + tagName + ")";
             DefaultMutableTreeNode node = new DefaultMutableTreeNode(nodeName);
-            currNode.insert(node, currNode.getChildCount());
+            currNode.add(node);
             return true;
         } else {
             JOptionPane.showMessageDialog(null, "Tag name not contain special character", "Error", JOptionPane.ERROR_MESSAGE);
@@ -294,32 +351,20 @@ public class CreateTemplateDialog extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(null, "Attributes is not empty", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-
-        String[] arrAttributes = attributes.split(",");
-        Validator validator = new Validator();
-        try {
-            for (String attribute : arrAttributes) {
-                String[] keyValue = attribute.trim().split("=");
-                if (keyValue.length == 2) {
-                    String key = keyValue[0].trim().toUpperCase();
-                    String value = keyValue[1].trim().replace("'", "").toUpperCase();
-                    if (validator.validateAttribute(key, value) && isExisted(currNode, "^attributes \\(.*\\)$")) {
-                        JOptionPane.showMessageDialog(null, "Attributes already exist", "Info", JOptionPane.INFORMATION_MESSAGE);
-                        return false;
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(null, "Attributes format invalid", "Error", JOptionPane.ERROR_MESSAGE);
-                    return false;
-                }
+        if (attributes.matches("^\\w+\\=\\'(\\w+\\;{0,1})+\\'(\\, {0,1}\\w+\\=\\'(\\w+\\;{0,1})+\\')*$")) {
+            if (isExisted(currNode, "^attributes \\(.*\\)$")) {
+                JOptionPane.showMessageDialog(null, "Attributes already exist", "Info", JOptionPane.INFORMATION_MESSAGE);
+                return false;
+            } else {
+                String nodeName = "attributes (" + attributes + ")";
+                DefaultMutableTreeNode node = new DefaultMutableTreeNode(nodeName);
+                currNode.add(node); 
+                return true;
             }
-            String nodeName = "attributes (" + attributes + ")";
-            DefaultMutableTreeNode node = new DefaultMutableTreeNode(nodeName);
-            currNode.insert(node, 0);
-            return true;
-        } catch (IllegalArgumentException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null, "Attributes format invalid", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
-        }
+        }        
     }
     
     private boolean addValue(DefaultMutableTreeNode currNode, String value) {
@@ -330,11 +375,7 @@ public class CreateTemplateDialog extends javax.swing.JDialog {
         } else {
            String nodeName = "value (" + value + ")";
            DefaultMutableTreeNode node = new DefaultMutableTreeNode(nodeName);
-           if (currNode.getChildCount() == 0) {
-               currNode.insert(node, 0);
-           } else {
-               currNode.insert(node, 1);
-           }
+           currNode.add(node); 
            return true;
         }
     }
@@ -361,29 +402,12 @@ public class CreateTemplateDialog extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(null, "Attributes is not empty", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-
-        String[] arrAttributes = attributes.split(",");
-        Validator validator = new Validator();
-        try {
-            for (String attribute : arrAttributes) {
-                String[] keyValue = attribute.trim().split("=");
-                if (keyValue.length == 2) {
-                    String key = keyValue[0].trim().toUpperCase();
-                    String value = keyValue[1].trim().replace("'", "").toUpperCase();
-                    if (validator.validateAttribute(key, value) && isExisted(currNode, "^attributes \\(.*\\)$")) {
-                        JOptionPane.showMessageDialog(null, "Attributes already exist", "Info", JOptionPane.INFORMATION_MESSAGE);
-                        return false;
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(null, "Attributes format invalid", "Error", JOptionPane.ERROR_MESSAGE);
-                    return false;
-                }
-            }
+        if (attributes.matches("^\\w+\\=\\'(\\w+\\;{0,1})+\\'(\\, {0,1}\\w+\\=\\'(\\w+\\;{0,1})+\\')*$")) {
             String nodeName = "attributes (" + attributes + ")";
             currNode.setUserObject(nodeName);
             return true;
-        } catch (IllegalArgumentException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null, "Attributes format invalid", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }
@@ -394,7 +418,8 @@ public class CreateTemplateDialog extends javax.swing.JDialog {
         currNode.setUserObject(nodeName);
         return true;
     } 
-
+    
+    
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
         TreePath selectionPath = jTreeXML.getSelectionPath();
         if (selectionPath == null) {
@@ -404,41 +429,35 @@ public class CreateTemplateDialog extends javax.swing.JDialog {
         DefaultMutableTreeNode currNode = (DefaultMutableTreeNode) selectionPath.getLastPathComponent();
         String input = txtInput.getText();
         String option = cbbOptionAdd.getSelectedItem().toString();
-        
-        boolean isSuccess = true;
 
         switch (option) {
             case "tag":
-                isSuccess = addTag(currNode, input);
-                break;
+            addTag(currNode, input);
+            break;
             case "attributes":
-                isSuccess = addAttributes(currNode, input);
-                break;
+            addAttributes(currNode, input);
+            break;
             case "value":
-                isSuccess = addValue(currNode, input);
-                break;
+            addValue(currNode, input);
+            break;
             default:
-                JOptionPane.showMessageDialog(this, "Can not add!", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
+            JOptionPane.showMessageDialog(this, "Can not add!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
 
-        if (isSuccess) {                    
-            redrawTree(currNode, selectionPath);
-            cbbOptionAdd.setSelectedIndex(0);
-            txtInput.setText("");
-            jTreeXML.setSelectionPath(selectionPath);
-            JOptionPane.showMessageDialog(this, "Add success!", "Add Success", JOptionPane.INFORMATION_MESSAGE);
-        }
+        redrawTree(currNode, selectionPath);
+
+        cbbOptionAdd.setSelectedIndex(0);
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-    
+
         TreePath selectionPath = jTreeXML.getSelectionPath();
         if (selectionPath == null) {
             JOptionPane.showMessageDialog(this, "Please select a node to update!", "Warning", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
+
         DefaultMutableTreeNode currNode = (DefaultMutableTreeNode) selectionPath.getLastPathComponent();
         String nodeText = currNode.getUserObject().toString();
         boolean result = false;
@@ -451,8 +470,8 @@ public class CreateTemplateDialog extends javax.swing.JDialog {
         }
         if (result) {
             redrawTree(currNode, selectionPath);
-            jTreeXML.setSelectionPath(selectionPath);
             JOptionPane.showMessageDialog(this, "Update success!", "Update Success", JOptionPane.INFORMATION_MESSAGE);
+            txtInput.setText("");
         }
     }//GEN-LAST:event_btnEditActionPerformed
 
@@ -463,11 +482,13 @@ public class CreateTemplateDialog extends javax.swing.JDialog {
             return;
         }
 
-        try 
+        try
         {
             int dialogResult = JOptionPane.showConfirmDialog(this, "Are you sure to delete?", "Confirm", JOptionPane.YES_NO_OPTION);
 
             if (dialogResult == JOptionPane.YES_OPTION) {
+                DefaultTreeModel model = (DefaultTreeModel) jTreeXML.getModel();
+
                 for (TreePath selectionPath : selectionPaths) {
                     DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) selectionPath.getLastPathComponent();
                     DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) selectedNode.getParent();
@@ -481,93 +502,14 @@ public class CreateTemplateDialog extends javax.swing.JDialog {
             } else {
                 return;
             }
-        } 
+        }
         catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Delete fail!", "Error", JOptionPane.ERROR_MESSAGE);
         }
-
     }//GEN-LAST:event_btnDeleteActionPerformed
 
-    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        int childCount = ((DefaultMutableTreeNode) jTreeXML.getModel().getRoot()).getChildCount();
-        if (childCount == 0) {
-            JOptionPane.showMessageDialog(this, "Please input XML!", "Warning", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        if (txtFileName.getText().isBlank()) {
-            JOptionPane.showMessageDialog(this, "Please input file name!", "Warning", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        JProgressBar progressBar = new JProgressBar(0, 100);
-        progressBar.setStringPainted(true);
-        progressBar.setString("Saving...");
-        progressBar.setValue(0);
-        JOptionPane pane = new JOptionPane(progressBar);
-        pane.setOptions(new Object[]{});
-        JDialog dialog = pane.createDialog(this, "Save template");
-        dialog.setModal(true);
-        dialog.setResizable(false);
-
-        dialog.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                convertThread.interrupt();
-                dialog.dispose();
-            }
-        });
-        Thread dialogThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                dialog.setVisible(true);
-            }
-        });
-        dialogThread.start(); 
-        convertThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    String targetFilePath = converter.convertJTreeToXml(jTreeXML, txtFileName.getText(), progressBar);
-                    CreateTemplateDialog.this.dispose();
-                    JOptionPane.showMessageDialog(null, "Save success!\nFile path: " + targetFilePath, "Save Success", JOptionPane.INFORMATION_MESSAGE);
-                } catch (XMLStreamException | IOException| TransformerException e) {
-                    JOptionPane.showMessageDialog(null, "Save fail!", "Error", JOptionPane.ERROR_MESSAGE);
-                    e.printStackTrace();
-                } finally {
-                    dialog.dispose();
-                }
-            }
-        });
-        convertThread.start();
-    }//GEN-LAST:event_btnSaveActionPerformed
-
-    private void jTreeXMLMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTreeXMLMouseClicked
-        TreeSelectionModel selectionModel = jTreeXML.getSelectionModel();
-        if(selectionModel.getSelectionCount() > 0 && selectionModel.getSelectionPath().getPathCount() > 1)
-        {
-            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) jTreeXML.getSelectionPath().getLastPathComponent();
-            String nodeText = selectedNode.getUserObject().toString();
-            if (nodeText.contains("tag") && !cbbOptionAdd.getSelectedItem().toString().contains("none")) {
-                btnAdd.setEnabled(true);
-            } else {
-                btnAdd.setEnabled(false);
-            }
-            Pattern pattern = Pattern.compile("^\\w+ \\((.+?)\\)$");
-            Matcher matcher = pattern.matcher(nodeText);
-            if (matcher.find()) {
-                txtInput.setText(matcher.group(1));
-            }
-            btnEdit.setEnabled(true);
-            btnDelete.setEnabled(true);
-        } else {
-            btnEdit.setEnabled(false);
-            btnDelete.setEnabled(false);
-        }
-    }//GEN-LAST:event_jTreeXMLMouseClicked
-
     private void cbbOptionAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbOptionAddActionPerformed
-        if (cbbOptionAdd.getSelectedItem().toString().contains("none")) 
+        if (cbbOptionAdd.getSelectedItem().toString().contains("none"))
         {
             btnAdd.setEnabled(false);
         } else {
@@ -586,6 +528,43 @@ public class CreateTemplateDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_cbbOptionAddActionPerformed
 
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnSaveActionPerformed
+
+    private void jTreeXMLMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTreeXMLMouseClicked
+        TreeSelectionModel selectionModel = jTreeXML.getSelectionModel();
+        if(selectionModel.getSelectionCount() > 0)
+        {
+            DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) jTreeXML.getSelectionPath().getLastPathComponent();
+            String nodeText = selectedNode.getUserObject().toString();
+
+            if (nodeText.contains("XML Document")) {
+                btnEdit.setEnabled(false);
+                btnDelete.setEnabled(false);
+            } else {
+                btnEdit.setEnabled(true);
+                btnDelete.setEnabled(true);
+            }
+
+            if (nodeText.contains("tag") && !cbbOptionAdd.getSelectedItem().toString().contains("none")) {
+                btnAdd.setEnabled(true);
+            } else {
+                btnAdd.setEnabled(false);
+            }
+            Pattern pattern = Pattern.compile("^\\w+ \\((.+?)\\)$");
+            Matcher matcher = pattern.matcher(nodeText);
+            if (matcher.find()) {
+                txtInput.setText(matcher.group(1));
+            }
+            //            btnEdit.setEnabled(true);
+            //            btnDelete.setEnabled(true);
+        } else {
+            btnEdit.setEnabled(false);
+            btnDelete.setEnabled(false);
+        }
+    }//GEN-LAST:event_jTreeXMLMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -603,21 +582,20 @@ public class CreateTemplateDialog extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(CreateTemplateDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditTemplateDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(CreateTemplateDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditTemplateDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(CreateTemplateDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditTemplateDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(CreateTemplateDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(EditTemplateDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                CreateTemplateDialog dialog = new CreateTemplateDialog(new javax.swing.JFrame(), true);
+                EditTemplateDialog dialog = new EditTemplateDialog(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -635,11 +613,9 @@ public class CreateTemplateDialog extends javax.swing.JDialog {
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnSave;
     private javax.swing.JComboBox<String> cbbOptionAdd;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTree jTreeXML;
-    private javax.swing.JTextField txtFileName;
     private javax.swing.JTextField txtInput;
     // End of variables declaration//GEN-END:variables
 }

@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -20,20 +19,8 @@ import org.jasypt.salt.RandomIVGenerator;
 
 public class Config {
 
-    public static Wini getConfigPath() throws InvalidFileFormatException, IOException {
-        File file = new File("configs/path.ini") {{
-            getParentFile().mkdirs();
-            createNewFile();
-            if (length() == 0) {
-                FileOutputStream fos = new FileOutputStream(this);
-                fos.write(
-                    "[DefaultValues]\nPATH=configs/default/values.properties\n\n[DatabaseConfig]\nPATH=configs/default/database.properties\n\n[DefaultInputFolder]\nPATH=\n[FileHeaderTemplate]\nPATH=configs/templates/file_header.xml"
-                    .getBytes());
-                fos.close();
-            }
-        }};
-        
-        Wini ini = new Wini(file);
+    public static Wini getConfigPath() throws InvalidFileFormatException, IOException {        
+        Wini ini = new Wini(new File("configs/path.ini"));
         org.ini4j.Config cfg = ini.getConfig();
         cfg.setStrictOperator(true);
         ini.setConfig(cfg);
@@ -52,16 +39,16 @@ public class Config {
         ini.store();
     }
 
-    public static Properties getConfigDefaultValues() throws InvalidFileFormatException, IOException {
+    public static void removeConfigPath(String section) throws InvalidFileFormatException, IOException{
+        Wini ini = getConfigPath();
+        ini.remove(ini.get(section));
+        ini.store();
+    }
+
+    public static Properties getConfigDefaultValues() throws IOException {
         String defaultValuesFilePath = getConfigPath().get("DefaultValues", "PATH");
-
-        new File(defaultValuesFilePath) {{
-            getParentFile().mkdirs();
-            createNewFile();
-        }};
-
         return new Properties() {{
-            load(new FileInputStream(defaultValuesFilePath));
+            load(new FileInputStream(new File(defaultValuesFilePath)));
         }};
     }
     
@@ -87,20 +74,8 @@ public class Config {
         properties.store(new FileOutputStream(defaultValuesFilePath), null);
     }
 
-    public static XMLEventReader getTemplate(String templateName) throws InvalidFileFormatException, IOException, XMLStreamException {
+    public static XMLEventReader getTemplate(String templateName) throws IOException, XMLStreamException  {
         String templateFilePath = getConfigPath().get(templateName, "PATH");
-
-        if (templateName.equals("FileHeaderTemplate")) {
-            new File(templateFilePath) {{
-                getParentFile().mkdirs();
-                createNewFile();
-                if (length() == 0) {
-                    FileOutputStream fos = new FileOutputStream(this);
-                    fos.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<FileHeader>\n</FileHeader>".getBytes());
-                    fos.close();
-                }
-            }};
-        }
 
         XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
         XMLEventReader reader = xmlInputFactory.createXMLEventReader(new FileInputStream(templateFilePath));
@@ -110,19 +85,9 @@ public class Config {
 
     public static Properties getConfigDatabase() throws IOException {
         String databaseFilePath = getConfigPath().get("DatabaseConfig", "PATH");
-
-        new File(databaseFilePath) {{
-            getParentFile().mkdirs();
-            createNewFile();
-            if (length() == 0) {
-                FileOutputStream fos = new FileOutputStream(this);
-                fos.write("DB_HOST=\nDB_PORT=\nDB_NAME=\nDB_USER=\nDB_PASSWORD=".getBytes());
-                fos.close();
-            }
-        }};
-
+        
         Properties properties = new EncryptableProperties(getEncryptor());
-        properties.load(new FileInputStream(databaseFilePath));
+        properties.load(new FileInputStream(new File(databaseFilePath)));
 
         return properties;
     }

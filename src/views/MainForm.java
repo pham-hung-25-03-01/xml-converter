@@ -40,6 +40,10 @@ public class MainForm extends javax.swing.JFrame {
         loadDataCBB();
         loadImgApp("/img/openway-way4-logo.png");
     }
+
+    public javax.swing.JComboBox<String> getCbbTemplate() {
+        return cbbTemplate;
+    }
     
     private void loadImgApp(String path)
     {
@@ -195,6 +199,11 @@ public class MainForm extends javax.swing.JFrame {
         menuListTemplates.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/list-teamplates.png"))); // NOI18N
         menuListTemplates.setText("List templates");
         menuListTemplates.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        menuListTemplates.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuListTemplatesActionPerformed(evt);
+            }
+        });
         menuOutput.add(menuListTemplates);
 
         menuBarMainForm.add(menuOutput);
@@ -338,15 +347,13 @@ public class MainForm extends javax.swing.JFrame {
                             if (!targetFilePath.equals("")) {
                                 countSuccess++;
                             }
-        
-                            JOptionPane.showMessageDialog(null, "Convert " + countSuccess + "/" + targetFilePaths.size()
-                                    + " files successfully!\nOutput files saved at: /logs/foutputs\nProcess files saved at: /logs/fprocesses\nError files saved at: /logs/ferrors",
-                                    "Notification", JOptionPane.INFORMATION_MESSAGE);
-        
-                            txtPathFileInput.setText("");
-                            selectedFilePaths.clear();
                         }
+                        
                         progressBar.setValue(100);
+
+                        JOptionPane.showMessageDialog(null, "Convert " + countSuccess + "/" + targetFilePaths.size() + " files successfully!", "Notification", JOptionPane.INFORMATION_MESSAGE);
+                        txtPathFileInput.setText("");
+                        selectedFilePaths.clear();
                     }
                     catch (IOException e) 
                     {
@@ -363,7 +370,7 @@ public class MainForm extends javax.swing.JFrame {
 
 
     private void menuExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuExitActionPerformed
-        if (JOptionPane.showConfirmDialog(null, "Are you sure to exit?", "Notification",
+        if (JOptionPane.showConfirmDialog(null, "Are you sure to exit?", "Confirm",
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
             System.exit(0);
     }//GEN-LAST:event_menuExitActionPerformed
@@ -397,6 +404,10 @@ public class MainForm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Error when saving path!", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_menuInputFolderActionPerformed
+
+    private void menuListTemplatesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuListTemplatesActionPerformed
+        new ConfigTemplateDialog(this, rootPaneCheckingEnabled).setVisible(true);
+    }//GEN-LAST:event_menuListTemplatesActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

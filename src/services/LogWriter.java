@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
-
 import utils.LogFormatter;
 
 public class LogWriter {
@@ -21,12 +20,7 @@ public class LogWriter {
         FINEST
     }
 
-    public static void writeLog(String message, LogType logType) throws IOException {
-        new File(logFilePath) {{
-            getParentFile().mkdirs();
-            createNewFile();
-        }};
-
+    public static void writeLog(String message, LogType logType) {
         boolean append = true;
         
         try {
@@ -65,11 +59,7 @@ public class LogWriter {
 
     public static void cleanLog() {
         try {
-            File logFile = new File(logFilePath) {{
-                getParentFile().mkdirs();
-                createNewFile();
-            }};
-            new FileOutputStream(logFile).close();
+            new FileOutputStream(new File(logFilePath)).close();
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }

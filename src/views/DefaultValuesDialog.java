@@ -11,7 +11,6 @@ import javax.swing.JOptionPane;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
-import org.ini4j.InvalidFileFormatException;
 import utils.Config;
 
 /**
@@ -56,7 +55,7 @@ public class DefaultValuesDialog extends javax.swing.JDialog {
         this.setIconImage(icon.getImage());
     }
     
-    private void loadDefaultValues() throws InvalidFileFormatException, IOException
+    private void loadDefaultValues() throws IOException
     {
         DefaultTableModel tblDefaultValues = (DefaultTableModel) this.tblDefaultValues.getModel();
         tblDefaultValues.setRowCount(0);

@@ -6,7 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Random;
 import java.util.regex.Pattern;
-
 import org.ini4j.InvalidFileFormatException;
 
 public class Generator {
@@ -38,7 +37,7 @@ public class Generator {
         }
     }
 
-    public String generateTargetFileName(String sourceTemplateName) throws InvalidFileFormatException, IOException {
+    public String generateTargetFileName(String sourceTemplateName) throws IOException {
         String prefix = sourceTemplateName.replace("Template", "").toLowerCase();
         String sender = Config.getConfigDefaultValues().getProperty("SENDER");
         String number = Config.getConfigDefaultValues().getProperty("NUMBER");

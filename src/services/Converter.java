@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.swing.JProgressBar;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -69,7 +68,7 @@ public class Converter {
             StringBuilder prettyPrintXml = formatXml(xmlCleaned);
 
             String targetFileName = generator.generateTargetFileName(templateName);
-            String targetFilePath = "logs/foutputs/" + targetFileName;
+            String targetFilePath = Config.getConfigPath().get("DefaultOutputFolder", "PATH") + "/" + targetFileName;
             File targetFile = new File(targetFilePath) {{
                 getParentFile().mkdirs();
                 createNewFile();
@@ -77,7 +76,7 @@ public class Converter {
 
             Files.writeString(targetFile.toPath(), prettyPrintXml, StandardCharsets.UTF_8);
 
-            String fprocessPath = "logs/fprocesses/" + CurrentValues.SourceFile.getName();
+            String fprocessPath = Config.getConfigPath().get("DefaultProcessFolder", "PATH") + "/" + CurrentValues.SourceFile.getName();
             File fprocess = new File(fprocessPath) {{
                 getParentFile().mkdirs();
                 createNewFile();
@@ -91,7 +90,7 @@ public class Converter {
             String message = e.getMessage() + "::" + CurrentValues.SourceFile.getName();
             LogWriter.writeLog(message, LogType.SEVERE);
             
-            String ferrorPath = "logs/ferrors/" + CurrentValues.SourceFile.getName();
+            String ferrorPath = Config.getConfigPath().get("DefaultErrorFolder", "PATH") + "/" + CurrentValues.SourceFile.getName();
             File ferror = new File(ferrorPath) {{
                 getParentFile().mkdirs();
                 createNewFile();
@@ -160,7 +159,7 @@ public class Converter {
 
         progressBar.setValue(95);
 
-        templateName = templateName.substring(0, 1).toUpperCase() + templateName.substring(1);
+        templateName = templateName.substring(0, 1).toUpperCase() + templateName.substring(1) + "Template";
 
         Config.setConfigPath(templateName, "PATH", targetFilePath);
 
@@ -194,7 +193,6 @@ public class Converter {
             if (matcher.find()) {
                 writer.writeCharacters(matcher.group(1));
             }
-            writer.writeEndElement();
         }
 
         int childCount = node.getChildCount();
@@ -202,11 +200,14 @@ public class Converter {
             DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) node.getChildAt(i);
             traverseTree(writer, childNode);
         }
+        
+        if (nodeText.matches("^tag \\(\\w+\\)$")) {
+            writer.writeEndElement();
+        }
     }
 
     private void writeXml(String templateName, HashMap<String, Integer> headers, List<String[]> rows,
-            OutputStream outputStream)
-            throws XMLStreamException, InvalidFileFormatException, IOException {
+            OutputStream outputStream) throws XMLStreamException, IOException {
         XMLOutputFactory output = XMLOutputFactory.newInstance();
         XMLStreamWriter writer = output.createXMLStreamWriter(outputStream);
 
@@ -238,8 +239,7 @@ public class Converter {
         writer.close();
     }
 
-    private String getData(HashMap<String, Integer> headers, String[] rowData, String s)
-            throws InvalidFileFormatException, IOException {
+    private String getData(HashMap<String, Integer> headers, String[] rowData, String s) throws IOException {
         List<String> listExpressionLanguage = Data.getListExpressionLanguage(s);
 
         String dataNameExtracted = "";
@@ -290,7 +290,7 @@ public class Converter {
     }
 
     private void writeData(XMLStreamWriter writer, XMLEventReader template, HashMap<String, Integer> headers,
-            String[] rowData) throws XMLStreamException, InvalidFileFormatException, IOException {
+            String[] rowData) throws XMLStreamException, IOException {
         while (template.hasNext()) {
             XMLEvent event = template.nextEvent();
 

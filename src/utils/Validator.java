@@ -11,23 +11,23 @@ public class Validator {
     }
 
     public enum ValueType {
+        DEFAULT,
         NUMBER,
         LETTERS,
         EMAIL,
         PHONE,
         DATE,
-        TIME,
-        DEFAULT
+        TIME
     }
 
     public enum UseType {
-        REQUIRED,
-        DEFAULT
+        DEFAULT,
+        REQUIRED
     }
 
     public enum FormatType {
-        TRUE,
-        FALSE
+        FALSE,
+        TRUE
     }
 
     public boolean validateAttribute(String attributeName, String attributeValue) {
