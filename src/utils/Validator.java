@@ -3,6 +3,7 @@ package utils;
 import java.util.HashMap;
 
 public class Validator {
+    // if add new attribute, please add it to last position
     public enum AttributeName {
         TYPE,
         USE,
@@ -10,6 +11,7 @@ public class Validator {
         FORMAT
     }
 
+    // if add new value type, please add it to last position
     public enum ValueType {
         DEFAULT,
         NUMBER,
@@ -20,11 +22,13 @@ public class Validator {
         TIME
     }
 
+    // if add new use type, please add it to last position
     public enum UseType {
         DEFAULT,
         REQUIRED
     }
 
+    // if add new format type, please add it to last position
     public enum FormatType {
         FALSE,
         TRUE

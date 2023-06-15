@@ -120,7 +120,7 @@ public class Converter {
         return targetFilePaths;
     }
 
-    public String convertJTreeToXml(JTree tree, String templateName, JProgressBar progressBar) throws XMLStreamException, IOException, TransformerException {
+    public Map<String, String> convertJTreeToXml(JTree tree, String templateName, JProgressBar progressBar) throws XMLStreamException, IOException, TransformerException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
         XMLStreamWriter writer = outputFactory.createXMLStreamWriter(out);
@@ -158,14 +158,20 @@ public class Converter {
         Files.writeString(targetFile.toPath(), prettyPrintXml, StandardCharsets.UTF_8);
 
         progressBar.setValue(95);
+        
+        Map<String, String> result = new HashMap<String, String>();
+        
+        templateName = templateName.substring(0, 1).toUpperCase() + templateName.substring(1).toLowerCase();
+        result.put("templateName", templateName);
 
-        templateName = templateName.substring(0, 1).toUpperCase() + templateName.substring(1) + "Template";
+        templateName += "Template";
 
         Config.setConfigPath(templateName, "PATH", targetFilePath);
+        result.put("targetFilePath", targetFilePath);
 
         progressBar.setValue(100);
 
-        return targetFilePath;
+        return result;
     }
 
     private static void traverseTree(XMLStreamWriter writer, DefaultMutableTreeNode node) throws XMLStreamException {

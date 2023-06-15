@@ -74,6 +74,13 @@ public class Config {
         properties.store(new FileOutputStream(defaultValuesFilePath), null);
     }
 
+    public static Properties getQueries() throws IOException {
+        String queriesFilePath = getConfigPath().get("Queries", "PATH");
+        return new Properties() {{
+            load(new FileInputStream(new File(queriesFilePath)));
+        }};
+    }
+
     public static XMLEventReader getTemplate(String templateName) throws IOException, XMLStreamException  {
         String templateFilePath = getConfigPath().get(templateName, "PATH");
 

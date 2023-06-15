@@ -268,7 +268,7 @@ public class DefaultValuesDialog extends javax.swing.JDialog {
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
 
-        if (tblDefaultValues.getSelectedRow() != -1 && tblDefaultValues.getSelectionModel().isSelectionEmpty()) {
+        if (tblDefaultValues.getSelectedRow() == -1 || tblDefaultValues.getSelectionModel().isSelectionEmpty()) {
             // No row is selected by the user
             JOptionPane.showMessageDialog(this, "Please select a row to delete!", "Notification", JOptionPane.WARNING_MESSAGE);
             return;

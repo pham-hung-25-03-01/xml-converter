@@ -5,6 +5,9 @@
 package views;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import org.ini4j.Wini;
@@ -130,6 +133,8 @@ public class ConfigTemplateDialog extends javax.swing.JDialog {
                 try {
                     for (int i=selectedRows.length-1; i>=0; i--) {
                         String templateName = model.getValueAt(selectedRows[i], 0).toString();
+                        String path = model.getValueAt(selectedRows[i], 1).toString();
+                        Files.deleteIfExists(Paths.get(path));
                         Config.removeConfigPath(templateName + "Template");
                         model.removeRow(selectedRows[i]);
                         ((MainForm) this.getParent()).getCbbTemplate().removeItem(templateName);
@@ -152,8 +157,8 @@ public class ConfigTemplateDialog extends javax.swing.JDialog {
             return;
         }
         try {
-            String templateName = tblTemplates.getValueAt(tblTemplates.getSelectedRow(), 0).toString() + "Template";
-            EditTemplateDialog editTemplateDialog = new EditTemplateDialog((MainForm)this.getParent(), true, templateName);
+            String templateName = tblTemplates.getValueAt(tblTemplates.getSelectedRow(), 0).toString();
+            TemplateDialog editTemplateDialog = new TemplateDialog((MainForm)this.getParent(), "Edit template", true, templateName);
             editTemplateDialog.setVisible(true);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Can not edit!", "Error", JOptionPane.WARNING_MESSAGE);

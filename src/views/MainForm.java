@@ -29,7 +29,6 @@ import utils.FileTypeFilter;
 public class MainForm extends javax.swing.JFrame {
     private List<String> selectedFilePaths = new ArrayList<String>();
     private static Converter converter = new Converter();
-    private String inputFolderPath;
     private Thread convertThread;
 
     /**
@@ -94,10 +93,14 @@ public class MainForm extends javax.swing.JFrame {
         menuConfig = new javax.swing.JMenu();
         menuConnectDB = new javax.swing.JMenuItem();
         menuDefaultValues = new javax.swing.JMenuItem();
-        menuInputFolder = new javax.swing.JMenuItem();
         menuOutput = new javax.swing.JMenu();
         menuAddTemplate = new javax.swing.JMenuItem();
         menuListTemplates = new javax.swing.JMenuItem();
+        menuSetFolder = new javax.swing.JMenu();
+        menuInputFolder = new javax.swing.JMenuItem();
+        menuOutputFolder = new javax.swing.JMenuItem();
+        menuErrorFolder = new javax.swing.JMenuItem();
+        menuProcessFolder = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Convert Application");
@@ -133,7 +136,7 @@ public class MainForm extends javax.swing.JFrame {
 
         menuSystem.setText("System");
 
-        menuExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.ALT_DOWN_MASK));
+        menuExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.ALT_DOWN_MASK));
         menuExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/exit.png"))); // NOI18N
         menuExit.setText("Exit");
         menuExit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -170,16 +173,6 @@ public class MainForm extends javax.swing.JFrame {
         });
         menuConfig.add(menuDefaultValues);
 
-        menuInputFolder.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.ALT_DOWN_MASK));
-        menuInputFolder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/input-folder.png"))); // NOI18N
-        menuInputFolder.setText("Set input folder");
-        menuInputFolder.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuInputFolderActionPerformed(evt);
-            }
-        });
-        menuConfig.add(menuInputFolder);
-
         menuBarMainForm.add(menuConfig);
 
         menuOutput.setText("Output");
@@ -207,6 +200,50 @@ public class MainForm extends javax.swing.JFrame {
         menuOutput.add(menuListTemplates);
 
         menuBarMainForm.add(menuOutput);
+
+        menuSetFolder.setText(" Set folder");
+
+        menuInputFolder.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.ALT_DOWN_MASK));
+        menuInputFolder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/input-folder.png"))); // NOI18N
+        menuInputFolder.setText("Input folder");
+        menuInputFolder.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuInputFolderActionPerformed(evt);
+            }
+        });
+        menuSetFolder.add(menuInputFolder);
+
+        menuOutputFolder.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.ALT_DOWN_MASK));
+        menuOutputFolder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/output-folder.png"))); // NOI18N
+        menuOutputFolder.setText("Output folder");
+        menuOutputFolder.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuOutputFolderActionPerformed(evt);
+            }
+        });
+        menuSetFolder.add(menuOutputFolder);
+
+        menuErrorFolder.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.ALT_DOWN_MASK));
+        menuErrorFolder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/error-folder.png"))); // NOI18N
+        menuErrorFolder.setText("Error folder");
+        menuErrorFolder.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuErrorFolderActionPerformed(evt);
+            }
+        });
+        menuSetFolder.add(menuErrorFolder);
+
+        menuProcessFolder.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.ALT_DOWN_MASK));
+        menuProcessFolder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/process-folder.png"))); // NOI18N
+        menuProcessFolder.setText("Process folder");
+        menuProcessFolder.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuProcessFolderActionPerformed(evt);
+            }
+        });
+        menuSetFolder.add(menuProcessFolder);
+
+        menuBarMainForm.add(menuSetFolder);
 
         setJMenuBar(menuBarMainForm);
 
@@ -376,7 +413,7 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_menuExitActionPerformed
 
     private void menuAddTemplateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAddTemplateActionPerformed
-        new CreateTemplateDialog(this, rootPaneCheckingEnabled).setVisible(true);
+        new TemplateDialog(this, "Create template", rootPaneCheckingEnabled, null).setVisible(true);
     }//GEN-LAST:event_menuAddTemplateActionPerformed
 
     private void menuConnectDBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuConnectDBActionPerformed
@@ -396,7 +433,7 @@ public class MainForm extends javax.swing.JFrame {
             if (choice == JFileChooser.APPROVE_OPTION) {
                 File selectedDirectory = fileChooser.getSelectedFile();
                 // Save the chosen path
-                inputFolderPath = selectedDirectory.getAbsolutePath();
+                String inputFolderPath = selectedDirectory.getAbsolutePath();
                 Config.setConfigPath("DefaultInputFolder", "PATH", inputFolderPath);
                 JOptionPane.showMessageDialog(this, "Path saved successfully:\n" + inputFolderPath, "Notification", JOptionPane.INFORMATION_MESSAGE);
             }
@@ -405,9 +442,67 @@ public class MainForm extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_menuInputFolderActionPerformed
 
+    //set default input folder
     private void menuListTemplatesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuListTemplatesActionPerformed
         new ConfigTemplateDialog(this, rootPaneCheckingEnabled).setVisible(true);
     }//GEN-LAST:event_menuListTemplatesActionPerformed
+
+    //set default output folder
+    private void menuOutputFolderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuOutputFolderActionPerformed
+        try {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+    
+            int choice = fileChooser.showOpenDialog(this);
+            if (choice == JFileChooser.APPROVE_OPTION) {
+                File selectedDirectory = fileChooser.getSelectedFile();
+                // Save the chosen path
+                String outputFolderPath = selectedDirectory.getAbsolutePath();
+                Config.setConfigPath("DefaultOutputFolder", "PATH", outputFolderPath);
+                JOptionPane.showMessageDialog(this, "Path saved successfully:\n" + outputFolderPath, "Notification", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error when saving path!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_menuOutputFolderActionPerformed
+
+    //set default error folder
+    private void menuErrorFolderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuErrorFolderActionPerformed
+        try {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+    
+            int choice = fileChooser.showOpenDialog(this);
+            if (choice == JFileChooser.APPROVE_OPTION) {
+                File selectedDirectory = fileChooser.getSelectedFile();
+                // Save the chosen path
+                String errorFolderPath = selectedDirectory.getAbsolutePath();
+                Config.setConfigPath("DefaultErrorFolder", "PATH", errorFolderPath);
+                JOptionPane.showMessageDialog(this, "Path saved successfully:\n" + errorFolderPath, "Notification", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error when saving path!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_menuErrorFolderActionPerformed
+
+    //set default process folder
+    private void menuProcessFolderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuProcessFolderActionPerformed
+        try {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+    
+            int choice = fileChooser.showOpenDialog(this);
+            if (choice == JFileChooser.APPROVE_OPTION) {
+                File selectedDirectory = fileChooser.getSelectedFile();
+                // Save the chosen path
+                String processFolderPath = selectedDirectory.getAbsolutePath();
+                Config.setConfigPath("DefaultProcessFolder", "PATH", processFolderPath);
+                JOptionPane.showMessageDialog(this, "Path saved successfully:\n" + processFolderPath, "Notification", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error when saving path!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_menuProcessFolderActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -421,10 +516,14 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenu menuConfig;
     private javax.swing.JMenuItem menuConnectDB;
     private javax.swing.JMenuItem menuDefaultValues;
+    private javax.swing.JMenuItem menuErrorFolder;
     private javax.swing.JMenuItem menuExit;
     private javax.swing.JMenuItem menuInputFolder;
     private javax.swing.JMenuItem menuListTemplates;
     private javax.swing.JMenu menuOutput;
+    private javax.swing.JMenuItem menuOutputFolder;
+    private javax.swing.JMenuItem menuProcessFolder;
+    private javax.swing.JMenu menuSetFolder;
     private javax.swing.JMenu menuSystem;
     private javax.swing.JTextField txtPathFileInput;
     // End of variables declaration//GEN-END:variables
