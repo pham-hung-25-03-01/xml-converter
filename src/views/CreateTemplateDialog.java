@@ -428,33 +428,52 @@ public class CreateTemplateDialog extends javax.swing.JDialog {
     } 
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        TreePath selectionPath = jTreeXML.getSelectionPath();
-        if (selectionPath == null) {
-            JOptionPane.showMessageDialog(this, "Please select a node to add!", "Warning", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        DefaultMutableTreeNode currNode = (DefaultMutableTreeNode) selectionPath.getLastPathComponent();
-        String input = txtInput.getText();
-        String option = cbbOptionAdd.getSelectedItem().toString();
-        
-        switch (option) {
-            case "tag":
-                addTag(currNode, input);
-                break;
-            case "attributes":
-                addAttributes(currNode, input);
-                break;
-            case "value":
-                addValue(currNode, input);
-                break;
-            default:
-                JOptionPane.showMessageDialog(this, "Can not add!", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-        }
-        
-        redrawTree(currNode, selectionPath);
+//        TreePath selectionPath = jTreeXML.getSelectionPath();
+//        if (selectionPath == null) {
+//            JOptionPane.showMessageDialog(this, "Please select a node to add!", "Warning", JOptionPane.WARNING_MESSAGE);
+//            return;
+//        }
+//        DefaultMutableTreeNode currNode = (DefaultMutableTreeNode) selectionPath.getLastPathComponent();
+//        String input = txtInput.getText();
+//        String option = cbbOptionAdd.getSelectedItem().toString();
+//        
+//        switch (option) {
+//            case "tag":
+//                addTag(currNode, input);
+//                break;
+//            case "attributes":
+//                addAttributes(currNode, input);
+//                break;
+//            case "value":
+//                addValue(currNode, input);
+//                break;
+//            default:
+//                JOptionPane.showMessageDialog(this, "Can not add!", "Error", JOptionPane.ERROR_MESSAGE);
+//                return;
+//        }
+//        
+//        redrawTree(currNode, selectionPath);
+//
+//        cbbOptionAdd.setSelectedIndex(0);
 
-        cbbOptionAdd.setSelectedIndex(0);
+        MainForm mainForm = new MainForm();
+        String selectedItem = cbbOptionAdd.getSelectedItem().toString();
+        if(selectedItem.contains("tag"))
+        {
+            AddTagDialog addTagDialog = new AddTagDialog(mainForm, rootPaneCheckingEnabled);
+            addTagDialog.setVisible(true);
+        }
+        else if(selectedItem.contains("attributes"))
+        {
+            AddAttributeDialog addAttributeDialog = new AddAttributeDialog(mainForm, rootPaneCheckingEnabled);
+            addAttributeDialog.setVisible(true);
+        }
+        else
+        {
+            AddValueDialog addValueDialog = new AddValueDialog(mainForm, rootPaneCheckingEnabled);
+            addValueDialog.setVisible(true);
+        }
+
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
