@@ -19,6 +19,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import services.Converter;
 import utils.FileTypeFilter;
 
@@ -89,18 +90,21 @@ public class MainForm extends javax.swing.JFrame {
         cbbTemplate = new javax.swing.JComboBox<>();
         menuBarMainForm = new javax.swing.JMenuBar();
         menuSystem = new javax.swing.JMenu();
+        menuSeeLog = new javax.swing.JMenuItem();
         menuExit = new javax.swing.JMenuItem();
-        menuConfig = new javax.swing.JMenu();
-        menuConnectDB = new javax.swing.JMenuItem();
-        menuDefaultValues = new javax.swing.JMenuItem();
-        menuOutput = new javax.swing.JMenu();
-        menuAddTemplate = new javax.swing.JMenuItem();
-        menuListTemplates = new javax.swing.JMenuItem();
         menuSetFolder = new javax.swing.JMenu();
         menuInputFolder = new javax.swing.JMenuItem();
         menuOutputFolder = new javax.swing.JMenuItem();
         menuErrorFolder = new javax.swing.JMenuItem();
         menuProcessFolder = new javax.swing.JMenuItem();
+        menuConfig = new javax.swing.JMenu();
+        menuConnectDB = new javax.swing.JMenuItem();
+        menuDefaultValues = new javax.swing.JMenuItem();
+        menuQueries = new javax.swing.JMenuItem();
+        menuOutput = new javax.swing.JMenu();
+        menuAddTemplate = new javax.swing.JMenuItem();
+        menuListTemplates = new javax.swing.JMenuItem();
+        menuImportTemplate = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Convert Application");
@@ -136,6 +140,16 @@ public class MainForm extends javax.swing.JFrame {
 
         menuSystem.setText("System");
 
+        menuSeeLog.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_DOWN_MASK));
+        menuSeeLog.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/see-log.png"))); // NOI18N
+        menuSeeLog.setText("See log");
+        menuSeeLog.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuSeeLogActionPerformed(evt);
+            }
+        });
+        menuSystem.add(menuSeeLog);
+
         menuExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.ALT_DOWN_MASK));
         menuExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/exit.png"))); // NOI18N
         menuExit.setText("Exit");
@@ -148,58 +162,6 @@ public class MainForm extends javax.swing.JFrame {
         menuSystem.add(menuExit);
 
         menuBarMainForm.add(menuSystem);
-
-        menuConfig.setText(" Config");
-
-        menuConnectDB.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.ALT_DOWN_MASK));
-        menuConnectDB.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/database.png"))); // NOI18N
-        menuConnectDB.setText("Connect to DB");
-        menuConnectDB.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        menuConnectDB.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuConnectDBActionPerformed(evt);
-            }
-        });
-        menuConfig.add(menuConnectDB);
-
-        menuDefaultValues.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.ALT_DOWN_MASK));
-        menuDefaultValues.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/default-value.png"))); // NOI18N
-        menuDefaultValues.setText("Default values");
-        menuDefaultValues.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        menuDefaultValues.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuDefaultValuesActionPerformed(evt);
-            }
-        });
-        menuConfig.add(menuDefaultValues);
-
-        menuBarMainForm.add(menuConfig);
-
-        menuOutput.setText("Output");
-
-        menuAddTemplate.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.ALT_DOWN_MASK));
-        menuAddTemplate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/add-template.png"))); // NOI18N
-        menuAddTemplate.setText("Add template");
-        menuAddTemplate.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        menuAddTemplate.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuAddTemplateActionPerformed(evt);
-            }
-        });
-        menuOutput.add(menuAddTemplate);
-
-        menuListTemplates.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.ALT_DOWN_MASK));
-        menuListTemplates.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/list-teamplates.png"))); // NOI18N
-        menuListTemplates.setText("List templates");
-        menuListTemplates.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        menuListTemplates.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuListTemplatesActionPerformed(evt);
-            }
-        });
-        menuOutput.add(menuListTemplates);
-
-        menuBarMainForm.add(menuOutput);
 
         menuSetFolder.setText(" Set folder");
 
@@ -245,6 +207,78 @@ public class MainForm extends javax.swing.JFrame {
 
         menuBarMainForm.add(menuSetFolder);
 
+        menuConfig.setText(" Config");
+
+        menuConnectDB.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.ALT_DOWN_MASK));
+        menuConnectDB.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/database.png"))); // NOI18N
+        menuConnectDB.setText("Connect to DB");
+        menuConnectDB.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        menuConnectDB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuConnectDBActionPerformed(evt);
+            }
+        });
+        menuConfig.add(menuConnectDB);
+
+        menuDefaultValues.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.ALT_DOWN_MASK));
+        menuDefaultValues.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/default-value.png"))); // NOI18N
+        menuDefaultValues.setText("Default values");
+        menuDefaultValues.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        menuDefaultValues.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuDefaultValuesActionPerformed(evt);
+            }
+        });
+        menuConfig.add(menuDefaultValues);
+
+        menuQueries.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.ALT_DOWN_MASK));
+        menuQueries.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/query.png"))); // NOI18N
+        menuQueries.setText("Queries");
+        menuQueries.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuQueriesActionPerformed(evt);
+            }
+        });
+        menuConfig.add(menuQueries);
+
+        menuBarMainForm.add(menuConfig);
+
+        menuOutput.setText("Output");
+
+        menuAddTemplate.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.ALT_DOWN_MASK));
+        menuAddTemplate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/add-template.png"))); // NOI18N
+        menuAddTemplate.setText("Add template");
+        menuAddTemplate.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        menuAddTemplate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuAddTemplateActionPerformed(evt);
+            }
+        });
+        menuOutput.add(menuAddTemplate);
+
+        menuListTemplates.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.ALT_DOWN_MASK));
+        menuListTemplates.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/list-teamplates.png"))); // NOI18N
+        menuListTemplates.setText("List templates");
+        menuListTemplates.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        menuListTemplates.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuListTemplatesActionPerformed(evt);
+            }
+        });
+        menuOutput.add(menuListTemplates);
+
+        menuImportTemplate.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.ALT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        menuImportTemplate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/import-template.png"))); // NOI18N
+        menuImportTemplate.setText(" Import templates");
+        menuImportTemplate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuImportTemplateActionPerformed(evt);
+            }
+        });
+        menuOutput.add(menuImportTemplate);
+
+        menuBarMainForm.add(menuOutput);
+
         setJMenuBar(menuBarMainForm);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -281,7 +315,7 @@ public class MainForm extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnConvertFile)
                     .addComponent(cbbTemplate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(22, Short.MAX_VALUE))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
 
         pack();
@@ -421,7 +455,7 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_menuConnectDBActionPerformed
 
     private void menuDefaultValuesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuDefaultValuesActionPerformed
-          new DefaultValuesDialog(this, rootPaneCheckingEnabled).setVisible(true);
+        new DefaultValuesDialog(this, rootPaneCheckingEnabled).setVisible(true);
     }//GEN-LAST:event_menuDefaultValuesActionPerformed
 
     private void menuInputFolderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuInputFolderActionPerformed
@@ -504,6 +538,39 @@ public class MainForm extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_menuProcessFolderActionPerformed
 
+    private void menuSeeLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSeeLogActionPerformed
+        new SeeLogDialog(this, rootPaneCheckingEnabled, "").setVisible(true);
+    }//GEN-LAST:event_menuSeeLogActionPerformed
+
+    private void menuImportTemplateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuImportTemplateActionPerformed
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setMultiSelectionEnabled(true); // Enable multiple file selection
+
+        // Set file filters
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("xml", "xml");
+        fileChooser.setFileFilter(filter);
+        fileChooser.setAcceptAllFileFilterUsed(false);
+
+        int result = fileChooser.showOpenDialog(this);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File[] selectedFiles = fileChooser.getSelectedFiles();
+            StringBuilder sb = new StringBuilder();
+            for (File file : selectedFiles) {
+                sb.append(file.getAbsolutePath()).append(", ");
+            }
+            sb.delete(sb.length() - 2, sb.length());
+            ImportTemplateDialog importTemplateDialog = new ImportTemplateDialog(this, rootPaneCheckingEnabled, sb.toString(), selectedFiles);
+            importTemplateDialog.setVisible(true);
+        } else {
+            System.out.println("No files selected.");
+        }
+    }//GEN-LAST:event_menuImportTemplateActionPerformed
+
+    private void menuQueriesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuQueriesActionPerformed
+        new QueriesDialog(this, rootPaneCheckingEnabled).setVisible(true);
+    }//GEN-LAST:event_menuQueriesActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnChooseFile;
@@ -518,11 +585,14 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuDefaultValues;
     private javax.swing.JMenuItem menuErrorFolder;
     private javax.swing.JMenuItem menuExit;
+    private javax.swing.JMenuItem menuImportTemplate;
     private javax.swing.JMenuItem menuInputFolder;
     private javax.swing.JMenuItem menuListTemplates;
     private javax.swing.JMenu menuOutput;
     private javax.swing.JMenuItem menuOutputFolder;
     private javax.swing.JMenuItem menuProcessFolder;
+    private javax.swing.JMenuItem menuQueries;
+    private javax.swing.JMenuItem menuSeeLog;
     private javax.swing.JMenu menuSetFolder;
     private javax.swing.JMenu menuSystem;
     private javax.swing.JTextField txtPathFileInput;
