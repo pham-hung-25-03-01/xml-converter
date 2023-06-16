@@ -302,6 +302,10 @@ public class TemplateDialog extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Please select a node to add!", "Warning", JOptionPane.WARNING_MESSAGE);
             return;
         }
+        if (jTreeXML.getSelectionCount() > 1) {
+            JOptionPane.showMessageDialog(this, "Please select only one node to add!", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         MainForm mainForm = (MainForm) this.getParent();
         String selectedItem = cbbOptionAdd.getSelectedItem().toString();
         DefaultMutableTreeNode currNode = (DefaultMutableTreeNode) selectionPath.getLastPathComponent();
@@ -359,13 +363,15 @@ public class TemplateDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-    
         TreePath selectionPath = jTreeXML.getSelectionPath();
         if (selectionPath == null) {
             JOptionPane.showMessageDialog(this, "Please select a node to update!", "Warning", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
+        if (jTreeXML.getSelectionCount() > 1) {
+            JOptionPane.showMessageDialog(this, "Please select only one node to add!", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         DefaultMutableTreeNode currNode = (DefaultMutableTreeNode) selectionPath.getLastPathComponent();
         String nodeText = currNode.getUserObject().toString();
         MainForm mainForm = (MainForm) this.getParent();
@@ -509,7 +515,7 @@ public class TemplateDialog extends javax.swing.JDialog {
 
     private void jTreeXMLMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTreeXMLMouseClicked
         TreeSelectionModel selectionModel = jTreeXML.getSelectionModel();
-        if(selectionModel.getSelectionCount() > 0 && selectionModel.getSelectionPath().getPathCount() > 1)
+        if(selectionModel.getSelectionCount() > 0 && selectionModel.getSelectionPath().getPathCount() > 0)
         {
             DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) jTreeXML.getSelectionPath().getLastPathComponent();
             String nodeText = selectedNode.getUserObject().toString();
