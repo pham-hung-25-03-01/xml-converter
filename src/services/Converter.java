@@ -70,16 +70,20 @@ public class Converter {
             String targetFileName = generator.generateTargetFileName(templateName);
             String targetFilePath = Config.getConfigPath().get("DefaultOutputFolder", "PATH") + "/" + targetFileName;
             File targetFile = new File(targetFilePath) {{
-                getParentFile().mkdirs();
-                createNewFile();
+                if (!exists()) {
+                    getParentFile().mkdirs();
+                    createNewFile();
+                }
             }};
 
             Files.writeString(targetFile.toPath(), prettyPrintXml, StandardCharsets.UTF_8);
 
             String fprocessPath = Config.getConfigPath().get("DefaultProcessFolder", "PATH") + "/" + CurrentValues.SourceFile.getName();
             File fprocess = new File(fprocessPath) {{
-                getParentFile().mkdirs();
-                createNewFile();
+                if (!exists()) {
+                    getParentFile().mkdirs();
+                    createNewFile();
+                }
             }};
 
             Files.copy(CurrentValues.SourceFile.toPath(), fprocess.toPath(), StandardCopyOption.REPLACE_EXISTING);
@@ -92,8 +96,10 @@ public class Converter {
             
             String ferrorPath = Config.getConfigPath().get("DefaultErrorFolder", "PATH") + "/" + CurrentValues.SourceFile.getName();
             File ferror = new File(ferrorPath) {{
-                getParentFile().mkdirs();
-                createNewFile();
+                if (!exists()) {
+                    getParentFile().mkdirs();
+                    createNewFile();
+                }
             }};
 
             Files.copy(CurrentValues.SourceFile.toPath(), ferror.toPath(), StandardCopyOption.REPLACE_EXISTING);
@@ -149,7 +155,7 @@ public class Converter {
 
         String targetFileName = templateName.toLowerCase();
 
-        String targetFilePath = "configs/templates/" + targetFileName + ".xml";
+        String targetFilePath = Config.getConfigPath().get("DefaultTemplateFolder", "PATH") + "/" + targetFileName + ".xml";
         File targetFile = new File(targetFilePath) {{
             getParentFile().mkdirs();
             createNewFile();

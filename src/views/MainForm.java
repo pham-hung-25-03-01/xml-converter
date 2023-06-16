@@ -21,6 +21,8 @@ import javax.swing.JProgressBar;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import services.Converter;
+import services.Importer;
+import services.LogReader;
 import utils.FileTypeFilter;
 
 /**
@@ -57,7 +59,7 @@ public class MainForm extends javax.swing.JFrame {
         Wini ini = Config.getConfigPath();
         for (String sectionName : ini.keySet()) {
             if (sectionName.matches("^\\w+Template$") && !sectionName.equals("FileHeaderTemplate")) {
-                cbbTemplate.addItem(sectionName.replace("Template", ""));
+                cbbTemplate.addItem(sectionName.replaceAll("Template$", ""));
             }
         }
     }
@@ -422,7 +424,7 @@ public class MainForm extends javax.swing.JFrame {
                         
                         progressBar.setValue(100);
 
-                        JOptionPane.showMessageDialog(null, "Convert " + countSuccess + "/" + targetFilePaths.size() + " files successfully!", "Notification", JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "Converted " + countSuccess + " out of " + sourceFilePaths.size() + " files successfully!", "Notification", JOptionPane.INFORMATION_MESSAGE);
                         txtPathFileInput.setText("");
                         selectedFilePaths.clear();
                     }
@@ -539,7 +541,7 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_menuProcessFolderActionPerformed
 
     private void menuSeeLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSeeLogActionPerformed
-        new SeeLogDialog(this, rootPaneCheckingEnabled, "").setVisible(true);
+        new SeeLogDialog(this, rootPaneCheckingEnabled, LogReader.getLog()).setVisible(true);
     }//GEN-LAST:event_menuSeeLogActionPerformed
 
     private void menuImportTemplateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuImportTemplateActionPerformed
@@ -547,7 +549,7 @@ public class MainForm extends javax.swing.JFrame {
         fileChooser.setMultiSelectionEnabled(true); // Enable multiple file selection
 
         // Set file filters
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("xml", "xml");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(".xml", "xml");
         fileChooser.setFileFilter(filter);
         fileChooser.setAcceptAllFileFilterUsed(false);
 
@@ -555,15 +557,57 @@ public class MainForm extends javax.swing.JFrame {
 
         if (result == JFileChooser.APPROVE_OPTION) {
             File[] selectedFiles = fileChooser.getSelectedFiles();
-            StringBuilder sb = new StringBuilder();
-            for (File file : selectedFiles) {
-                sb.append(file.getAbsolutePath()).append(", ");
+            if (selectedFiles.length == 0) {
+                JOptionPane.showMessageDialog(null, "No files selected!", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
             }
-            sb.delete(sb.length() - 2, sb.length());
-            ImportTemplateDialog importTemplateDialog = new ImportTemplateDialog(this, rootPaneCheckingEnabled, sb.toString(), selectedFiles);
-            importTemplateDialog.setVisible(true);
-        } else {
-            System.out.println("No files selected.");
+
+            JProgressBar progressBar = new JProgressBar(0, 100);
+            progressBar.setStringPainted(true);
+            progressBar.setString("Importing...");
+            progressBar.setValue(0);
+            JOptionPane pane = new JOptionPane(progressBar);
+            pane.setOptions(new Object[]{});
+            JDialog dialog = pane.createDialog(this, "Import templates");
+            dialog.setModal(true);
+            dialog.setResizable(false);
+            dialog.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    convertThread.interrupt();
+                    dialog.dispose();
+                }
+            });
+            Thread dialogThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    dialog.setVisible(true);
+                }
+            });
+            dialogThread.start(); 
+            convertThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    List<String> listPath = new ArrayList<String>();
+                    for (File file : selectedFiles) {
+                        listPath.add(file.getAbsolutePath());
+                        
+                    }
+                    Importer importer = new Importer();
+                    List<String> templates = importer.importTemplates(listPath, progressBar);
+                    int countSuccess = 0;
+                    for (String template : templates) {
+                        if (!template.equals("")) {
+                            countSuccess++;
+                            MainForm.this.getCbbTemplate().addItem(template);
+                        }
+                    }
+
+                    JOptionPane.showMessageDialog(null, "Imported " + countSuccess + " out of " + templates.size() + " templates successfully!", "Notification", JOptionPane.INFORMATION_MESSAGE);
+                    dialog.dispose();
+                }
+            });
+            convertThread.start();
         }
     }//GEN-LAST:event_menuImportTemplateActionPerformed
 

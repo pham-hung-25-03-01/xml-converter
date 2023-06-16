@@ -180,7 +180,7 @@ public class ConfigTemplateDialog extends javax.swing.JDialog {
 
         for (String sectionName : ini.keySet()) {
             if (sectionName.matches("^\\w+Template$") && !sectionName.equals("FileHeaderTemplate")) {
-                String templateName = sectionName.replace("Template", "");
+                String templateName = sectionName.replaceAll("Template$", "");
                 String templatePath = ini.get(sectionName, "PATH");
                 Object[] row = {templateName, templatePath};
                 model.addRow(row);

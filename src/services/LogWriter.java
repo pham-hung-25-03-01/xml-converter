@@ -5,11 +5,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
+
+import utils.Config;
 import utils.LogFormatter;
 
 public class LogWriter {
-    private static String logFilePath = "logs/default.log";
-
     public enum LogType {
         SEVERE,
         WARNING,
@@ -22,8 +22,8 @@ public class LogWriter {
 
     public static void writeLog(String message, LogType logType) {
         boolean append = true;
-        
         try {
+            String logFilePath = Config.getConfigPath().get("DefaultLogFile", "PATH");
             FileHandler handler = new FileHandler(logFilePath, append);
             handler.setFormatter(new LogFormatter());
             Logger logger = Logger.getLogger("SERVICES");
@@ -59,6 +59,7 @@ public class LogWriter {
 
     public static void cleanLog() {
         try {
+            String logFilePath = Config.getConfigPath().get("DefaultLogFile", "PATH");
             new FileOutputStream(new File(logFilePath)).close();
         } catch (IOException e) {
             System.out.println(e.getMessage());
