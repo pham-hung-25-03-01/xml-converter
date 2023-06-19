@@ -359,8 +359,10 @@ public class TemplateDialog extends javax.swing.JDialog {
                 DefaultMutableTreeNode node = new DefaultMutableTreeNode(nodeName);
                 if (currNode.getChildCount() == 0) {
                     currNode.insert(node, 0);
-                } else {
+                } else if (((DefaultMutableTreeNode)currNode.getFirstChild()).getUserObject().toString().contains("attributes")) {
                     currNode.insert(node, 1);
+                } else {
+                    currNode.insert(node, 0);
                 }
                 isSuccess = true;
             }

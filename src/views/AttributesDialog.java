@@ -103,7 +103,7 @@ public class AttributesDialog extends javax.swing.JDialog {
         jLabel4.setText(" Format:");
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 2, 12)); // NOI18N
-        jLabel5.setText("Ex: CL1; CL2;... or empty");
+        jLabel5.setText("Ex: CL1; CL2=Y;... or empty");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

@@ -16,7 +16,7 @@ import utils.Data;
  * @author ASUS RG
  */
 public class ValueDialog extends javax.swing.JDialog {
-    private String value;
+    private String output;
     private boolean isOK = false;
     /**
      * Creates new form AddValueDialog
@@ -28,7 +28,7 @@ public class ValueDialog extends javax.swing.JDialog {
         loadCBB();
     }
     public String getValue() {
-        return value;
+        return output;
     }
 
     public boolean isOK() {
@@ -147,35 +147,14 @@ public class ValueDialog extends javax.swing.JDialog {
     }
     
     private void btnAddValueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddValueActionPerformed
-        String input = txtValue.getText().trim();
-        if (input == null || input.isBlank()) {
-            JOptionPane.showMessageDialog(null, "Value is not empty", "Error", JOptionPane.ERROR_MESSAGE);
+        String value = txtPreview.getText().trim();
+        if (value == null || value.isBlank()) {
+            JOptionPane.showMessageDialog(null, "Value of preview is not empty", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        String option = cbbValue.getSelectedItem().toString();
-        switch(option){
-            case "from_file":
-                this.value = "${" + input + "}";
-                break;
-            case "from_db":
-                this.value = "@{" + input + "}";
-                break;
-            case "from_generator":
-                this.value = "#{" + input + "}";
-                break;
-            case "from_default_values":
-                this.value = "*{" + input + "}";
-                break;
-            case "from_template":
-                this.value = input;
-                break;
-        }
-        if (this.value != null && !this.value.isBlank()) {
-            this.isOK = true;
-            this.setVisible(false);
-        } else {
-            JOptionPane.showMessageDialog(null, "Value is not empty", "Error", JOptionPane.ERROR_MESSAGE);
-        }
+        this.output = value;
+        this.isOK = true;
+        this.setVisible(false);
     }//GEN-LAST:event_btnAddValueActionPerformed
 
     private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
@@ -183,7 +162,33 @@ public class ValueDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_btnClearActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        
+        String input = txtValue.getText();
+        if (input == null || input.isBlank()) {
+            JOptionPane.showMessageDialog(null, "Value is not empty", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        String option = cbbValue.getSelectedItem().toString();
+        String result = txtPreview.getText();
+        switch(option){
+            case "from_file":
+                result += "${" + input.trim() + "}";
+                break;
+            case "from_db":
+                result += "@{" + input.trim() + "}";
+                break;
+            case "from_generator":
+                result += "#{" + input.trim() + "}";
+                break;
+            case "from_default_values":
+                result += "*{" + input.trim() + "}";
+                break;
+            case "from_template":
+                result += input;
+                break;
+        }
+        txtPreview.setText(result);
+        txtValue.setText("");
+        cbbValue.setSelectedIndex(0);
     }//GEN-LAST:event_btnAddActionPerformed
 
     /**
