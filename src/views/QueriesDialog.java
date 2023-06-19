@@ -4,7 +4,10 @@
  */
 package views;
 
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JOptionPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 
 /**
@@ -41,6 +44,7 @@ public class QueriesDialog extends javax.swing.JDialog {
         btnDeleteQuery = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         txtQuery = new javax.swing.JTextArea();
+        btnClearText = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Queries");
@@ -80,6 +84,8 @@ public class QueriesDialog extends javax.swing.JDialog {
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel2.setText("Query:");
 
+        txtKey.setToolTipText("Enter a key");
+
         btnAddQuery.setText("Add");
         btnAddQuery.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -103,7 +109,15 @@ public class QueriesDialog extends javax.swing.JDialog {
 
         txtQuery.setColumns(20);
         txtQuery.setRows(5);
+        txtQuery.setToolTipText("Enter a query");
         jScrollPane2.setViewportView(txtQuery);
+
+        btnClearText.setText("Clear text");
+        btnClearText.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClearTextActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -121,11 +135,13 @@ public class QueriesDialog extends javax.swing.JDialog {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtKey)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(btnAddQuery, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnUpdateQuery, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnDeleteQuery, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(btnClearText)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnAddQuery, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnUpdateQuery, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnDeleteQuery, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jScrollPane2))))
                 .addGap(19, 19, 19))
         );
@@ -146,7 +162,8 @@ public class QueriesDialog extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAddQuery)
                     .addComponent(btnUpdateQuery)
-                    .addComponent(btnDeleteQuery))
+                    .addComponent(btnDeleteQuery)
+                    .addComponent(btnClearText))
                 .addGap(17, 17, 17))
         );
 
@@ -201,6 +218,16 @@ public class QueriesDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_btnDeleteQueryActionPerformed
 
+    private void btnClearTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearTextActionPerformed
+        txtKey.setText("");
+        txtQuery.setText("");
+        tblQueries.clearSelection();
+        tblQueries.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        DefaultListSelectionModel selectionModel = (DefaultListSelectionModel) tblQueries.getSelectionModel();
+        selectionModel.setSelectionMode(DefaultListSelectionModel.SINGLE_SELECTION);
+        selectionModel.setSelectionInterval(-1, -1);
+    }//GEN-LAST:event_btnClearTextActionPerformed
+
     private void loadDataTbl()
     {
         DefaultTableCellRenderer renderer = (DefaultTableCellRenderer) tblQueries.getTableHeader().getDefaultRenderer();
@@ -250,6 +277,7 @@ public class QueriesDialog extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddQuery;
+    private javax.swing.JButton btnClearText;
     private javax.swing.JButton btnDeleteQuery;
     private javax.swing.JButton btnUpdateQuery;
     private javax.swing.JLabel jLabel1;

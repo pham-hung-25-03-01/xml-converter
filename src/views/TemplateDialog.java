@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Stack;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -152,6 +154,8 @@ public class TemplateDialog extends javax.swing.JDialog {
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel1.setText("Template name:");
+
+        txtTemplateName.setToolTipText("Enter a template name");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -352,7 +356,12 @@ public class TemplateDialog extends javax.swing.JDialog {
                 JOptionPane.showMessageDialog(null, "Value already exist", "Info", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
-            ValueDialog addValueDialog = new ValueDialog(mainForm, "Add value", rootPaneCheckingEnabled);
+            ValueDialog addValueDialog = null;
+            try {
+                addValueDialog = new ValueDialog(mainForm, "Add value", rootPaneCheckingEnabled);
+            } catch (IOException ex) {
+                Logger.getLogger(TemplateDialog.class.getName()).log(Level.SEVERE, null, ex);
+            }
             addValueDialog.setVisible(true);
             if(addValueDialog.isOK() && !addValueDialog.getValue().isBlank()) {
                 String nodeName = "value (" + addValueDialog.getValue() + ")";
@@ -408,7 +417,12 @@ public class TemplateDialog extends javax.swing.JDialog {
             }
             editAttributeDialog.dispose();
         } else {
-            ValueDialog editValueDialog = new ValueDialog(mainForm, "Edit value", rootPaneCheckingEnabled);
+            ValueDialog editValueDialog = null;
+            try {
+                editValueDialog = new ValueDialog(mainForm, "Edit value", rootPaneCheckingEnabled);
+            } catch (IOException ex) {
+                Logger.getLogger(TemplateDialog.class.getName()).log(Level.SEVERE, null, ex);
+            }
             editValueDialog.setVisible(true);
             if (editValueDialog.isOK() && !editValueDialog.getValue().isBlank()) {
                 String nodeName = "value (" + editValueDialog.getValue() + ")";

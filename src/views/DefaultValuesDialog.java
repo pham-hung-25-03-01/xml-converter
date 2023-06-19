@@ -87,7 +87,7 @@ public class DefaultValuesDialog extends javax.swing.JDialog {
         btnUpdate = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Default Values");
+        setTitle("Default values");
         setResizable(false);
 
         tblDefaultValues.setModel(new javax.swing.table.DefaultTableModel(
@@ -110,7 +110,7 @@ public class DefaultValuesDialog extends javax.swing.JDialog {
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 3, 20)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Config Default Values");
+        jLabel1.setText("Config default values");
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel2.setText("Key: ");

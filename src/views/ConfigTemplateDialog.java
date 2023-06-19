@@ -44,9 +44,10 @@ public class ConfigTemplateDialog extends javax.swing.JDialog {
         tblTemplates = new javax.swing.JTable();
         btnEdit = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
+        btnDuplicate = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Config Templates");
+        setTitle("Config templates");
 
         tblTemplates.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -64,7 +65,6 @@ public class ConfigTemplateDialog extends javax.swing.JDialog {
                 return canEdit [columnIndex];
             }
         });
-        
         jScrollPane1.setViewportView(tblTemplates);
         if (tblTemplates.getColumnModel().getColumnCount() > 0) {
             tblTemplates.getColumnModel().getColumn(0).setResizable(false);
@@ -74,6 +74,7 @@ public class ConfigTemplateDialog extends javax.swing.JDialog {
 
         btnEdit.setText("Edit");
         btnEdit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnEdit.setPreferredSize(new java.awt.Dimension(75, 23));
         btnEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEditActionPerformed(evt);
@@ -82,9 +83,17 @@ public class ConfigTemplateDialog extends javax.swing.JDialog {
 
         btnDelete.setText("Delete");
         btnDelete.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnDelete.setPreferredSize(new java.awt.Dimension(75, 23));
         btnDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDeleteActionPerformed(evt);
+            }
+        });
+
+        btnDuplicate.setText("Duplicate");
+        btnDuplicate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDuplicateActionPerformed(evt);
             }
         });
 
@@ -94,24 +103,27 @@ public class ConfigTemplateDialog extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(14, 14, 14)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 456, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnEdit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnDelete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(btnDelete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnDuplicate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(13, 13, 13))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(16, 16, 16)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnEdit)
-                    .addComponent(btnDelete))
-                .addGap(16, 16, 16))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnDelete, javax.swing.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE)
+                    .addComponent(btnEdit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnDuplicate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -164,6 +176,18 @@ public class ConfigTemplateDialog extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Can not edit!", "Error", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_btnEditActionPerformed
+
+    private void btnDuplicateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDuplicateActionPerformed
+        if(tblTemplates.getSelectedRowCount() < 1)
+        {
+            JOptionPane.showMessageDialog(this, "Please select a template to duplicate", "Warning", JOptionPane.WARNING_MESSAGE);
+        }
+        else
+        {
+            //duplicate
+            new InputTextDialog((MainForm) this.getParent(), rootPaneCheckingEnabled, "", "").setVisible(true);
+        }
+    }//GEN-LAST:event_btnDuplicateActionPerformed
 
     private void loadTemplates() throws IOException
     {
@@ -233,6 +257,7 @@ public class ConfigTemplateDialog extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnDuplicate;
     private javax.swing.JButton btnEdit;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblTemplates;

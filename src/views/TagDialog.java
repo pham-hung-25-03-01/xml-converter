@@ -4,6 +4,7 @@
  */
 package views;
 
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 /**
@@ -19,7 +20,14 @@ public class TagDialog extends javax.swing.JDialog {
     public TagDialog(java.awt.Frame parent, String title, boolean modal) {
         super(parent, modal);
         initComponents();
-        setTitle(title);    
+        setTitle(title);
+        loadImgApp("/img/openway-way4-logo.png");
+    }
+    
+        private void loadImgApp(String path)
+    {
+        ImageIcon icon = new ImageIcon(this.getClass().getResource(path));
+        this.setIconImage(icon.getImage());
     }
 
     public String getTagName() {
@@ -44,10 +52,11 @@ public class TagDialog extends javax.swing.JDialog {
         btnAddTag = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setResizable(false);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel1.setText("Tag name:");
+
+        txtTagName.setToolTipText("Enter a tag name");
 
         btnAddTag.setText("OK");
         btnAddTag.addActionListener(new java.awt.event.ActionListener() {
