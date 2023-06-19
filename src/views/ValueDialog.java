@@ -4,12 +4,21 @@
  */
 package views;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
+import utils.Config;
 
 import utils.Data;
+import utils.Generator;
 
 /**
  *
@@ -18,6 +27,10 @@ import utils.Data;
 public class ValueDialog extends javax.swing.JDialog {
     private String output;
     private boolean isOK = false;
+    private static List<String> lstDB = new ArrayList<>();
+    private static List<String> lstDefaultValue = new ArrayList<>();
+    private static List<String> lstGenerator = new ArrayList<>();
+    private static HashMap<String, ArrayList<String>> hashMapDetailValue = new HashMap<>();
     /**
      * Creates new form AddValueDialog
      */
@@ -26,6 +39,14 @@ public class ValueDialog extends javax.swing.JDialog {
         initComponents();
         setTitle(title);
         loadCBB();
+        try {
+            loadFromDB();
+            loadFromDefaultValue();
+            loadFromGenerator();
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Can not load data!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
     }
     public String getValue() {
         return output;
@@ -51,8 +72,11 @@ public class ValueDialog extends javax.swing.JDialog {
         jLabel2 = new javax.swing.JLabel();
         txtPreview = new javax.swing.JTextField();
         btnClear = new javax.swing.JButton();
+        cbbDetailValue = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        txtValue.setToolTipText("Enter a value");
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel1.setText("Value:");
@@ -61,6 +85,12 @@ public class ValueDialog extends javax.swing.JDialog {
         btnAddValue.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAddValueActionPerformed(evt);
+            }
+        });
+
+        cbbValue.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbbValueActionPerformed(evt);
             }
         });
 
@@ -89,11 +119,11 @@ public class ValueDialog extends javax.swing.JDialog {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(451, 451, 451)
                         .addComponent(btnAddValue, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
                         .addGap(22, 22, 22)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -102,14 +132,16 @@ public class ValueDialog extends javax.swing.JDialog {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(cbbValue, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(cbbDetailValue, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(txtPreview, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
                                 .addComponent(txtValue)))
                         .addGap(12, 12, 12)
-                        .addComponent(btnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(22, 22, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btnClear, javax.swing.GroupLayout.DEFAULT_SIZE, 83, Short.MAX_VALUE)
+                            .addComponent(btnAdd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -122,11 +154,12 @@ public class ValueDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
+                    .addComponent(jLabel1)
+                    .addComponent(btnAdd))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cbbValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAdd))
+                    .addComponent(cbbDetailValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnAddValue)
                 .addGap(13, 13, 13))
@@ -143,6 +176,38 @@ public class ValueDialog extends javax.swing.JDialog {
         for(Data.Type type : lstType)
         {
             cbbValue.addItem(type.toString().toLowerCase());
+        }
+    }
+    
+    private void loadFromDB() throws IOException
+    {
+        lstDB.clear();
+        Properties keyDB = Config.getQueries();
+        Set<String> headers = keyDB.stringPropertyNames();  
+        for(String item : headers)
+        {
+            lstDB.add(item);
+        }
+    }
+    
+    private void loadFromDefaultValue() throws IOException
+    {
+        lstDefaultValue.clear();
+        Properties keyDefaultValue = Config.getConfigDefaultValues();
+        Set<String> headers = keyDefaultValue.stringPropertyNames(); 
+        for(String item : headers)
+        {
+            lstDefaultValue.add(item);
+        }
+    }
+    
+    private void loadFromGenerator() throws IOException
+    {
+        lstGenerator.clear();
+        List<Generator.Type> lstValueGenerator = Arrays.asList(Generator.Type.values());
+        for(Generator.Type item : lstValueGenerator)
+        {
+            lstGenerator.add(item.toString());
         }
     }
     
@@ -191,6 +256,64 @@ public class ValueDialog extends javax.swing.JDialog {
         cbbValue.setSelectedIndex(0);
     }//GEN-LAST:event_btnAddActionPerformed
 
+    private void cbbValueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbValueActionPerformed
+        String selectedValue = cbbValue.getSelectedItem().toString();
+        if(selectedValue.contains("db"))
+        {
+            cbbDetailValue.removeAllItems();
+            try {
+                loadFromDB();
+            } catch (IOException ex) {
+                Logger.getLogger(ValueDialog.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            for(String item : lstDB)
+            {
+                cbbDetailValue.addItem(item.toLowerCase());
+            }
+            cbbDetailValue.setEnabled(true);
+            txtValue.setEnabled(false);
+        }
+        
+        else if(selectedValue.contains("default"))
+        {
+            cbbDetailValue.removeAllItems();
+            try {
+                loadFromDefaultValue();
+            } catch (IOException ex) {
+                Logger.getLogger(ValueDialog.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            for(String item : lstDefaultValue)
+            {
+                cbbDetailValue.addItem(item.toLowerCase());
+            }
+            cbbDetailValue.setEnabled(true);
+            txtValue.setEnabled(false);
+        }
+        
+        else if(selectedValue.contains("generator"))
+        {
+            cbbDetailValue.removeAllItems();
+            try {
+                loadFromGenerator();
+            } catch (IOException ex) {
+                Logger.getLogger(ValueDialog.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            for(String item : lstGenerator)
+            {
+                cbbDetailValue.addItem(item.toLowerCase());
+            }
+            cbbDetailValue.setEnabled(true);
+            txtValue.setEnabled(false);
+        }
+        
+        else
+        {
+            cbbDetailValue.setEnabled(false);
+            cbbDetailValue.removeAllItems();
+            txtValue.setEnabled(true);
+        }
+    }//GEN-LAST:event_cbbValueActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -237,6 +360,7 @@ public class ValueDialog extends javax.swing.JDialog {
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnAddValue;
     private javax.swing.JButton btnClear;
+    private javax.swing.JComboBox<String> cbbDetailValue;
     private javax.swing.JComboBox<String> cbbValue;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

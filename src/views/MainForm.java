@@ -18,6 +18,7 @@ import utils.Config;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
+import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import services.Converter;
@@ -40,17 +41,21 @@ public class MainForm extends javax.swing.JFrame {
     public MainForm() {
         initComponents();
         loadDataCBB();
-        loadImgApp("/img/openway-way4-logo.png");
+        loadImgApp("/img/openway-way4-logo.png", "/img/logo.png");
     }
 
     public javax.swing.JComboBox<String> getCbbTemplate() {
         return cbbTemplate;
     }
     
-    private void loadImgApp(String path)
+    private void loadImgApp(String pathIconApp, String pathCopyRight)
     {
-        ImageIcon icon = new ImageIcon(this.getClass().getResource(path));
+        ImageIcon icon = new ImageIcon(this.getClass().getResource(pathIconApp));
         this.setIconImage(icon.getImage());
+        
+        ImageIcon iconCopyRight = new ImageIcon(this.getClass().getResource(pathCopyRight));
+        lbCopyRight.setIcon(iconCopyRight);
+        lbCopyRight.setHorizontalTextPosition(SwingConstants.LEFT);
     }
     
     public void getHeaderIni() throws IOException 
@@ -90,6 +95,8 @@ public class MainForm extends javax.swing.JFrame {
         txtPathFileInput = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         cbbTemplate = new javax.swing.JComboBox<>();
+        lbCopyRight = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
         menuBarMainForm = new javax.swing.JMenuBar();
         menuSystem = new javax.swing.JMenu();
         menuSeeLog = new javax.swing.JMenuItem();
@@ -123,7 +130,7 @@ public class MainForm extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 3, 20)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("XML Converter");
+        jLabel1.setText("XML converter");
 
         btnConvertFile.setText("Convert File");
         btnConvertFile.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -133,10 +140,16 @@ public class MainForm extends javax.swing.JFrame {
             }
         });
 
+        txtPathFileInput.setEditable(false);
+
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel2.setText("File input:");
 
         cbbTemplate.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+        lbCopyRight.setText("Copyright 2023 © by  ");
+
+        jLabel4.setText("Version 1.0.0.0");
 
         menuBarMainForm.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
@@ -289,24 +302,35 @@ public class MainForm extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)
-                .addGap(12, 12, 12)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(txtPathFileInput, javax.swing.GroupLayout.PREFERRED_SIZE, 464, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnChooseFile))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(cbbTemplate, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnConvertFile)))
-                .addGap(26, 26, 26))
+                        .addComponent(lbCopyRight)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE)
+                        .addGap(12, 12, 12)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(txtPathFileInput, javax.swing.GroupLayout.PREFERRED_SIZE, 464, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnChooseFile))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(cbbTemplate, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnConvertFile)))
+                        .addGap(20, 20, 20))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(34, 34, 34)
+                .addContainerGap()
+                .addComponent(jLabel4)
+                .addGap(12, 12, 12)
                 .addComponent(jLabel1)
                 .addGap(32, 32, 32)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -317,7 +341,9 @@ public class MainForm extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnConvertFile)
                     .addComponent(cbbTemplate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lbCopyRight)
+                .addContainerGap())
         );
 
         pack();
@@ -338,6 +364,7 @@ public class MainForm extends javax.swing.JFrame {
         fileChooser.addChoosableFileFilter(csvFilter);
         fileChooser.addChoosableFileFilter(xlsxFilter);
         fileChooser.addChoosableFileFilter(txtFilter);
+        
 
         String path = "";
         try {
@@ -622,6 +649,8 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> cbbTemplate;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel lbCopyRight;
     private javax.swing.JMenuItem menuAddTemplate;
     private javax.swing.JMenuBar menuBarMainForm;
     private javax.swing.JMenu menuConfig;
