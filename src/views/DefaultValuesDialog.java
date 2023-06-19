@@ -10,6 +10,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import utils.Config;
 
@@ -30,7 +31,8 @@ public class DefaultValuesDialog extends javax.swing.JDialog {
         try {
             loadDefaultValues();
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            JOptionPane.showMessageDialog(null, "Cannot load default values", "Error", JOptionPane.ERROR_MESSAGE);
+            this.dispose();
         }
         loadImgApp("/img/openway-way4-logo.png");
 
@@ -57,12 +59,14 @@ public class DefaultValuesDialog extends javax.swing.JDialog {
     
     private void loadDefaultValues() throws IOException
     {
-        DefaultTableModel tblDefaultValues = (DefaultTableModel) this.tblDefaultValues.getModel();
-        tblDefaultValues.setRowCount(0);
+        DefaultTableCellRenderer renderer = (DefaultTableCellRenderer) this.tblDefaultValues.getTableHeader().getDefaultRenderer();
+        renderer.setHorizontalAlignment((int) CENTER_ALIGNMENT);
+        DefaultTableModel defaultValuesModel = (DefaultTableModel) this.tblDefaultValues.getModel();
+        defaultValuesModel.setRowCount(0);
 
         Config.getConfigDefaultValues().forEach((key, value) -> {
             Object[] row = {key, value};
-            tblDefaultValues.addRow(row);
+            defaultValuesModel.addRow(row);
         });
     }
 
@@ -209,46 +213,33 @@ public class DefaultValuesDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-
-        if (txtKey.getText().isEmpty() || txtValue.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please enter the key and value!", "Notification", JOptionPane.WARNING_MESSAGE);
-        } 
-        else 
-        {
-            try 
-            {
-                if (Config.getConfigDefaultValues().containsKey(txtKey.getText()))
-                    JOptionPane.showMessageDialog(this, txtKey.getText() + " already exists!", "Notification", JOptionPane.ERROR_MESSAGE);
-                else
-                {
-                    try
-                    {
-                        Config.setConfigDefaultValues(new HashMap<String, String>(){{
-                            put(txtKey.getText(), txtValue.getText());
-                        }});
-                        
-                        DefaultTableModel tblDefaultValues = (DefaultTableModel) this.tblDefaultValues.getModel();
-                        tblDefaultValues.addRow(new Object[]{txtKey.getText(), txtValue.getText()});
-                        
-                        JOptionPane.showMessageDialog(this, "Add " + txtKey.getText() + " success!", "Notification", JOptionPane.INFORMATION_MESSAGE);
-                        txtKey.setText("");
-                        txtValue.setText("");
-                    }
-                    catch (Exception e) {
-                        JOptionPane.showMessageDialog(this, "Add fail!", "Notification", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            } 
-            catch (IOException ex) {
-                System.out.println(ex.getMessage());
-            }
-
+        String key = txtKey.getText().trim();
+        String value = txtValue.getText().trim();
+        if (key.isBlank() || value.isBlank()) {
+            JOptionPane.showMessageDialog(this, "Please fill all!", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
         }
 
+        try {
+            if (Config.getConfigDefaultValues().containsKey(key)) {
+                JOptionPane.showMessageDialog(this, "This key already exists!", "Warning", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            Config.setConfigDefaultValues(new HashMap<String, String>(){{
+                put(txtKey.getText(), txtValue.getText());
+            }});
+
+            DefaultTableModel model = (DefaultTableModel) this.tblDefaultValues.getModel();
+            model.addRow(new Object[]{key, value});
+            txtKey.setText("");
+            txtValue.setText("");
+            JOptionPane.showMessageDialog(this, "Value added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Error while adding value!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
-        
         if(tblDefaultValues.getCellEditor() != null)
         {
             tblDefaultValues.getCellEditor().stopCellEditing();
@@ -260,52 +251,48 @@ public class DefaultValuesDialog extends javax.swing.JDialog {
             return;
         }
         
-        int confirmResult = JOptionPane.showConfirmDialog(this, "Are you sure to update?", "Confirm", JOptionPane.YES_NO_OPTION);
+        int confirmResult = JOptionPane.showConfirmDialog(this, "Are you sure to update this value?", "Warning", JOptionPane.YES_NO_OPTION);
         if (confirmResult == JOptionPane.YES_OPTION) 
         {
             try {
                 Config.setConfigDefaultValues(updateListDefaultValues);
                 updateListDefaultValues.clear();
-                JOptionPane.showMessageDialog(this, "Update success!", "Notification", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Value updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
             } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "Update fail!", "Notification", JOptionPane.ERROR_MESSAGE);
-                System.out.println(ex.getMessage());
+                JOptionPane.showMessageDialog(this, "Error while updating value!", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-
-        if (tblDefaultValues.getSelectedRow() == -1 || tblDefaultValues.getSelectionModel().isSelectionEmpty()) {
-            // No row is selected by the user
-            JOptionPane.showMessageDialog(this, "Please select a row to delete!", "Notification", JOptionPane.WARNING_MESSAGE);
+        int[] selectedRows = tblDefaultValues.getSelectedRows();
+        if (selectedRows.length < 1) {
+            JOptionPane.showMessageDialog(this, "Please select the row you want to delete!", "Warning", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
-        int confirmResult = JOptionPane.showConfirmDialog(this, "Are you sure to delete?", "Confirmation", JOptionPane.YES_NO_OPTION);
+        int confirmResult = JOptionPane.showConfirmDialog(this, "Are you sure to delete selected rows?", "Warning", JOptionPane.YES_NO_OPTION);
         if (confirmResult == JOptionPane.YES_OPTION) {
             try {
-                int[] selectedRows = tblDefaultValues.getSelectedRows();
                 HashMap<String, String> deleteListDefaultValues = new HashMap<>();
 
                 for (int selectedRow : selectedRows) {
-                    String key = tblDefaultValues.getValueAt(selectedRow, 0).toString();
-                    String value = tblDefaultValues.getValueAt(selectedRow, 1).toString();
+                    String key = this.tblDefaultValues.getValueAt(selectedRow, 0).toString();
+                    String value = this.tblDefaultValues.getValueAt(selectedRow, 1).toString();
                     deleteListDefaultValues.put(key, value);
                 }
 
                 Config.removeConfigDefaultValues(deleteListDefaultValues);
 
-                DefaultTableModel tblDefaultValues = (DefaultTableModel) this.tblDefaultValues.getModel();
+                DefaultTableModel model = (DefaultTableModel) this.tblDefaultValues.getModel();
 
                 for (int i = selectedRows.length - 1; i >= 0; i--) {
-                    tblDefaultValues.removeRow(selectedRows[i]);
+                    model.removeRow(selectedRows[i]);
                 }
 
-                JOptionPane.showMessageDialog(this, "Delete success!", "Notification", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Deleted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
             } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "Delete fail!", "Notification", JOptionPane.ERROR_MESSAGE);
-                System.out.println(ex.getMessage());
+                JOptionPane.showMessageDialog(this, "Error while deleting value!", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }//GEN-LAST:event_btnDeleteActionPerformed

@@ -20,12 +20,4 @@ public class SqlDataReader {
         }
         return null;
     }
-
-    public static void main(String[] args) throws IOException {
-        var reader = new SqlDataReader();
-        var query = Config.getQueries().getProperty("BANKING_DATE");
-        System.out.println(query);
-        var result = reader.getDataFromQuery(query);
-        System.out.println(result);
-    }
 }

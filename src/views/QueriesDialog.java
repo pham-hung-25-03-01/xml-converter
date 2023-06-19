@@ -4,8 +4,14 @@
  */
 package views;
 
+import java.io.IOException;
+import java.util.HashMap;
+
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+
+import utils.Config;
 
 /**
  *
@@ -19,7 +25,20 @@ public class QueriesDialog extends javax.swing.JDialog {
     public QueriesDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        loadDataTbl();
+        try {
+            loadQueries();
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Cannot load queries", "Error", JOptionPane.ERROR_MESSAGE);
+            this.dispose();
+        }
+    }
+
+    private void resetForm() {
+        this.txtKey.setText("");
+        this.txtKey.setEditable(true);
+        this.txtKey.setFocusable(true);
+        this.txtQuery.setText("");
+        this.tblQueries.clearSelection();
     }
 
     /**
@@ -48,8 +67,7 @@ public class QueriesDialog extends javax.swing.JDialog {
 
         tblQueries.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null},
-                {null, null}
+
             },
             new String [] {
                 "Key", "Query"
@@ -157,54 +175,115 @@ public class QueriesDialog extends javax.swing.JDialog {
     private void tblQueriesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblQueriesMouseClicked
         String key = tblQueries.getValueAt(tblQueries.getSelectedRow(), 0).toString();
         String query = tblQueries.getValueAt(tblQueries.getSelectedRow(), 1).toString();
-        txtKey.setText(key);
-        txtQuery.setText(query);
+        this.txtKey.setText(key);
+        this.txtQuery.setText(query);
+        this.txtKey.setEditable(false);
+        this.txtKey.setFocusable(false);
     }//GEN-LAST:event_tblQueriesMouseClicked
 
     private void btnAddQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddQueryActionPerformed
-        String key = txtKey.getText();
-        String query = txtQuery.getText();
-        if(key.isBlank() || query.isBlank())
-        {
+        String key = txtKey.getText().trim();
+        String query = txtQuery.getText().trim();
+        
+        if(key.isBlank() || query.isBlank()) {
             JOptionPane.showMessageDialog(this, "Please fill all!", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
         }
-        else
-        {
-            //add
+
+        try {
+            if (Config.getQueries().containsKey(key)) {
+                JOptionPane.showMessageDialog(this, "This key already exists!", "Warning", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            Config.setQueries(new HashMap<String, String>() {{
+                put(key, query);
+            }});
+
+            DefaultTableModel model = (DefaultTableModel) this.tblQueries.getModel();
+            model.addRow(new Object[]{key, query});
+
+            resetForm();
+
+            JOptionPane.showMessageDialog(this, "Query added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error while adding query!", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnAddQueryActionPerformed
 
     private void btnUpdateQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateQueryActionPerformed
-        String key = txtKey.getText();
-        String query = txtQuery.getText();
-        if(key.isBlank() || query.isBlank())
-        {
-            JOptionPane.showMessageDialog(this, "Please select row to update!", "Warning", JOptionPane.WARNING_MESSAGE);
+        if (this.tblQueries.getSelectedRowCount() > 1) {
+            JOptionPane.showMessageDialog(this, "Please only select one row to update!", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
         }
-        else
-        {
-            //update
+        if (this.tblQueries.getSelectedRowCount() < 1) {
+            JOptionPane.showMessageDialog(this, "Please select a row to update!", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        String key = txtKey.getText().trim();
+        String query = txtQuery.getText().trim();
+        if(key.isBlank() || query.isBlank()) {
+            JOptionPane.showMessageDialog(this, "Please fill all!", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        int confirmResult = JOptionPane.showConfirmDialog(this, "Are you sure to update this query?", "Warning", JOptionPane.YES_NO_OPTION);
+        if (confirmResult == JOptionPane.YES_OPTION) {
+            try {
+                Config.setQueries(new HashMap<String, String>() {{
+                    put(key, query);
+                }});
+                this.tblQueries.setValueAt(query, this.tblQueries.getSelectedRow(), 1);
+                resetForm();
+                JOptionPane.showMessageDialog(this, "Query updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "Error while updating query!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }//GEN-LAST:event_btnUpdateQueryActionPerformed
 
     private void btnDeleteQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteQueryActionPerformed
-        String key = txtKey.getText();
-        String query = txtQuery.getText();
-        int clickTbl = tblQueries.getSelectedRow();
-        if(clickTbl == -1)
-        {
-            JOptionPane.showMessageDialog(this, "Please select a row to delete", "Warning", JOptionPane.WARNING_MESSAGE);
+        int[] selectedRows = tblQueries.getSelectedRows();
+        if (selectedRows.length < 1) {
+            JOptionPane.showMessageDialog(this, "Please select row to delete!", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
         }
-        else
-        {
-            //delete
+        int dialogResult = JOptionPane.showConfirmDialog(this, "Are you sure to delete selected rows?", "Warning", JOptionPane.YES_NO_OPTION);
+        if (dialogResult == JOptionPane.YES_OPTION) {
+            try {
+                HashMap<String, String> deleteListQueries = new HashMap<String, String>();
+                for (int i = selectedRows.length - 1; i >= 0; i--) {
+                    String key = this.tblQueries.getValueAt(selectedRows[i], 0).toString();
+                    String query = this.tblQueries.getValueAt(selectedRows[i], 1).toString();
+                    deleteListQueries.put(key, query);
+                }
+
+                Config.removeQueries(deleteListQueries);
+
+                DefaultTableModel model = (DefaultTableModel) this.tblQueries.getModel();
+
+                for (int i = selectedRows.length - 1; i >= 0; i--) {
+                    model.removeRow(selectedRows[i]);
+                }
+
+                resetForm();
+
+                JOptionPane.showMessageDialog(this, "Deleted successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "Error while deleting query!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }//GEN-LAST:event_btnDeleteQueryActionPerformed
 
-    private void loadDataTbl()
+    private void loadQueries() throws IOException
     {
-        DefaultTableCellRenderer renderer = (DefaultTableCellRenderer) tblQueries.getTableHeader().getDefaultRenderer();
+        DefaultTableCellRenderer renderer = (DefaultTableCellRenderer) this.tblQueries.getTableHeader().getDefaultRenderer();
         renderer.setHorizontalAlignment((int) CENTER_ALIGNMENT);
+        DefaultTableModel queriesModel = (DefaultTableModel) this.tblQueries.getModel();
+        queriesModel.setRowCount(0);
+
+        Config.getQueries().forEach((key, value) -> {
+            Object[] row = {key, value};
+            queriesModel.addRow(row);
+        });
     }
     /**
      * @param args the command line arguments

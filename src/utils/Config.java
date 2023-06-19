@@ -81,6 +81,29 @@ public class Config {
         }};
     }
 
+    public static void setQueries(HashMap<String, String> queries) throws IOException {
+        String defaultQueriesFilePath = getConfigPath().get("Queries", "PATH");
+
+        Properties properties = getQueries();
+
+        for(Map.Entry<String, String> entry : queries.entrySet()) {
+            properties.put(entry.getKey(), entry.getValue());
+        }
+        properties.store(new FileOutputStream(defaultQueriesFilePath), null);
+    }
+
+    public static void removeQueries(HashMap<String, String> queries) throws IOException {
+        String defaultQueriesFilePath = getConfigPath().get("Queries", "PATH");
+
+        Properties properties = getQueries();
+
+        for (Map.Entry<String, String> entry : queries.entrySet()) {
+            properties.remove(entry.getKey());
+        }
+
+        properties.store(new FileOutputStream(defaultQueriesFilePath), null);
+    }
+
     public static XMLEventReader getTemplate(String templateName) throws IOException, XMLStreamException  {
         String templateFilePath = getConfigPath().get(templateName, "PATH");
 
