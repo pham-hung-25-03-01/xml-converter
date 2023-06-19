@@ -30,8 +30,8 @@ public class Validator {
 
     // if add new format type, please add it to last position
     public enum FormatType {
-        FALSE,
-        TRUE
+        DEFAULT,
+        ADD_INFO
     }
 
     public boolean validateAttribute(String attributeName, String attributeValue) {

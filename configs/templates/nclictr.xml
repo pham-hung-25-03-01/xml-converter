@@ -55,7 +55,7 @@
             </BaseAddress>
             <AddInfo>
                 <AddInfo01>${NO_OF_DEPENDANTS}</AddInfo01>
-                <AddInfo02 format="true">RES_PERIOD=${PERIOD_OF_RESIDENCE};OCC_PERIOD=${PERIOD_OF_OCCUPATION};DEPEND_NO=${NO_OF_DEPENDANTS};SP_ID_CARD=${SPOUSE_ID_NUMBER};SP_ID_DATE=${SPOUSE_ID_ISSUED_DATE};</AddInfo02>
+                <AddInfo02 format="add_info">RES_PERIOD=${PERIOD_OF_RESIDENCE};OCC_PERIOD=${PERIOD_OF_OCCUPATION};DEPEND_NO=${NO_OF_DEPENDANTS};SP_ID_CARD=${SPOUSE_ID_NUMBER};SP_ID_DATE=${SPOUSE_ID_ISSUED_DATE};</AddInfo02>
                 <AddInfo03>${TYPE_OF_RESIDENCE}</AddInfo03>
             </AddInfo>
         </Client>

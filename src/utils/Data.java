@@ -5,6 +5,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import utils.Validator.FormatType;
+
 public class Data {
 
     public enum Type {
@@ -68,8 +70,23 @@ public class Data {
         return matches;
     }
 
-    public static String format(String s){
-        return s.replaceAll("\\w+\\=\\;", "");
+    public static String format(String s, FormatType formatType){
+        String regex = "";
+        switch(formatType){
+            case ADD_INFO:
+                regex = "\\w+\\=[^\\s|\\;]+\\;";
+                break;
+            default:
+                return s;
+        }
+
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(s);
+        StringBuilder output = new StringBuilder();
+        while (matcher.find()) {
+            output.append(matcher.group());
+        }
+        return output.toString();
     }
 
 }

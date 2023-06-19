@@ -41,6 +41,7 @@ import utils.Data;
 import utils.Generator;
 import utils.Validator;
 import utils.Data.Type;
+import utils.Validator.FormatType;
 
 public class Converter {
 
@@ -294,10 +295,8 @@ public class Converter {
             s = s.replace(expressionLanguage, data);
         }
 
-        if (CurrentValues.Attributes.get("FORMAT").equals("TRUE")) {
-            s = Data.format(s);
-        }
-        
+        s = Data.format(s, FormatType.valueOf(CurrentValues.Attributes.get("FORMAT").toUpperCase()));
+
         return s;
     }
 
