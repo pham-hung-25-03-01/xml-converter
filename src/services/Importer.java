@@ -2,17 +2,13 @@ package services;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
-
 import javax.swing.JProgressBar;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -75,6 +71,28 @@ public class Importer {
         }
     }
 
+    public String duplicateTemplate(String sourceTemplateName, String targetTemplateName) {
+        try {
+            String sourceTemplatePath = Config.getConfigPath().get(sourceTemplateName + "Template", "PATH");
+            File sourceFile = new File(sourceTemplatePath);
+            String targetTemplatePath = Config.getConfigPath().get("DefaultTemplateFolder", "PATH") + "/" + targetTemplateName.toLowerCase() + ".xml";
+            File targetFile = new File(targetTemplatePath) {{
+                if (!exists()) {
+                    getParentFile().mkdirs();
+                    createNewFile();
+                }
+            }};
+            Files.copy(sourceFile.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            String template = targetTemplateName.substring(0, 1).toUpperCase() + targetTemplateName.substring(1).toLowerCase();
+            targetTemplateName = template + "Template";
+            Config.setConfigPath(targetTemplateName, "PATH", targetTemplatePath);
+            return template;
+        } catch (IOException e) {
+            LogWriter.writeLog(e.getMessage(), LogWriter.LogType.SEVERE);
+            return "";
+        }
+    }
+
     private boolean validateTemplate(XMLEventReader template) throws XMLStreamException {
         if (!template.hasNext()) {
             throw new IllegalArgumentException("Template is empty");
@@ -111,5 +129,4 @@ public class Importer {
         }
         return true;
     }
-
 }
