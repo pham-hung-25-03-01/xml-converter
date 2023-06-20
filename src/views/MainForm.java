@@ -39,6 +39,7 @@ public class MainForm extends javax.swing.JFrame {
      */
     public MainForm() {
         initComponents();
+        this.getRootPane().setDefaultButton(btnConvertFile);
         loadImgApp("/img/openway-way4-logo.png", "/img/logo.png");
         try {
             loadTemplates();

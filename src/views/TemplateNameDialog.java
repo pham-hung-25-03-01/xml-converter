@@ -29,6 +29,7 @@ public class TemplateNameDialog extends javax.swing.JDialog {
     public TemplateNameDialog(java.awt.Frame parent, boolean modal, String title, String label) {
         super(parent, modal);
         initComponents();
+        this.getRootPane().setDefaultButton(btnOK);
         this.setTitle(title);
         this.lbInput.setText(label);
     }

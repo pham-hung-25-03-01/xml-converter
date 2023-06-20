@@ -20,6 +20,7 @@ public class TagDialog extends javax.swing.JDialog {
     public TagDialog(java.awt.Frame parent, String title, boolean modal) {
         super(parent, modal);
         initComponents();
+        this.getRootPane().setDefaultButton(btnAddTag);
         setTitle(title);
         loadImgApp("/img/openway-way4-logo.png");
     }

@@ -5,6 +5,8 @@
 package views;
 
 import java.awt.Component;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -12,11 +14,15 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Stack;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JTree;
+import javax.swing.KeyStroke;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
@@ -39,6 +45,7 @@ public class TemplateDialog extends javax.swing.JDialog {
     private static Converter converter = new Converter();
     private Thread convertThread;
     private String templateName;
+    private boolean isChanged = false;
 
     /**
      * Creates new form TestJTreeDialog
@@ -53,6 +60,25 @@ public class TemplateDialog extends javax.swing.JDialog {
         btnDelete.setEnabled(false);
         jTreeXML.setSelectionRow(0);
         setIconNode();
+        this.getRootPane().registerKeyboardAction(new ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                btnSaveActionPerformed(e);
+            }
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_S,KeyEvent.CTRL_DOWN_MASK),JComponent.WHEN_IN_FOCUSED_WINDOW);
+        this.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                if (isChanged) {
+                    int result = JOptionPane.showConfirmDialog((Component) null, "Do you want to save template before exit?", "Notification", JOptionPane.YES_NO_OPTION);
+                    if (result == JOptionPane.YES_OPTION) {
+                        return;
+                    }
+                }
+                dispose();
+            }
+        });
         this.templateName = templateName;
         if (templateName != null) {
             loadXmlToTree(templateName);
@@ -64,6 +90,23 @@ public class TemplateDialog extends javax.swing.JDialog {
             jTreeXML.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         }
         this.jTreeXML.setSelectionRow(0);
+        this.jTreeXML.getModel().addTreeModelListener(new TreeModelListener() {
+            public void treeNodesChanged(TreeModelEvent e) {
+                isChanged = true;
+            }
+
+            public void treeNodesInserted(TreeModelEvent e) {
+                isChanged = true;
+            }
+
+            public void treeNodesRemoved(TreeModelEvent e) {
+                isChanged = true;
+            }
+
+            public void treeStructureChanged(TreeModelEvent e) {
+                isChanged = true;
+            }
+        });
     }
 
     /**

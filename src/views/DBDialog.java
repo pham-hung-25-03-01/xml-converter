@@ -27,6 +27,7 @@ public class DBDialog extends javax.swing.JDialog {
     public DBDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        this.getRootPane().setDefaultButton(btnConnectDB);
         loadImgApp("/img/openway-way4-logo.png");
         try {
             loadDatabaseConfig();

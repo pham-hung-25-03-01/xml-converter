@@ -27,6 +27,7 @@ public class AttributesDialog extends javax.swing.JDialog {
     public AttributesDialog(java.awt.Frame parent, String title, boolean modal) {
         super(parent, modal);
         initComponents();
+        this.getRootPane().setDefaultButton(btnAddAttribute);
         setTitle(title);
         loadCBB();
     }

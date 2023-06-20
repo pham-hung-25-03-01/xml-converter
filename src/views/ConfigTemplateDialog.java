@@ -73,6 +73,12 @@ public class ConfigTemplateDialog extends javax.swing.JDialog {
             tblTemplates.getColumnModel().getColumn(1).setResizable(false);
         }
 
+        tblTemplates.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblTemplatesMouseClicked(evt);
+            }
+        });
+
         btnEdit.setText("Edit");
         btnEdit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnEdit.setPreferredSize(new java.awt.Dimension(75, 23));
@@ -131,6 +137,16 @@ public class ConfigTemplateDialog extends javax.swing.JDialog {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    public void tblTemplatesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblTemplatesMouseClicked
+        int row = tblTemplates.rowAtPoint(evt.getPoint());
+        int col = tblTemplates.columnAtPoint(evt.getPoint());
+        if (row >= 0 && col >= 0) {
+            if (evt.getClickCount() == 2) {
+                btnEditActionPerformed(null);
+            }
+        }
+    }//GEN-LAST:event_tblTemplatesMouseClicked
+
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         
         if(tblTemplates.getSelectedRowCount() < 1)
@@ -154,7 +170,7 @@ public class ConfigTemplateDialog extends javax.swing.JDialog {
                     }
                     JOptionPane.showMessageDialog(this, "Delete successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                 } catch (IOException e) {
-                    JOptionPane.showMessageDialog(this, "Can not delete!", "Error", JOptionPane.WARNING_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Cannot delete!", "Error", JOptionPane.WARNING_MESSAGE);
                 }
             }
         }
@@ -174,7 +190,7 @@ public class ConfigTemplateDialog extends javax.swing.JDialog {
             TemplateDialog editTemplateDialog = new TemplateDialog((MainForm)this.getParent(), "Edit template", true, templateName);
             editTemplateDialog.setVisible(true);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Can not edit!", "Error", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Cannot edit!", "Error", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_btnEditActionPerformed
 
@@ -196,7 +212,7 @@ public class ConfigTemplateDialog extends javax.swing.JDialog {
             Importer importer = new Importer();
             String targetTemplateName = importer.duplicateTemplate(sourceTemplateName, inputTemplateNameDialog.getText());
             if (targetTemplateName.isBlank()) {
-                JOptionPane.showMessageDialog(this, "Can not duplicate!", "Error", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Cannot duplicate!", "Error", JOptionPane.WARNING_MESSAGE);
                 return;
             }
             ((MainForm) this.getParent()).getCbbTemplate().addItem(targetTemplateName);
@@ -206,7 +222,7 @@ public class ConfigTemplateDialog extends javax.swing.JDialog {
                 model.addRow(new Object[]{targetTemplateName, Config.getConfigPath().get(targetTemplateName + "Template", "PATH")});
                 JOptionPane.showMessageDialog(this, "Duplicate successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
             } catch (IOException e) {
-                JOptionPane.showMessageDialog(this, "Can not load new template!", "Error", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Cannot load new template!", "Error", JOptionPane.WARNING_MESSAGE);
             }
         }
     }//GEN-LAST:event_btnDuplicateActionPerformed

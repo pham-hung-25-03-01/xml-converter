@@ -29,6 +29,7 @@ public class ValueDialog extends javax.swing.JDialog {
     public ValueDialog(java.awt.Frame parent, String title, boolean modal) {
         super(parent, modal);
         initComponents();
+        this.getRootPane().setDefaultButton(btnAdd);
         setTitle(title);
         loadOptions();
         try {

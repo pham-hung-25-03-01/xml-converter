@@ -5,6 +5,7 @@
 
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import javax.swing.JOptionPane;
 import services.InitResource;
 import views.MainForm;
@@ -17,8 +18,10 @@ public class Main {
 
     /**
      * @param args the command line arguments
+     * @throws InterruptedException
+     * @throws InvocationTargetException
      */
-    public static void main(String args[]) {
+    public static void main(String args[]) throws InvocationTargetException, InterruptedException {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -49,7 +52,7 @@ public class Main {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        java.awt.EventQueue.invokeAndWait(new Runnable() {
             public void run() {
                 new MainForm().setVisible(true);
             }
