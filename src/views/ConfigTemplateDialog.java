@@ -27,7 +27,8 @@ public class ConfigTemplateDialog extends javax.swing.JDialog {
         try {
             loadTemplates();
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            JOptionPane.showMessageDialog(this, "Error loading templates", "Error", JOptionPane.ERROR_MESSAGE);
+            this.dispose();
         }
     }
 
@@ -187,7 +188,7 @@ public class ConfigTemplateDialog extends javax.swing.JDialog {
             return;
         }
 
-        TemplateNametDialog inputTemplateNameDialog = new TemplateNametDialog((MainForm) this.getParent(), true, "Duplicate template", "Template name");
+        TemplateNameDialog inputTemplateNameDialog = new TemplateNameDialog((MainForm) this.getParent(), true, "Duplicate template", "Template name");
         inputTemplateNameDialog.setVisible(true);
 
         if (inputTemplateNameDialog.isOK() && !inputTemplateNameDialog.getText().isBlank()) {

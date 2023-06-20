@@ -9,7 +9,6 @@ import java.util.HashMap;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-
 import utils.Config;
 
 /**
@@ -30,6 +29,7 @@ public class QueriesDialog extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(null, "Cannot load queries", "Error", JOptionPane.ERROR_MESSAGE);
             this.dispose();
         }
+        resetForm();
     }
 
     private void resetForm() {
@@ -38,6 +38,9 @@ public class QueriesDialog extends javax.swing.JDialog {
         this.txtKey.setFocusable(true);
         this.txtQuery.setText("");
         this.tblQueries.clearSelection();
+        this.btnAddQuery.setEnabled(true);
+        this.btnUpdateQuery.setEnabled(false);
+        this.btnDeleteQuery.setEnabled(false);
     }
 
     /**
@@ -192,6 +195,9 @@ public class QueriesDialog extends javax.swing.JDialog {
         this.txtQuery.setText(query);
         this.txtKey.setEditable(false);
         this.txtKey.setFocusable(false);
+        this.btnAddQuery.setEnabled(false);
+        this.btnUpdateQuery.setEnabled(true);
+        this.btnDeleteQuery.setEnabled(true);
     }//GEN-LAST:event_tblQueriesMouseClicked
 
     private void btnAddQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddQueryActionPerformed

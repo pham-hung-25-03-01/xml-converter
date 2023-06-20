@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
-
 import org.ini4j.Wini;
 import utils.Config;
 import javax.swing.JFileChooser;
@@ -40,8 +39,13 @@ public class MainForm extends javax.swing.JFrame {
      */
     public MainForm() {
         initComponents();
-        loadDataCBB();
         loadImgApp("/img/openway-way4-logo.png", "/img/logo.png");
+        try {
+            loadTemplates();
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Load templates failed!", "Error", JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
+        }
     }
 
     public javax.swing.JComboBox<String> getCbbTemplate() {
@@ -58,7 +62,7 @@ public class MainForm extends javax.swing.JFrame {
         lbCopyRight.setHorizontalTextPosition(SwingConstants.LEFT);
     }
     
-    public void getHeaderIni() throws IOException 
+    public void loadTemplates() throws IOException 
     {
         cbbTemplate.removeAllItems();
         Wini ini = Config.getConfigPath();
@@ -67,17 +71,6 @@ public class MainForm extends javax.swing.JFrame {
                 cbbTemplate.addItem(sectionName.replaceAll("Template$", ""));
             }
         }
-    }
-
-    public void loadDataCBB()
-    {
-        try 
-        {
-            getHeaderIni();
-        }
-        catch (Exception e) {
-        }
-
     }
     
     /**

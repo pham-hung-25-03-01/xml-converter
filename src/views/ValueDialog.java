@@ -5,18 +5,13 @@
 package views;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import utils.Config;
-
 import utils.Data;
 import utils.Generator;
 
@@ -27,10 +22,7 @@ import utils.Generator;
 public class ValueDialog extends javax.swing.JDialog {
     private String output;
     private boolean isOK = false;
-    private static List<String> lstDB = new ArrayList<>();
-    private static List<String> lstDefaultValue = new ArrayList<>();
-    private static List<String> lstGenerator = new ArrayList<>();
-    private static HashMap<String, ArrayList<String>> hashMapDetailValue = new HashMap<>();
+    private HashMap<String, String[]> listData = new HashMap<String, String[]>();
     /**
      * Creates new form AddValueDialog
      */
@@ -38,14 +30,12 @@ public class ValueDialog extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         setTitle(title);
-        loadCBB();
+        loadOptions();
         try {
-            loadFromDB();
-            loadFromDefaultValue();
-            loadFromGenerator();
+            loadData();
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Can not load data!", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
+            JOptionPane.showMessageDialog(this, "Cannot load data!", "Error", JOptionPane.ERROR_MESSAGE);
+            this.dispose();
         }
     }
     public String getValue() {
@@ -54,6 +44,16 @@ public class ValueDialog extends javax.swing.JDialog {
 
     public boolean isOK() {
         return isOK;
+    }
+
+    private void loadData() throws IOException {
+        Properties queries = Config.getQueries();
+        listData.put("from_db", queries.keySet().toArray(String[]::new));
+
+        listData.put("from_generator", Arrays.stream(Generator.Type.values()).map(Enum::name).toArray(String[]::new));
+        Properties defaultValues = Config.getConfigDefaultValues();
+
+        listData.put("from_default_values", defaultValues.keySet().toArray(String[]::new));
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -169,7 +169,7 @@ public class ValueDialog extends javax.swing.JDialog {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void loadCBB()
+    private void loadOptions()
     {
         List<Data.Type> lstType = Arrays.asList(Data.Type.values());
         
@@ -179,36 +179,10 @@ public class ValueDialog extends javax.swing.JDialog {
         }
     }
     
-    private void loadFromDB() throws IOException
+    private void loadDataForOption(String option)
     {
-        lstDB.clear();
-        Properties keyDB = Config.getQueries();
-        Set<String> headers = keyDB.stringPropertyNames();  
-        for(String item : headers)
-        {
-            lstDB.add(item);
-        }
-    }
-    
-    private void loadFromDefaultValue() throws IOException
-    {
-        lstDefaultValue.clear();
-        Properties keyDefaultValue = Config.getConfigDefaultValues();
-        Set<String> headers = keyDefaultValue.stringPropertyNames(); 
-        for(String item : headers)
-        {
-            lstDefaultValue.add(item);
-        }
-    }
-    
-    private void loadFromGenerator() throws IOException
-    {
-        lstGenerator.clear();
-        List<Generator.Type> lstValueGenerator = Arrays.asList(Generator.Type.values());
-        for(Generator.Type item : lstValueGenerator)
-        {
-            lstGenerator.add(item.toString());
-        }
+        String[] data = listData.get(option);
+        cbbDetailValue.setModel(new DefaultComboBoxModel<>(data));
     }
     
     private void btnAddValueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddValueActionPerformed
@@ -227,91 +201,57 @@ public class ValueDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_btnClearActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
+        String result = txtPreview.getText();
+        String option = cbbValue.getSelectedItem().toString();
         String input = txtValue.getText();
-        if (input == null || input.isBlank()) {
+        String detailOption = cbbDetailValue.getItemCount() > 0 ? cbbDetailValue.getSelectedItem().toString() : "";
+        if ((option.equals("from_file") || option.equals("from_template")) && (input == null || input.isBlank())) {
             JOptionPane.showMessageDialog(null, "Value is not empty", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        String option = cbbValue.getSelectedItem().toString();
-        String result = txtPreview.getText();
-        switch(option){
+        switch(option) {
             case "from_file":
                 result += "${" + input.trim() + "}";
                 break;
             case "from_db":
-                result += "@{" + input.trim() + "}";
+                result += "@{" + detailOption + "}";
                 break;
             case "from_generator":
-                result += "#{" + input.trim() + "}";
+                result += "#{" + detailOption + "}";
                 break;
             case "from_default_values":
-                result += "*{" + input.trim() + "}";
+                result += "*{" + detailOption + "}";
                 break;
             case "from_template":
                 result += input;
                 break;
+            default:
+                JOptionPane.showMessageDialog(null, "Option is invalid", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
         }
         txtPreview.setText(result);
-        txtValue.setText("");
         cbbValue.setSelectedIndex(0);
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void cbbValueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbValueActionPerformed
-        String selectedValue = cbbValue.getSelectedItem().toString();
-        if(selectedValue.contains("db"))
-        {
-            cbbDetailValue.removeAllItems();
-            try {
-                loadFromDB();
-            } catch (IOException ex) {
-                Logger.getLogger(ValueDialog.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            for(String item : lstDB)
-            {
-                cbbDetailValue.addItem(item.toLowerCase());
-            }
-            cbbDetailValue.setEnabled(true);
-            txtValue.setEnabled(false);
+        String option = cbbValue.getSelectedItem().toString();
+        switch(option) {
+            case "from_file":
+            case "from_template":
+                txtValue.setEnabled(true);
+                txtValue.setFocusable(true);
+                cbbDetailValue.setModel(new DefaultComboBoxModel<>());
+                cbbDetailValue.setEnabled(false);
+                cbbDetailValue.setFocusable(false);
+                break;
+            default:
+                txtValue.setEnabled(false);
+                txtValue.setFocusable(false);
+                loadDataForOption(option);
+                cbbDetailValue.setEnabled(true);
+                cbbDetailValue.setFocusable(true);
         }
-        
-        else if(selectedValue.contains("default"))
-        {
-            cbbDetailValue.removeAllItems();
-            try {
-                loadFromDefaultValue();
-            } catch (IOException ex) {
-                Logger.getLogger(ValueDialog.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            for(String item : lstDefaultValue)
-            {
-                cbbDetailValue.addItem(item.toLowerCase());
-            }
-            cbbDetailValue.setEnabled(true);
-            txtValue.setEnabled(false);
-        }
-        
-        else if(selectedValue.contains("generator"))
-        {
-            cbbDetailValue.removeAllItems();
-            try {
-                loadFromGenerator();
-            } catch (IOException ex) {
-                Logger.getLogger(ValueDialog.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            for(String item : lstGenerator)
-            {
-                cbbDetailValue.addItem(item.toLowerCase());
-            }
-            cbbDetailValue.setEnabled(true);
-            txtValue.setEnabled(false);
-        }
-        
-        else
-        {
-            cbbDetailValue.setEnabled(false);
-            cbbDetailValue.removeAllItems();
-            txtValue.setEnabled(true);
-        }
+        txtValue.setText("");
     }//GEN-LAST:event_cbbValueActionPerformed
 
     /**

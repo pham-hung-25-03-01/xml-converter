@@ -5,9 +5,7 @@
 
 
 import java.io.IOException;
-
 import javax.swing.JOptionPane;
-
 import services.InitResource;
 import views.MainForm;
 

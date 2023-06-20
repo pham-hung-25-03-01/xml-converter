@@ -11,8 +11,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Stack;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -88,24 +86,6 @@ public class TemplateDialog extends javax.swing.JDialog {
         txtTemplateName = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Create template");
-
-        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("tag (XML Document)");
-        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("tag (Application)");
-        javax.swing.tree.DefaultMutableTreeNode treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("tag (RegNumber)");
-        treeNode2.add(treeNode3);
-        treeNode3 = new javax.swing.tree.DefaultMutableTreeNode("tag (PhoneList)");
-        javax.swing.tree.DefaultMutableTreeNode treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("attributes (ref='PHONE;')");
-        treeNode3.add(treeNode4);
-        treeNode4 = new javax.swing.tree.DefaultMutableTreeNode("tag (Phone)");
-        javax.swing.tree.DefaultMutableTreeNode treeNode5 = new javax.swing.tree.DefaultMutableTreeNode("attributes (type='number', use='required')");
-        treeNode4.add(treeNode5);
-        treeNode5 = new javax.swing.tree.DefaultMutableTreeNode("value (84${PHONE})");
-        treeNode4.add(treeNode5);
-        treeNode3.add(treeNode4);
-        treeNode2.add(treeNode3);
-        treeNode1.add(treeNode2);
-        jTreeXML.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         jTreeXML.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTreeXMLMouseClicked(evt);
@@ -523,7 +503,6 @@ public class TemplateDialog extends javax.swing.JDialog {
                     JOptionPane.showMessageDialog(null, "Save success!\nFile path: " + result.get("targetFilePath"), "Save Success", JOptionPane.INFORMATION_MESSAGE);
                 } catch (XMLStreamException | IOException| TransformerException e) {
                     JOptionPane.showMessageDialog(null, "Save fail!", "Error", JOptionPane.ERROR_MESSAGE);
-                    e.printStackTrace();
                 } finally {
                     dialog.dispose();
                 }

@@ -8,54 +8,45 @@ import utils.Config;
 import utils.Validator;
 
 public class Database {
-    private static class DatabaseHelper {
-        private static final Database INSTANCE = new Database();
-    }
+    private static Database instance;
 
-    private Connection connection;
+    private static Connection connection;
 
     private Database() {
-        try {
-            Class.forName("oracle.jdbc.driver.OracleDriver");
 
-            String host = Config.getConfigDatabase().getProperty("DB_HOST");
-            String port = Config.getConfigDatabase().getProperty("DB_PORT");
-            String dbname = Config.getConfigDatabase().getProperty("DB_NAME");
-
-            String url = "jdbc:oracle:thin:@"+ host +":"+ port +"/"+ dbname;
-
-            String user = Config.getConfigDatabase().getProperty("DB_USER");
-            String password = Config.getConfigDatabase().getProperty("DB_PASSWORD");
-
-            DriverManager.setLoginTimeout(10);
-
-            this.connection = DriverManager.getConnection(url, user, password);
-
-            System.out.println("Connected to Oracle Database successfully");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Oracle JDBC Driver not found");
-        } catch (SQLException e) {
-            throw new RuntimeException("Connection Failed");
-        } catch (IOException e) {
-            throw new RuntimeException("Config file not found");
-        } 
     }
 
     public static Database getInstance() {
-        return DatabaseHelper.INSTANCE;
-    }
-
-    public Connection getConnection() {
-        return this.connection;
-    }
-
-    public boolean closeConnection() {
-        try {
-            this.connection.close();
-            return true;
-        } catch (SQLException e) {
-            return false;
+        if (instance == null) {
+            instance = new Database();
         }
+        return instance;
+    }
+
+    public static Connection getConnection() {
+        if (connection == null) {
+            try {
+                Class.forName("oracle.jdbc.driver.OracleDriver");
+
+                String host = Config.getConfigDatabase().getProperty("DB_HOST");
+                String port = Config.getConfigDatabase().getProperty("DB_PORT");
+                String dbname = Config.getConfigDatabase().getProperty("DB_NAME");
+
+                String url = "jdbc:oracle:thin:@"+ host +":"+ port +"/"+ dbname;
+
+                String user = Config.getConfigDatabase().getProperty("DB_USER");
+                String password = Config.getConfigDatabase().getProperty("DB_PASSWORD");
+
+                DriverManager.setLoginTimeout(10);
+
+                connection = DriverManager.getConnection(url, user, password);
+
+                System.out.println("Connected to Oracle Database successfully");
+            } catch (ClassNotFoundException | SQLException | IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return connection;
     }
 
     public static boolean testConnection(String host, String port, String dbname, String user, String password) {
@@ -85,5 +76,4 @@ public class Database {
             return false;
         }
     }
-
 }

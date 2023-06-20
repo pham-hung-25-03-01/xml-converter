@@ -9,6 +9,7 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -39,6 +40,7 @@ import utils.Config;
 import utils.CurrentValues;
 import utils.Data;
 import utils.Generator;
+import utils.SqlDataReader;
 import utils.Validator;
 import utils.Data.Type;
 import utils.Validator.FormatType;
@@ -91,7 +93,6 @@ public class Converter {
 
             return targetFile.getAbsolutePath();
         } catch (Exception e) {
-            e.printStackTrace();
             String message = e.getMessage() + "::" + CurrentValues.SourceFile.getName();
             LogWriter.writeLog(message, LogType.SEVERE);
             
@@ -220,7 +221,7 @@ public class Converter {
     }
 
     private void writeXml(String templateName, HashMap<String, Integer> headers, List<String[]> rows,
-            OutputStream outputStream) throws XMLStreamException, IOException {
+            OutputStream outputStream) throws XMLStreamException, IOException, SQLException {
         XMLOutputFactory output = XMLOutputFactory.newInstance();
         XMLStreamWriter writer = output.createXMLStreamWriter(outputStream);
 
@@ -252,7 +253,7 @@ public class Converter {
         writer.close();
     }
 
-    private String getData(HashMap<String, Integer> headers, String[] rowData, String s) throws IOException {
+    private String getData(HashMap<String, Integer> headers, String[] rowData, String s) throws IOException, SQLException {
         List<String> listExpressionLanguage = Data.getListExpressionLanguage(s);
 
         String dataNameExtracted = "";
@@ -271,7 +272,7 @@ public class Converter {
                     break;
                 case FROM_DB:
                     dataNameExtracted = Data.extractDataName(expressionLanguage, Type.FROM_DB);
-                    data = "";
+                    data = SqlDataReader.getData(dataNameExtracted);
                     break;
                 case FROM_GENERATOR:
                     dataNameExtracted = Data.extractDataName(expressionLanguage, Type.FROM_GENERATOR);
@@ -301,7 +302,7 @@ public class Converter {
     }
 
     private void writeData(XMLStreamWriter writer, XMLEventReader template, HashMap<String, Integer> headers,
-            String[] rowData) throws XMLStreamException, IOException {
+            String[] rowData) throws XMLStreamException, IOException, SQLException {
         while (template.hasNext()) {
             XMLEvent event = template.nextEvent();
 

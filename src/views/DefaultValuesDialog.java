@@ -28,13 +28,13 @@ public class DefaultValuesDialog extends javax.swing.JDialog {
     public DefaultValuesDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        loadImgApp("/img/openway-way4-logo.png");
         try {
             loadDefaultValues();
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Cannot load default values", "Error", JOptionPane.ERROR_MESSAGE);
             this.dispose();
         }
-        loadImgApp("/img/openway-way4-logo.png");
 
         tblDefaultValues.getModel().addTableModelListener(
                 new TableModelListener() {

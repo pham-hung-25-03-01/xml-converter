@@ -81,7 +81,6 @@ public class AttributesDialog extends javax.swing.JDialog {
         jLabel5 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Add attribute");
 
         txtRef.setToolTipText("Enter references");
 

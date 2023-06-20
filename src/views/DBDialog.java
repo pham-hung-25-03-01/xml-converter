@@ -8,7 +8,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.HashMap;
-
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -32,7 +31,8 @@ public class DBDialog extends javax.swing.JDialog {
         try {
             loadDatabaseConfig();
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            JOptionPane.showMessageDialog(this, "Cannot load database config", "Error", JOptionPane.ERROR_MESSAGE);
+            this.dispose();
         }
     }
     

@@ -2,22 +2,25 @@ package utils;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import services.Database;
 
 public class SqlDataReader {
-    private Connection db = Database.getInstance().getConnection();
+    public static String getData(String dataName) throws IOException, SQLException {
+        String query = Config.getQueries().getProperty(dataName);
+        return getDataFromQuery(query);
+    }
     
-    public Object getDataFromQuery(String query) {
-        try {
-            var stmt = db.createStatement();
-            var rs = stmt.executeQuery(query);
-            if (rs.next()) {
-                return rs.getObject(1);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    private static String getDataFromQuery(String query) throws SQLException {
+        Connection db = Database.getInstance().getConnection();
+        Statement stmt = db.createStatement();
+        ResultSet rs = stmt.executeQuery(query);
+        if (rs.next()) {
+            return rs.getObject(1).toString();
         }
-        return null;
+        return "";
     }
 }
