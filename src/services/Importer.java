@@ -30,8 +30,8 @@ public class Importer {
         LogWriter.cleanLog();
 
         for(String templateFilePath : templateFilePaths) {
-            String templateName = templateFilePath.substring(templateFilePath.lastIndexOf("/") + 1, templateFilePath.lastIndexOf("."));
-            String template = importTemplate(templateFilePath, templateName);
+            // String templateName = templateFilePath.substring(templateFilePath.lastIndexOf("/") + 1, templateFilePath.lastIndexOf("."));
+            String template = importTemplate(templateFilePath);
             templates.add(template);
             progressBar.setValue(progressBar.getValue() + 90 / totalFiles);
         }
@@ -39,11 +39,14 @@ public class Importer {
         return templates;
     }
 
-    public String importTemplate(String templatePath, String templateName) {
+    public String importTemplate(String templatePath) {
         try {
-            String templateNameLowerCase = templateName.toLowerCase();
-            String template = templateName.substring(0, 1).toUpperCase() + templateName.substring(1).toLowerCase();
-            templateName = template + "Template";
+            File sourceFile = new File(templatePath);
+
+            String targetFileName = sourceFile.getName().toLowerCase();
+
+            String template = targetFileName.substring(0, 1).toUpperCase() + targetFileName.substring(1);
+            String templateName = template + "Template";
 
             if (Config.getConfigPath().containsKey(templateName)) {
                 String message = "Template " + template + " already exists";
@@ -51,18 +54,21 @@ public class Importer {
             }
 
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-            File sourceFile = new File(templatePath);
             XMLEventReader reader = inputFactory.createXMLEventReader(new FileInputStream(sourceFile));
             validateTemplate(reader);
-            String targetFilePath = Config.getConfigPath().get("DefaultTemplateFolder", "PATH") + "/" + templateNameLowerCase + ".xml";
+
+            String targetFilePath = Config.getConfigPath().get("DefaultTemplateFolder", "PATH") + "/" + targetFileName + ".xml";
             File targetFile = new File(targetFilePath) {{
                 if (!exists()) {
                     getParentFile().mkdirs();
                     createNewFile();
                 }
             }};
+
             Files.copy(sourceFile.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
             Config.setConfigPath(templateName, "PATH", targetFilePath);
+
             return template;
         } catch (IllegalArgumentException | XMLStreamException | IOException e) {
             String message = e.getMessage() + "::" + templatePath;
