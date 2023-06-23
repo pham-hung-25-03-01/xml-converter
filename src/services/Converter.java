@@ -110,6 +110,7 @@ public class Converter {
             return "";
         } finally {
             CurrentValues.SourceFile = null;
+            CurrentValues.setDefaultAttributes();
         }
     }
 
@@ -232,7 +233,7 @@ public class Converter {
 
         XMLEventReader fileHeaderTemplate = Config.getTemplate("FileHeaderTemplate");
 
-        writeData(writer, fileHeaderTemplate, null, null);
+        writeData(writer, fileHeaderTemplate, new HashMap<String, Integer>(), new String[] {});
 
         writer.writeStartElement("ApplicationsList");
 
