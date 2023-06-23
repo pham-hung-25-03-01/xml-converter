@@ -84,7 +84,7 @@
         <Component class="javax.swing.JTree" name="jTreeXML">
           <Properties>
             <Property name="model" type="javax.swing.tree.TreeModel" editor="org.netbeans.modules.form.editors2.TreeModelEditor">
-              <TreeModel code="tag (XML Document)&#xa; tag (Application)&#xa;  tag (RegNumber)&#xa;  tag (PhoneList)&#xa;   attributes (ref=&apos;PHONE;&apos;)&#xa;   tag (Phone)&#xa;    attributes (type=&apos;number&apos;, use=&apos;required&apos;)&#xa;    value (84${PHONE})"/>
+              <TreeModel code="tag (Application)"/>
             </Property>
           </Properties>
           <Events>
