@@ -43,7 +43,11 @@ public class Importer {
         try {
             File sourceFile = new File(templatePath);
 
-            String targetFileName = sourceFile.getName().toLowerCase();
+            String targetFileName = sourceFile.getName().substring(0, sourceFile.getName().lastIndexOf("."));
+
+            if (!targetFileName.matches("^\\w+$")) {
+                throw new IllegalArgumentException("Template name must be alphanumeric or underscore");
+            }
 
             String template = targetFileName.substring(0, 1).toUpperCase() + targetFileName.substring(1);
             String templateName = template + "Template";

@@ -96,7 +96,7 @@ public class TemplateNameDialog extends javax.swing.JDialog {
             return;
         }
         if (!input.matches("^\\w+$")) {
-            JOptionPane.showMessageDialog(this, "Please input text only", "Warning", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Template name must be alphanumeric or underscore!", "Warning", JOptionPane.WARNING_MESSAGE);
             return;
         }
         String templateName = input.substring(0, 1).toUpperCase() + input.substring(1) + "Template";

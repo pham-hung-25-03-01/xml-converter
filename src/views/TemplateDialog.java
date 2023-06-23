@@ -498,6 +498,11 @@ public class TemplateDialog extends javax.swing.JDialog {
             return;
         }
 
+        if (!txtTemplateName.getText().matches("^\\w+$")) {
+            JOptionPane.showMessageDialog(this, "Template name must be alphanumeric or underscore!", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         try {
             String newTemplateName = txtTemplateName.getText().substring(0, 1).toUpperCase() + txtTemplateName.getText().substring(1).toLowerCase() + "Template";
             if (this.templateName == null && Config.getConfigPath().get(newTemplateName, "PATH") != null) {
