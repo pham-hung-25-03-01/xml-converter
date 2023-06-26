@@ -28,7 +28,7 @@ public class InitResource {
                         "[DefaultErrorFolder]\nPATH=logs/ferrors\n\n" +
                         "[DefaultOutputFolder]\nPATH=logs/foutputs\n\n" +
                         "[DefaultProcessFolder]\nPATH=logs/fprocesses\n\n" +
-                        "[FileHeaderTemplate]\nPATH=configs/templates/file_header.xml"
+                        "[FileheaderTemplate]\nPATH=configs/templates/fileheader.xml"
                     ).getBytes());
                     fos.close();
                 }
@@ -79,7 +79,7 @@ public class InitResource {
             }
         }};
 
-        String fileHeaderTemplateFilePath = Config.getConfigPath().get("FileHeaderTemplate", "PATH");
+        String fileHeaderTemplateFilePath = Config.getConfigPath().get("FileheaderTemplate", "PATH");
 
         new File(fileHeaderTemplateFilePath) {{
             if (!exists()) {
@@ -91,6 +91,7 @@ public class InitResource {
                     fos.close();
                 }
             }
+            setReadOnly();
         }};
     }
 }

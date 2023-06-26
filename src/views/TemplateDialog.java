@@ -40,13 +40,15 @@ public class TemplateDialog extends javax.swing.JDialog {
     private Thread convertThread;
     private String templateName;
     private boolean isChanged = false;
+    private boolean allowRef;
 
     /**
      * Creates new form TestJTreeDialog
      */
-    public TemplateDialog(java.awt.Frame parent, String title, boolean modal, String templateName) {
+    public TemplateDialog(java.awt.Frame parent, String title, boolean modal, String templateName, boolean allowRef) {
         super(parent, modal);
         setTitle(title);
+        this.allowRef = allowRef;
         initComponents();
         loadCBB();
         btnAdd.setEnabled(false);
@@ -321,7 +323,7 @@ public class TemplateDialog extends javax.swing.JDialog {
                 JOptionPane.showMessageDialog(null, "Attributes already exist", "Info", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
-            AttributesDialog addAttributeDialog = new AttributesDialog(mainForm, "Add attributes", rootPaneCheckingEnabled);
+            AttributesDialog addAttributeDialog = new AttributesDialog(mainForm, "Add attributes", rootPaneCheckingEnabled, this.allowRef);
             addAttributeDialog.setVisible(true);
             if (addAttributeDialog.isOK() && !addAttributeDialog.getAttributes().isBlank()) {
                 String nodeName = "attributes (" + addAttributeDialog.getAttributes() + ")";
@@ -384,7 +386,7 @@ public class TemplateDialog extends javax.swing.JDialog {
             }
             editTagDialog.dispose();            
         } else if (nodeText.contains("attributes")) {
-            AttributesDialog editAttributeDialog = new AttributesDialog(mainForm, "Edit attributes", rootPaneCheckingEnabled);
+            AttributesDialog editAttributeDialog = new AttributesDialog(mainForm, "Edit attributes", rootPaneCheckingEnabled, this.allowRef);
             editAttributeDialog.setVisible(true);
             if (editAttributeDialog.isOK() && !editAttributeDialog.getAttributes().isBlank()) {
                 String nodeName = "attributes (" + editAttributeDialog.getAttributes() + ")";
@@ -435,7 +437,7 @@ public class TemplateDialog extends javax.swing.JDialog {
             } else {
                 return;
             }
-        } 
+        }
         catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Delete fail!", "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -585,7 +587,7 @@ public class TemplateDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                TemplateDialog dialog = new TemplateDialog(new javax.swing.JFrame(), "Template dialog", true, null);
+                TemplateDialog dialog = new TemplateDialog(new javax.swing.JFrame(), "Template dialog", true, null, true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

@@ -162,8 +162,11 @@ public class Converter {
 
         String targetFilePath = Config.getConfigPath().get("DefaultTemplateFolder", "PATH") + "/" + targetFileName + ".xml";
         File targetFile = new File(targetFilePath) {{
-            getParentFile().mkdirs();
-            createNewFile();
+            if (!exists()) {
+                getParentFile().mkdirs();
+                createNewFile();
+            }
+            setWritable(true);
         }};
 
         Files.writeString(targetFile.toPath(), prettyPrintXml, StandardCharsets.UTF_8);
@@ -176,6 +179,10 @@ public class Converter {
         result.put("templateName", templateName);
 
         templateName += "Template";
+
+        if (templateName.equals("FileheaderTemplate")) {
+            targetFile.setReadOnly();
+        }
 
         Config.setConfigPath(templateName, "PATH", targetFilePath);
         result.put("targetFilePath", targetFilePath);
@@ -278,7 +285,7 @@ public class Converter {
 
         writer.writeStartElement("ApplicationFile");
 
-        XMLEventReader fileHeaderTemplate = Config.getTemplate("FileHeaderTemplate");
+        XMLEventReader fileHeaderTemplate = Config.getTemplate("FileheaderTemplate");
 
         writeData(writer, fileHeaderTemplate, new HashMap<String, Integer>(), new String[] {});
 

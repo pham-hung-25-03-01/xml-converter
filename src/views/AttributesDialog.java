@@ -24,9 +24,12 @@ public class AttributesDialog extends javax.swing.JDialog {
     /**
      * Creates new form AddAttributeDialog
      */
-    public AttributesDialog(java.awt.Frame parent, String title, boolean modal) {
+    public AttributesDialog(java.awt.Frame parent, String title, boolean modal, boolean allowRef) {
         super(parent, modal);
         initComponents();
+        this.txtRef.setEnabled(allowRef);
+        this.txtRef.setEditable(allowRef);
+        this.txtRef.setFocusable(allowRef);
         this.getRootPane().setDefaultButton(btnAddAttribute);
         setTitle(title);
         loadCBB();
@@ -224,7 +227,7 @@ public class AttributesDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                AttributesDialog dialog = new AttributesDialog(new javax.swing.JFrame(), "Attributes dialog", true);
+                AttributesDialog dialog = new AttributesDialog(new javax.swing.JFrame(), "Attributes dialog", true, true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

@@ -74,9 +74,7 @@ public class Config {
 
     public static Properties getQueries() throws IOException {
         String queriesFilePath = getConfigPath().get("Queries", "PATH");
-        // return new Properties() {{
-        //     load(new FileInputStream(new File(queriesFilePath)));
-        // }};
+        
         Properties properties = new EncryptableProperties(getEncryptor());
         properties.load(new FileInputStream(new File(queriesFilePath)));
 

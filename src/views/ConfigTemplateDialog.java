@@ -187,7 +187,7 @@ public class ConfigTemplateDialog extends javax.swing.JDialog {
         }
         try {
             String templateName = tblTemplates.getValueAt(tblTemplates.getSelectedRow(), 0).toString();
-            TemplateDialog editTemplateDialog = new TemplateDialog((MainForm)this.getParent(), "Edit template", true, templateName);
+            TemplateDialog editTemplateDialog = new TemplateDialog((MainForm)this.getParent(), "Edit template", true, templateName, true);
             editTemplateDialog.setVisible(true);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Cannot edit!", "Error", JOptionPane.WARNING_MESSAGE);
@@ -241,7 +241,7 @@ public class ConfigTemplateDialog extends javax.swing.JDialog {
         Wini ini = Config.getConfigPath();
 
         for (String sectionName : ini.keySet()) {
-            if (sectionName.matches("^\\w+Template$") && !sectionName.equals("FileHeaderTemplate")) {
+            if (sectionName.matches("^\\w+Template$") && !sectionName.equals("FileheaderTemplate")) {
                 String templateName = sectionName.replaceAll("Template$", "");
                 String templatePath = ini.get(sectionName, "PATH");
                 Object[] row = {templateName, templatePath};
