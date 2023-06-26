@@ -3,11 +3,14 @@ package services;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+
 import utils.Config;
 
 public class InitResource {
     public static void init() throws IOException {
-        new File("configs/path.ini") {{
+        File pathFile = new File("configs/.path.ini") {{
             if (!exists()) {
                 getParentFile().mkdirs();
                 createNewFile();
@@ -30,7 +33,10 @@ public class InitResource {
                     fos.close();
                 }
             }
+            setReadOnly();
         }};
+
+        Files.setAttribute(pathFile.toPath(), "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
 
         String defaultLogFilePath = Config.getConfigPath().get("DefaultLogFile", "PATH");
 

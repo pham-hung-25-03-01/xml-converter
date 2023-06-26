@@ -20,29 +20,27 @@ import org.jasypt.salt.RandomIVGenerator;
 public class Config {
 
     public static Wini getConfigPath() throws InvalidFileFormatException, IOException {        
-        Wini ini = new Wini(new File("configs/path.ini"));
-        org.ini4j.Config cfg = ini.getConfig();
-        cfg.setStrictOperator(true);
-        ini.setConfig(cfg);
-        return ini;
-
-//        return new Wini(file) {{
-//            setConfig(new org.ini4j.Config() {{
-//                setStrictOperator(true);
-//            }});
-//        }};
+        return new Wini(new File("configs/.path.ini")) {{
+            setConfig(new org.ini4j.Config() {{
+                setStrictOperator(true);
+            }});
+        }};
     }
 
     public static void setConfigPath(String section, String key, String value) throws InvalidFileFormatException, IOException{
         Wini ini = getConfigPath();
+        ini.getFile().setWritable(true);
         ini.put(section, key, value);
         ini.store();
+        ini.getFile().setReadOnly();
     }
 
     public static void removeConfigPath(String section) throws InvalidFileFormatException, IOException{
         Wini ini = getConfigPath();
+        ini.getFile().setWritable(true);
         ini.remove(ini.get(section));
         ini.store();
+        ini.getFile().setReadOnly();
     }
 
     public static Properties getConfigDefaultValues() throws IOException {
@@ -76,9 +74,13 @@ public class Config {
 
     public static Properties getQueries() throws IOException {
         String queriesFilePath = getConfigPath().get("Queries", "PATH");
-        return new Properties() {{
-            load(new FileInputStream(new File(queriesFilePath)));
-        }};
+        // return new Properties() {{
+        //     load(new FileInputStream(new File(queriesFilePath)));
+        // }};
+        Properties properties = new EncryptableProperties(getEncryptor());
+        properties.load(new FileInputStream(new File(queriesFilePath)));
+
+        return properties;
     }
 
     public static void setQueries(HashMap<String, String> queries) throws IOException {
@@ -86,8 +88,10 @@ public class Config {
 
         Properties properties = getQueries();
 
+        StandardPBEStringEncryptor encryptor = getEncryptor();
+
         for(Map.Entry<String, String> entry : queries.entrySet()) {
-            properties.put(entry.getKey(), entry.getValue());
+            properties.put(entry.getKey(), "ENC(" + encryptor.encrypt(entry.getValue()) + ")");
         }
         properties.store(new FileOutputStream(defaultQueriesFilePath), null);
     }

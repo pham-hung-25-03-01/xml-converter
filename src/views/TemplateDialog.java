@@ -10,9 +10,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Stack;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -28,11 +26,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.Attribute;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.TransformerException;
 import services.Converter;
 import utils.Config;
@@ -231,46 +225,8 @@ public class TemplateDialog extends javax.swing.JDialog {
     private void loadXmlToTree(String templateName) {
         templateName += "Template";
         try {
-            Stack<DefaultMutableTreeNode> stack = new Stack<DefaultMutableTreeNode>();
-            XMLEventReader template = Config.getTemplate(templateName);
-            while (template.hasNext()) {
-                XMLEvent event = template.nextEvent();
-
-                if (event.isStartElement()) {
-                    StartElement element = event.asStartElement();
-                    DefaultMutableTreeNode node = new DefaultMutableTreeNode("tag (" + element.getName().getLocalPart() + ")");
-                    stack.push(node);
-                    Iterator<Attribute> attributes = element.getAttributes();
-                    if (attributes.hasNext()) {
-                        String attr = "attributes (";
-                        while (attributes.hasNext()) {
-                            Attribute attribute = attributes.next();
-                            attr += attribute.getName().getLocalPart() + "='" + attribute.getValue() + "', ";
-                        }
-                        attr = attr.substring(0, attr.length() - 2) + ")";
-                        DefaultMutableTreeNode attrNode = new DefaultMutableTreeNode(attr);
-                        node.add(attrNode);
-                    }
-                    continue;
-                }
-
-                if (event.isCharacters()) {
-                    if (!event.asCharacters().isWhiteSpace()) {
-                        DefaultMutableTreeNode node = new DefaultMutableTreeNode("value (" + event.asCharacters().getData() + ")");
-                        stack.peek().add(node);
-                    }
-                    continue;
-                }
-
-                if (event.isEndElement()) {
-                    DefaultMutableTreeNode root = stack.pop();
-                    if (stack.isEmpty()) {
-                        this.jTreeXML.setModel(new DefaultTreeModel(root));
-                    } else {
-                        stack.peek().add(root);
-                    }
-                }
-            }
+            DefaultTreeModel model = converter.convertXmlToJTree(templateName);
+            this.jTreeXML.setModel(model);
         } catch (XMLStreamException | IOException e) {
             JOptionPane.showMessageDialog(this, "Can't load template file", "Error", JOptionPane.ERROR_MESSAGE);
         }

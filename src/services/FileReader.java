@@ -38,6 +38,8 @@ public class FileReader implements IFileReader {
             headers.put(header, index++);
         }
 
+        parser.stopParsing();
+
         Map<String, Object> result = new HashMap<>();
         result.put("headers", headers);
         result.put("rows", rows);

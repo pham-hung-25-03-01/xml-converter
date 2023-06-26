@@ -207,6 +207,11 @@ public class DefaultValuesDialog extends javax.swing.JDialog {
             return;
         }
 
+        if (!key.matches("\\w+")) {
+            JOptionPane.showMessageDialog(this, "Key must be contain only letters, numbers and underscore!", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         try {
             if (Config.getConfigDefaultValues().containsKey(key)) {
                 JOptionPane.showMessageDialog(this, "This key already exists!", "Warning", JOptionPane.WARNING_MESSAGE);

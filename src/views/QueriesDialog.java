@@ -6,9 +6,11 @@ package views;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+
 import utils.Config;
 
 /**
@@ -202,10 +204,15 @@ public class QueriesDialog extends javax.swing.JDialog {
 
     private void btnAddQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddQueryActionPerformed
         String key = txtKey.getText().trim();
-        String query = txtQuery.getText().trim();
+        String query = txtQuery.getText().trim().replaceAll("\\s+", " ");
         
         if(key.isBlank() || query.isBlank()) {
             JOptionPane.showMessageDialog(this, "Please fill all!", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        if(!key.matches("\\w+")) {
+            JOptionPane.showMessageDialog(this, "Key must be contain only letters, numbers and underscore!", "Warning", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -239,9 +246,13 @@ public class QueriesDialog extends javax.swing.JDialog {
             return;
         }
         String key = txtKey.getText().trim();
-        String query = txtQuery.getText().trim();
+        String query = txtQuery.getText().trim().replaceAll("\\s+", " ");
         if(key.isBlank() || query.isBlank()) {
             JOptionPane.showMessageDialog(this, "Please fill all!", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if(!key.matches("\\w+")) {
+            JOptionPane.showMessageDialog(this, "Key must be contain only letters, numbers and underscore!", "Warning", JOptionPane.WARNING_MESSAGE);
             return;
         }
         int confirmResult = JOptionPane.showConfirmDialog(this, "Are you sure to update this query?", "Warning", JOptionPane.YES_NO_OPTION);
@@ -302,10 +313,11 @@ public class QueriesDialog extends javax.swing.JDialog {
         DefaultTableModel queriesModel = (DefaultTableModel) this.tblQueries.getModel();
         queriesModel.setRowCount(0);
 
-        Config.getQueries().forEach((key, value) -> {
-            Object[] row = {key, value};
-            queriesModel.addRow(row);
-        });
+        for (Map.Entry<Object, Object> entry : Config.getQueries().entrySet()) {
+            String key = entry.getKey().toString();
+            String query = Config.getQueries().getProperty(key).toString();
+            queriesModel.addRow(new Object[]{key, query});
+        }
     }
     /**
      * @param args the command line arguments

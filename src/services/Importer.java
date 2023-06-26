@@ -30,7 +30,6 @@ public class Importer {
         LogWriter.cleanLog();
 
         for(String templateFilePath : templateFilePaths) {
-            // String templateName = templateFilePath.substring(templateFilePath.lastIndexOf("/") + 1, templateFilePath.lastIndexOf("."));
             String template = importTemplate(templateFilePath);
             templates.add(template);
             progressBar.setValue(progressBar.getValue() + 90 / totalFiles);
@@ -137,6 +136,7 @@ public class Importer {
                 }
             }
         }
+        template.close();
         return true;
     }
 }

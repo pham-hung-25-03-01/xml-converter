@@ -8,7 +8,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -16,11 +15,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JProgressBar;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -184,6 +185,52 @@ public class Converter {
         return result;
     }
 
+    public DefaultTreeModel convertXmlToJTree(String templateName) throws XMLStreamException, IOException {
+        Stack<DefaultMutableTreeNode> stack = new Stack<DefaultMutableTreeNode>();
+        XMLEventReader template = Config.getTemplate(templateName);
+        while (template.hasNext()) {
+            XMLEvent event = template.nextEvent();
+
+            if (event.isStartElement()) {
+                StartElement element = event.asStartElement();
+                DefaultMutableTreeNode node = new DefaultMutableTreeNode("tag (" + element.getName().getLocalPart() + ")");
+                stack.push(node);
+                Iterator<Attribute> attributes = element.getAttributes();
+                if (attributes.hasNext()) {
+                    String attr = "attributes (";
+                    while (attributes.hasNext()) {
+                        Attribute attribute = attributes.next();
+                        attr += attribute.getName().getLocalPart() + "='" + attribute.getValue() + "', ";
+                    }
+                    attr = attr.substring(0, attr.length() - 2) + ")";
+                    DefaultMutableTreeNode attrNode = new DefaultMutableTreeNode(attr);
+                    node.add(attrNode);
+                }
+                continue;
+            }
+
+            if (event.isCharacters()) {
+                if (!event.asCharacters().isWhiteSpace()) {
+                    DefaultMutableTreeNode node = new DefaultMutableTreeNode("value (" + event.asCharacters().getData() + ")");
+                    stack.peek().add(node);
+                }
+                continue;
+            }
+
+            if (event.isEndElement()) {
+                DefaultMutableTreeNode root = stack.pop();
+                if (stack.isEmpty()) {
+                    template.close();
+                    return new DefaultTreeModel(root);
+                } else {
+                    stack.peek().add(root);
+                }
+            }
+        }
+        template.close();
+        throw new XMLStreamException("Document ended before root element closed");
+    }
+
     private static void traverseTree(XMLStreamWriter writer, DefaultMutableTreeNode node) throws XMLStreamException {
         String nodeText = node.getUserObject().toString();
         
@@ -253,6 +300,8 @@ public class Converter {
 
         writer.flush();
         writer.close();
+
+        applicationTemplate.close();
     }
 
     private String getData(HashMap<String, Integer> headers, String[] rowData, String s) throws IOException, SQLException {
