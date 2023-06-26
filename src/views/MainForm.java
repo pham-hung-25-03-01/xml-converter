@@ -112,6 +112,7 @@ public class MainForm extends javax.swing.JFrame {
         menuAddTemplate = new javax.swing.JMenuItem();
         menuListTemplates = new javax.swing.JMenuItem();
         menuImportTemplate = new javax.swing.JMenuItem();
+        menuFileHeader = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Convert Application");
@@ -289,6 +290,16 @@ public class MainForm extends javax.swing.JFrame {
             }
         });
         menuOutput.add(menuImportTemplate);
+
+        menuFileHeader.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        menuFileHeader.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/file-header.png"))); // NOI18N
+        menuFileHeader.setText("File header");
+        menuFileHeader.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuFileHeaderActionPerformed(evt);
+            }
+        });
+        menuOutput.add(menuFileHeader);
 
         menuBarMainForm.add(menuOutput);
 
@@ -598,6 +609,10 @@ public class MainForm extends javax.swing.JFrame {
         new QueriesDialog(this, rootPaneCheckingEnabled).setVisible(true);
     }//GEN-LAST:event_menuQueriesActionPerformed
 
+    private void menuFileHeaderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuFileHeaderActionPerformed
+        
+    }//GEN-LAST:event_menuFileHeaderActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnChooseFile;
@@ -614,6 +629,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuDefaultValues;
     private javax.swing.JMenuItem menuErrorFolder;
     private javax.swing.JMenuItem menuExit;
+    private javax.swing.JMenuItem menuFileHeader;
     private javax.swing.JMenuItem menuImportTemplate;
     private javax.swing.JMenuItem menuInputFolder;
     private javax.swing.JMenuItem menuListTemplates;
