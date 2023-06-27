@@ -31,11 +31,14 @@ public class Database {
                 String host = Config.getConfigDatabase().getProperty("DB_HOST");
                 String port = Config.getConfigDatabase().getProperty("DB_PORT");
                 String dbname = Config.getConfigDatabase().getProperty("DB_NAME");
-
-                String url = "jdbc:oracle:thin:@"+ host +":"+ port +"/"+ dbname;
-
                 String user = Config.getConfigDatabase().getProperty("DB_USER");
                 String password = Config.getConfigDatabase().getProperty("DB_PASSWORD");
+
+                if (host == null || port == null || dbname == null || user == null || password == null || host.isEmpty() || port.isEmpty() || dbname.isEmpty() || user.isEmpty() || password.isEmpty()) {
+                    throw new RuntimeException("Database config is invalid");
+                }
+
+                String url = "jdbc:oracle:thin:@"+ host +":"+ port +"/"+ dbname;
 
                 DriverManager.setLoginTimeout(10);
 

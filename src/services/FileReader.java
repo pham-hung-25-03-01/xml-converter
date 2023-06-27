@@ -19,6 +19,7 @@ public class FileReader implements IFileReader {
     public Map<String, Object> readFile(File sourceFile) throws UnsupportedEncodingException, FileNotFoundException {
         Reader inputReader = new InputStreamReader(new FileInputStream(sourceFile), "UTF-8");
         CsvParserSettings settings = new CsvParserSettings();
+        settings.detectFormatAutomatically();
         settings.setLineSeparatorDetectionEnabled(true);
         settings.setHeaderExtractionEnabled(true);
         settings.setProcessor(new BatchedColumnProcessor(1000) {

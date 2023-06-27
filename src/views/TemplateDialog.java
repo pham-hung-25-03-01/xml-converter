@@ -52,7 +52,6 @@ public class TemplateDialog extends javax.swing.JDialog {
         initComponents();
         loadCBB();
         btnAdd.setEnabled(false);
-        btnEdit.setEnabled(false);
         btnDelete.setEnabled(false);
         jTreeXML.setSelectionRow(0);
         setIconNode();
@@ -419,6 +418,11 @@ public class TemplateDialog extends javax.swing.JDialog {
             return;
         }
 
+        if (jTreeXML.getSelectionCount() == 1 && ((DefaultMutableTreeNode) selectionPaths[0].getLastPathComponent()).isRoot()) {
+            JOptionPane.showMessageDialog(this, "Cannot delete root node!", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         try 
         {
             int dialogResult = JOptionPane.showConfirmDialog(this, "Are you sure to delete?", "Confirm", JOptionPane.YES_NO_OPTION);
@@ -529,7 +533,7 @@ public class TemplateDialog extends javax.swing.JDialog {
                 btnAdd.setEnabled(false);
             }
             btnEdit.setEnabled(true);
-            btnDelete.setEnabled(true);
+            btnDelete.setEnabled(true);   
         } else {
             btnEdit.setEnabled(false);
             btnDelete.setEnabled(false);
