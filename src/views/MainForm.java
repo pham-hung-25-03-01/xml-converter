@@ -129,12 +129,22 @@ public class MainForm extends javax.swing.JFrame {
         menuLogError.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.ALT_DOWN_MASK));
         menuLogError.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/log-error.png"))); // NOI18N
         menuLogError.setText("Error");
+        menuLogError.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuLogErrorActionPerformed(evt);
+            }
+        });
         menuLog.add(menuLogError);
         menuLog.add(jSeparator1);
 
         menuLogDate.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.ALT_DOWN_MASK));
         menuLogDate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/log-date.png"))); // NOI18N
         menuLogDate.setText("Date");
+        menuLogDate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuLogDateActionPerformed(evt);
+            }
+        });
         menuLog.add(menuLogDate);
 
         menuBar.add(menuLog);
@@ -144,24 +154,44 @@ public class MainForm extends javax.swing.JFrame {
         menuPathInput.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.ALT_DOWN_MASK));
         menuPathInput.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/input-folder.png"))); // NOI18N
         menuPathInput.setText("Input");
+        menuPathInput.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuPathInputActionPerformed(evt);
+            }
+        });
         menuPathFolder.add(menuPathInput);
         menuPathFolder.add(jSeparator2);
 
         menuPathOutput.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.ALT_DOWN_MASK));
         menuPathOutput.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/output-folder.png"))); // NOI18N
         menuPathOutput.setText("Output");
+        menuPathOutput.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuPathOutputActionPerformed(evt);
+            }
+        });
         menuPathFolder.add(menuPathOutput);
         menuPathFolder.add(jSeparator3);
 
         menuPathError.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.ALT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
         menuPathError.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/error-folder.png"))); // NOI18N
         menuPathError.setText("Error");
+        menuPathError.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuPathErrorActionPerformed(evt);
+            }
+        });
         menuPathFolder.add(menuPathError);
         menuPathFolder.add(jSeparator4);
 
         menuPathProcess.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.ALT_DOWN_MASK));
         menuPathProcess.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/process-folder.png"))); // NOI18N
         menuPathProcess.setText("Process");
+        menuPathProcess.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuPathProcessActionPerformed(evt);
+            }
+        });
         menuPathFolder.add(menuPathProcess);
 
         menuBar.add(menuPathFolder);
@@ -171,18 +201,33 @@ public class MainForm extends javax.swing.JFrame {
         menuConfigConnectDB.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.ALT_DOWN_MASK));
         menuConfigConnectDB.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/database.png"))); // NOI18N
         menuConfigConnectDB.setText("Connect to DB");
+        menuConfigConnectDB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuConfigConnectDBActionPerformed(evt);
+            }
+        });
         menuConfig.add(menuConfigConnectDB);
         menuConfig.add(jSeparator5);
 
         menuConfigDefaultValue.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.ALT_DOWN_MASK));
         menuConfigDefaultValue.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/default-value.png"))); // NOI18N
         menuConfigDefaultValue.setText("Default value");
+        menuConfigDefaultValue.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuConfigDefaultValueActionPerformed(evt);
+            }
+        });
         menuConfig.add(menuConfigDefaultValue);
         menuConfig.add(jSeparator6);
 
         menuConfigQuery.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.ALT_DOWN_MASK));
         menuConfigQuery.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/query.png"))); // NOI18N
         menuConfigQuery.setText("Query");
+        menuConfigQuery.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuConfigQueryActionPerformed(evt);
+            }
+        });
         menuConfig.add(menuConfigQuery);
 
         menuBar.add(menuConfig);
@@ -191,16 +236,31 @@ public class MainForm extends javax.swing.JFrame {
 
         jMenuItem1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/new.png"))); // NOI18N
         jMenuItem1.setText("New");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
         menuHeader.add(jMenuItem1);
         menuHeader.add(jSeparator7);
 
         menuHeaderList.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/list.png"))); // NOI18N
         menuHeaderList.setText("List");
+        menuHeaderList.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuHeaderListActionPerformed(evt);
+            }
+        });
         menuHeader.add(menuHeaderList);
         menuHeader.add(jSeparator8);
 
         menuHeaderImport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/import-template.png"))); // NOI18N
         menuHeaderImport.setText("Import");
+        menuHeaderImport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuHeaderImportActionPerformed(evt);
+            }
+        });
         menuHeader.add(menuHeaderImport);
 
         menuBar.add(menuHeader);
@@ -209,16 +269,31 @@ public class MainForm extends javax.swing.JFrame {
 
         menuObjectNew.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/new.png"))); // NOI18N
         menuObjectNew.setText("New");
+        menuObjectNew.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuObjectNewActionPerformed(evt);
+            }
+        });
         menuObject.add(menuObjectNew);
         menuObject.add(jSeparator9);
 
         jMenuItem3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/list.png"))); // NOI18N
         jMenuItem3.setText("List");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem3ActionPerformed(evt);
+            }
+        });
         menuObject.add(jMenuItem3);
         menuObject.add(jSeparator11);
 
         menuObjectImport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/import-template.png"))); // NOI18N
         menuObjectImport.setText("Import");
+        menuObjectImport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuObjectImportActionPerformed(evt);
+            }
+        });
         menuObject.add(menuObjectImport);
 
         menuBar.add(menuObject);
@@ -227,11 +302,21 @@ public class MainForm extends javax.swing.JFrame {
 
         menuStructNew.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/new.png"))); // NOI18N
         menuStructNew.setText("New");
+        menuStructNew.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuStructNewActionPerformed(evt);
+            }
+        });
         menuStruct.add(menuStructNew);
         menuStruct.add(jSeparator10);
 
         menuStructList.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/list.png"))); // NOI18N
         menuStructList.setText("List");
+        menuStructList.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuStructListActionPerformed(evt);
+            }
+        });
         menuStruct.add(menuStructList);
 
         menuBar.add(menuStruct);
@@ -305,6 +390,74 @@ public class MainForm extends javax.swing.JFrame {
     private void btnConvertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConvertActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnConvertActionPerformed
+
+    private void menuLogErrorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuLogErrorActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_menuLogErrorActionPerformed
+
+    private void menuLogDateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuLogDateActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_menuLogDateActionPerformed
+
+    private void menuPathInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuPathInputActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_menuPathInputActionPerformed
+
+    private void menuPathOutputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuPathOutputActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_menuPathOutputActionPerformed
+
+    private void menuPathErrorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuPathErrorActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_menuPathErrorActionPerformed
+
+    private void menuPathProcessActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuPathProcessActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_menuPathProcessActionPerformed
+
+    private void menuConfigConnectDBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuConfigConnectDBActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_menuConfigConnectDBActionPerformed
+
+    private void menuConfigDefaultValueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuConfigDefaultValueActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_menuConfigDefaultValueActionPerformed
+
+    private void menuConfigQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuConfigQueryActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_menuConfigQueryActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void menuHeaderListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuHeaderListActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_menuHeaderListActionPerformed
+
+    private void menuHeaderImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuHeaderImportActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_menuHeaderImportActionPerformed
+
+    private void menuObjectNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuObjectNewActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_menuObjectNewActionPerformed
+
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
+
+    private void menuObjectImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuObjectImportActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_menuObjectImportActionPerformed
+
+    private void menuStructNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuStructNewActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_menuStructNewActionPerformed
+
+    private void menuStructListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuStructListActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_menuStructListActionPerformed
 
     /**
      * @param args the command line arguments
