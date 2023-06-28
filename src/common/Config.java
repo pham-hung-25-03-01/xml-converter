@@ -152,7 +152,7 @@ public class Config {
         removePropertiesItem("config/default/folder.properties", getFolderFile(), keyValues);
     }
 
-    private static Properties getDatabaseFile() throws IOException {
+    public static Properties getDatabaseFile() throws IOException {
         return getPropertiesFile("config/default/database.properties");
     }
 

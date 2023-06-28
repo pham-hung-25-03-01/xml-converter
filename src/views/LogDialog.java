@@ -18,9 +18,11 @@ public class LogDialog extends javax.swing.JDialog {
     /**
      * Creates new form LogDialog
      */
-    public LogDialog(java.awt.Frame parent, boolean modal) {
+    public LogDialog(java.awt.Frame parent, boolean modal, String title, String log) {
         super(parent, modal);
         initComponents();
+        this.setTitle(title);
+        this.txtLog.setText(log);
     }
 
     /**
@@ -130,7 +132,7 @@ public class LogDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                LogDialog dialog = new LogDialog(new javax.swing.JFrame(), true);
+                LogDialog dialog = new LogDialog(new javax.swing.JFrame(), true, "Log", "Test log");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

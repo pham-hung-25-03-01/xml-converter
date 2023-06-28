@@ -4,7 +4,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+
+import javax.swing.table.DefaultTableModel;
 
 import common.Config;
 import common.Database;
@@ -32,6 +36,25 @@ public class Configurator {
         }
 
         throw new RuntimeException("Connection to database failed");
+    }
+
+    public HashMap<String, String> getConfigDatabase() throws IOException {
+        Properties store = Config.getDatabaseFile();
+        return getListItem(store);
+    }
+
+    public DefaultTableModel getConfigDefaultValue() throws IOException {
+        Properties store = Config.getValueFile();
+        HashMap<String, String> list = getListItem(store);
+        DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("Name");
+        model.addColumn("Value");
+        for (Map.Entry<String, String> entry : list.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            model.addRow(new Object[] { key, value });
+        }
+        return model;
     }
 
     public HashMap<String, String> createDefaultValue(String name, String value) throws IOException {
@@ -112,6 +135,10 @@ public class Configurator {
         }
 
         name = name.trim().toUpperCase();
+        if (!name.matches("\\w+")) {
+            throw new IllegalArgumentException("Name must be contain only letters, numbers, and underscore");
+        }
+
         value = value.trim();
 
         if (store.containsKey(name)) {
@@ -130,6 +157,7 @@ public class Configurator {
         }
 
         name = name.trim().toUpperCase();
+
         value = value.trim();
 
         if (!store.containsKey(name)) {
@@ -142,7 +170,7 @@ public class Configurator {
         return attributes;
     }
 
-    public String prepareDeleteItem(Properties store, String name) throws IOException {
+    private String prepareDeleteItem(Properties store, String name) throws IOException {
         if (name.isBlank()) {
             throw new IllegalArgumentException("All fields must be filled");
         }
@@ -154,5 +182,14 @@ public class Configurator {
         }
 
         return name;
+    }
+
+    private HashMap<String, String> getListItem(Properties store) {
+        Set<String> keys =  store.stringPropertyNames();
+        HashMap<String, String> attributes = new HashMap<String, String>();
+        for (String key : keys) {
+            attributes.put(key, store.getProperty(key));
+        }
+        return attributes;
     }
 }

@@ -3,8 +3,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package views;
+import java.io.File;
+import java.io.IOException;
+
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
+
+import services.FolderPath;
+import services.Logger;
 
 /**
  *
@@ -376,7 +383,19 @@ public class MainForm extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    
+    private String showDialogChooseFolderPath() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+        int choice = fileChooser.showOpenDialog(this);
+        if (choice == JFileChooser.APPROVE_OPTION) {
+            File selectedDirectory = fileChooser.getSelectedFile();
+            return selectedDirectory.getAbsolutePath();
+        }
+
+        return null;
+    }
+
     private void menuExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuExitActionPerformed
         if (JOptionPane.showConfirmDialog(null, "Are you sure to exit?", "Confirm",
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
@@ -392,35 +411,71 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_btnConvertActionPerformed
 
     private void menuLogErrorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuLogErrorActionPerformed
-        // TODO add your handling code here:
+        new LogDialog(this, true, "Log error", Logger.getLogError()).setVisible(true);
     }//GEN-LAST:event_menuLogErrorActionPerformed
 
     private void menuLogDateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuLogDateActionPerformed
-        // TODO add your handling code here:
+        new LogDialog(this, true, "Log date", Logger.getLogDate()).setVisible(true);
     }//GEN-LAST:event_menuLogDateActionPerformed
 
     private void menuPathInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuPathInputActionPerformed
-        // TODO add your handling code here:
+        String path = showDialogChooseFolderPath();
+        if (path != null) {
+            FolderPath folderPath = new FolderPath();
+            try {
+                String msg = folderPath.setInputFolderPath(path);
+                JOptionPane.showMessageDialog(this, msg, "Message", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }//GEN-LAST:event_menuPathInputActionPerformed
 
     private void menuPathOutputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuPathOutputActionPerformed
-        // TODO add your handling code here:
+        String path = showDialogChooseFolderPath();
+        if (path != null) {
+            FolderPath folderPath = new FolderPath();
+            try {
+                String msg = folderPath.setOutputFolderPath(path);
+                JOptionPane.showMessageDialog(this, msg, "Message", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }//GEN-LAST:event_menuPathOutputActionPerformed
 
     private void menuPathErrorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuPathErrorActionPerformed
-        // TODO add your handling code here:
+        String path = showDialogChooseFolderPath();
+        if (path != null) {
+            FolderPath folderPath = new FolderPath();
+            try {
+                String msg = folderPath.setErrorFolderPath(path);
+                JOptionPane.showMessageDialog(this, msg, "Message", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }//GEN-LAST:event_menuPathErrorActionPerformed
 
     private void menuPathProcessActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuPathProcessActionPerformed
-        // TODO add your handling code here:
+        String path = showDialogChooseFolderPath();
+        if (path != null) {
+            FolderPath folderPath = new FolderPath();
+            try {
+                String msg = folderPath.setProcessFolderPath(path);
+                JOptionPane.showMessageDialog(this, msg, "Message", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }//GEN-LAST:event_menuPathProcessActionPerformed
 
     private void menuConfigConnectDBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuConfigConnectDBActionPerformed
-        // TODO add your handling code here:
+        new DBDialog(this, true).setVisible(true);
     }//GEN-LAST:event_menuConfigConnectDBActionPerformed
 
     private void menuConfigDefaultValueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuConfigDefaultValueActionPerformed
-        // TODO add your handling code here:
+        new DefaultValueDialog(this, true).setVisible(true);
     }//GEN-LAST:event_menuConfigDefaultValueActionPerformed
 
     private void menuConfigQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuConfigQueryActionPerformed

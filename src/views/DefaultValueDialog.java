@@ -4,18 +4,42 @@
  */
 package views;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+
+import services.Configurator;
+
 /**
  *
  * @author sing1
  */
 public class DefaultValueDialog extends javax.swing.JDialog {
-
+    private Configurator configurator = new Configurator();
     /**
      * Creates new form DefaultValueDialog
      */
     public DefaultValueDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        try {
+            loadData();
+            reset();
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this,"Cannot load data", "Error", JOptionPane.ERROR_MESSAGE);
+            this.dispose();
+        }
+    }
+
+    private void loadData() throws IOException {
+        DefaultTableCellRenderer renderer = (DefaultTableCellRenderer) this.tblDefaultValue.getTableHeader().getDefaultRenderer();
+        renderer.setHorizontalAlignment((int) CENTER_ALIGNMENT);
+        this.tblDefaultValue.setModel(configurator.getConfigDefaultValue());
     }
 
     /**
@@ -136,16 +160,70 @@ public class DefaultValueDialog extends javax.swing.JDialog {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void reset() {
+        this.txtName.setText("");
+        this.txtName.setEditable(true);
+        this.txtName.setFocusable(true);
+        this.txtValue.setText("");
+        this.tblDefaultValue.clearSelection();
+        this.btnAdd.setEnabled(true);
+        this.btnUpdate.setEnabled(false);
+        this.btnDelete.setEnabled(false);
+    }
+
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        // TODO add your handling code here:
+        String name = txtName.getText();
+        String value = txtValue.getText();
+        try {
+            HashMap<String, String> defaultValue = configurator.createDefaultValue(name, value);
+            name = defaultValue.keySet().iterator().next();
+            DefaultTableModel model = (DefaultTableModel) tblDefaultValue.getModel();
+            model.addRow(new Object[]{name, defaultValue.get(name)});
+            reset();
+            JOptionPane.showMessageDialog(this, "Default value added successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
-        // TODO add your handling code here:
+        String name = txtName.getText();
+        String value = txtValue.getText();
+        try {
+            HashMap<String, String> defaultValue = configurator.updateDefaultValue(name, value);
+            name = defaultValue.keySet().iterator().next();
+            DefaultTableModel model = (DefaultTableModel) tblDefaultValue.getModel();
+            model.setValueAt(defaultValue.get(name), tblDefaultValue.getSelectedRow(), 1);
+            reset();
+            JOptionPane.showMessageDialog(this, "Default value updated successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        // TODO add your handling code here:
+        int[] selectedRows = tblDefaultValue.getSelectedRows();
+        if (selectedRows.length < 1) {
+            JOptionPane.showMessageDialog(this, "Please select a default value to delete", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete the selected default values?", "Confirm", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            List<String> deleted = new ArrayList<String>();
+            List<String> notDeleted = new ArrayList<String>();
+            DefaultTableModel model = (DefaultTableModel) tblDefaultValue.getModel();
+            for (int i = selectedRows.length - 1; i >= 0; i--) {
+                String name = (String) tblDefaultValue.getValueAt(selectedRows[i], 0);
+                try {
+                    String result = configurator.deleteDefaultValue(name);
+                    deleted.add(result);
+                    model.removeRow(selectedRows[i]);
+                } catch (Exception e) {
+                    notDeleted.add(name);
+                }
+            }
+            JOptionPane.showMessageDialog(this, "Deleted: " + String.join(", ", deleted) + "\nNot deleted: " + String.join(", ", notDeleted), "Message", JOptionPane.INFORMATION_MESSAGE);
+        }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     /**

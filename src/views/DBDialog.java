@@ -4,18 +4,40 @@
  */
 package views;
 
+import java.io.IOException;
+import java.util.HashMap;
+
+import javax.swing.JOptionPane;
+
+import services.Configurator;
+
 /**
  *
  * @author sing1
  */
 public class DBDialog extends javax.swing.JDialog {
-
+    private Configurator configurator = new Configurator();
     /**
      * Creates new form DBDialog
      */
     public DBDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        try {
+            loadConfigDB();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Cannot load data", "Error", JOptionPane.ERROR_MESSAGE);
+            this.dispose();
+        }
+    }
+
+    private void loadConfigDB() throws IOException {
+        HashMap<String, String> db = configurator.getConfigDatabase();
+        txtHost.setText(db.get("DB_HOST"));
+        txtDBname.setText(db.get("DB_NAME"));
+        txtUsername.setText(db.get("DB_USER"));
+        txtPassword.setText(db.get("DB_PASSWORD"));
+        txtPort.setText(db.get("DB_PORT"));
     }
 
     /**
@@ -146,7 +168,17 @@ public class DBDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_cbShowPasswordActionPerformed
 
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
-        // TODO add your handling code here:
+        String host = txtHost.getText();
+        String port = txtPort.getText();
+        String dbname = txtDBname.getText();
+        String username = txtUsername.getText();
+        String password = new String(txtPassword.getPassword());
+        try {
+            configurator.setConnectToDB(host, port, dbname, username, password);
+            JOptionPane.showMessageDialog(this, "Connected to database successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnConnectActionPerformed
 
     /**
