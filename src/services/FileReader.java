@@ -2,10 +2,9 @@ package services;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,10 +12,13 @@ import com.univocity.parsers.common.processor.BatchedColumnProcessor;
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
 
+import common.Config;
+
 public class FileReader {
-    public Map<String, Object> readFile(File sourceFile, String delimiter) throws UnsupportedEncodingException, FileNotFoundException {
+    public Map<String, Object> readFile(File sourceFile) throws IOException {
         Reader inputReader = new InputStreamReader(new FileInputStream(sourceFile), "UTF-8");
         CsvParserSettings settings = new CsvParserSettings();
+        String delimiter = Config.getSystem("DELIMITER");
         if (delimiter != null && delimiter.length() > 0) {
             settings.getFormat().setDelimiter(delimiter.charAt(0));
         } else {

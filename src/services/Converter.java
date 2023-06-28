@@ -62,7 +62,7 @@ public class Converter {
 
             CurrentValues.SourceFile = new File(inputFilePath);
 
-            Map<String, Object> inputFile = fileReader.readFile(CurrentValues.SourceFile, null);
+            Map<String, Object> inputFile = fileReader.readFile(CurrentValues.SourceFile);
 
             HashMap<String, Integer> headersInputFile = (HashMap<String, Integer>) inputFile.get("headers");
             List<String[]> rows = (List<String[]>) inputFile.get("rows");
@@ -309,14 +309,14 @@ public class Converter {
 
         XMLEventReader headerTemplate = Config.getHeaderTemplate(header);
 
-        writeData(writer, headerTemplate, new HashMap<String, Integer>(), new String[] {});
+        writeDataHeader(writer, headerTemplate, new HashMap<String, Integer>(), new String[] {});
 
         writer.writeStartElement(typeList);
 
         XMLEventReader objectTemplate = Config.getObjectTemplate(object);
 
         for (String[] row : rows) {
-            writeData(writer, objectTemplate, headersInputFile, row);
+            writeDataObject(writer, objectTemplate, headersInputFile, row);
 
             objectTemplate = Config.getObjectTemplate(object);
         }
@@ -382,7 +382,7 @@ public class Converter {
     }
 
     private void writeData(XMLStreamWriter writer, XMLEventReader template, HashMap<String, Integer> headersInputFile,
-            String[] rowData) throws XMLStreamException, IOException, SQLException {
+            String[] rowData, boolean allowRefAttribute) throws XMLStreamException, IOException, SQLException {
         while (template.hasNext()) {
             XMLEvent event = template.nextEvent();
 
@@ -394,7 +394,7 @@ public class Converter {
                     Attribute attribute = attributes.next();
                     String attributeName = attribute.getName().getLocalPart().toUpperCase();
                     String attributeValue = attribute.getValue().toUpperCase();
-                    if (validator.validateAttribute(attributeName, attributeValue)) {
+                    if (validator.validateAttribute(attributeName, attributeValue, allowRefAttribute)) {
                         CurrentValues.Attributes.put(attributeName, attributeValue);
                     }
                 }
@@ -432,6 +432,16 @@ public class Converter {
                 continue;
             }
         }
+    }
+
+    private void writeDataHeader(XMLStreamWriter writer, XMLEventReader template, HashMap<String, Integer> headersInputFile,
+            String[] rowData) throws XMLStreamException, IOException, SQLException {
+        writeData(writer, template, headersInputFile, rowData, false);
+    }
+
+    private void writeDataObject(XMLStreamWriter writer, XMLEventReader template, HashMap<String, Integer> headersInputFile,
+            String[] rowData) throws XMLStreamException, IOException, SQLException {
+        writeData(writer, template, headersInputFile, rowData, true);
     }
 
     private void skipChildTags(XMLEventReader template) throws XMLStreamException {

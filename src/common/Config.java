@@ -25,7 +25,7 @@ public class Config {
         }};
     }
 
-    private static void setIniItem(Wini ini, String section, HashMap<String, String> keyValues) throws IOException {
+    public static void setIniItem(Wini ini, String section, HashMap<String, String> keyValues) throws IOException {
         ini.getFile().setWritable(true);
         for(Map.Entry<String, String> entry : keyValues.entrySet()) {
             ini.put(section, entry.getKey(), entry.getValue());
@@ -34,7 +34,7 @@ public class Config {
         ini.getFile().setReadOnly();
     }
 
-    private static void removeIniItem(Wini ini, String section) throws IOException {
+    public static void removeIniItem(Wini ini, String section) throws IOException {
         ini.getFile().setWritable(true);
         ini.remove(ini.get(section));
         ini.store();
@@ -57,7 +57,7 @@ public class Config {
         removeIniItem(getStructFile(), section);
     }
 
-    private static Wini getHeaderFile() throws IOException {
+    public static Wini getHeaderFile() throws IOException {
         return getIniFile("config/header/.header.ini");
     }
 
@@ -73,7 +73,7 @@ public class Config {
         removeIniItem(getHeaderFile(), section);
     }
 
-    private static Wini getObjectFile() throws IOException {
+    public static Wini getObjectFile() throws IOException {
         return getIniFile("config/object/.object.ini");
     }
 
@@ -118,6 +118,22 @@ public class Config {
             properties.remove(entry.getKey());
         }
         properties.store(new FileOutputStream(path), null);
+    }
+
+    private static Properties getSystemFile() throws IOException {
+        return getPropertiesFile("config/.system.properties");
+    }
+
+    public static String getSystem(String key) throws IOException {
+        return getSystemFile().getProperty(key);
+    }
+
+    public static void setSystem(HashMap<String, String> keyValues) throws IOException {
+        setPropertiesItem("config/.system.properties", getSystemFile(), keyValues);
+    }
+
+    public static void removeSystem(HashMap<String, String> keyValues) throws IOException {
+        removePropertiesItem("config/.system.properties", getSystemFile(), keyValues);
     }
 
     private static Properties getFolderFile() throws IOException {

@@ -26,6 +26,20 @@ public class InitResource {
             setReadOnly();
         }};
 
+        File system = new File("config/.system.properties") {{
+            if (!exists()) {
+                getParentFile().mkdirs();
+                createNewFile();
+                if (length() == 0) {
+                    FileOutputStream fos = new FileOutputStream(this);
+                    fos.write(warning.getBytes());
+                    fos.close();
+                }
+            }
+            setReadOnly();
+        }};
+        Files.setAttribute(system.toPath(), "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
+
         File struct = new File("config/.struct.ini") {{
             if (!exists()) {
                 getParentFile().mkdirs();

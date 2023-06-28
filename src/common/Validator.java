@@ -34,7 +34,7 @@ public class Validator {
         ADD_INFO
     }
 
-    public boolean validateAttribute(String attributeName, String attributeValue) {
+    public boolean validateAttribute(String attributeName, String attributeValue, boolean allowRefAttribute) {
         AttributeName attribute;
         try {
             attribute = AttributeName.valueOf(attributeName);
@@ -48,7 +48,10 @@ public class Validator {
             case USE:
                 return validateUseType(attributeValue);
             case REF:
-                return validateRef(attributeValue);
+                if (allowRefAttribute) {
+                    return validateRef(attributeValue);
+                }
+                throw new IllegalArgumentException("Invalid attribute name: " + attributeName);
             case FORMAT:
                 return validateFormatType(attributeValue);
             default:
