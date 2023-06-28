@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import common.Validator.FormatType;
 
 public class Data {
-
     public enum Type {
         FROM_FILE,
         FROM_DB,

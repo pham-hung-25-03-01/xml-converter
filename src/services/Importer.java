@@ -23,7 +23,7 @@ import common.Config;
 import common.Validator;
 
 public class Importer {
-    private static Validator validator = new Validator();
+    private Validator validator = new Validator();
 
     public List<String> importMultipleHeaders(List<String> headerFilePaths, JProgressBar progressBar) throws IOException {
         String headerFolderPath = "config/header";

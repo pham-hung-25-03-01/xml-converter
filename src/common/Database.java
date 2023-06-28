@@ -1,11 +1,9 @@
-package services;
+package common;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import common.Config;
-import common.Validator;
 
 public class Database {
     private static Database instance;

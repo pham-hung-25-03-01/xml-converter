@@ -41,7 +41,7 @@ public class Config {
         ini.getFile().setReadOnly();
     }
 
-    private static Wini getStructFile() throws IOException {
+    public static Wini getStructFile() throws IOException {
         return getIniFile("config/.struct.ini");
     }
 
@@ -168,7 +168,7 @@ public class Config {
         removePropertiesItem("config/default/database.properties", getDatabaseFile(), keyValues);
     }
 
-    private static Properties getQueryFile() throws IOException {
+    public static Properties getQueryFile() throws IOException {
         return getPropertiesFile("config/default/query.properties");
     }
 
@@ -184,7 +184,7 @@ public class Config {
         removePropertiesItem("config/default/query.properties", getQueryFile(), keyValues);
     }
 
-    private static Properties getValueFile() throws IOException {
+    public static Properties getValueFile() throws IOException {
         return getPropertiesFile("config/default/value.properties");
     }
 
@@ -216,132 +216,5 @@ public class Config {
     public static XMLEventReader getObjectTemplate(String templateName) throws IOException, XMLStreamException  {
         return getTemplate(getObjectFile(), templateName);
     }
-
-    // public static Wini getConfigPath() throws InvalidFileFormatException, IOException {        
-    //     return new Wini(new File("config/.path.ini")) {{
-    //         setConfig(new org.ini4j.Config() {{
-    //             setStrictOperator(true);
-    //         }});
-    //     }};
-    // }
-
-    // public static void setConfigPath(String section, String key, String value) throws InvalidFileFormatException, IOException{
-    //     Wini ini = getConfigPath();
-    //     ini.getFile().setWritable(true);
-    //     ini.put(section, key, value);
-    //     ini.store();
-    //     ini.getFile().setReadOnly();
-    // }
-
-    // public static void removeConfigPath(String section) throws InvalidFileFormatException, IOException{
-    //     Wini ini = getConfigPath();
-    //     ini.getFile().setWritable(true);
-    //     ini.remove(ini.get(section));
-    //     ini.store();
-    //     ini.getFile().setReadOnly();
-    // }
-
-    // public static Properties getConfigDefaultValues() throws IOException {
-    //     String defaultValuesFilePath = getConfigPath().get("DefaultValues", "PATH");
-    //     return new Properties() {{
-    //         load(new FileInputStream(new File(defaultValuesFilePath)));
-    //     }};
-    // }
-    
-    // public static void setConfigDefaultValues(HashMap<String, String> configs) throws IOException {
-    //     String defaultValuesFilePath = getConfigPath().get("DefaultValues", "PATH");
-
-    //     Properties properties = getConfigDefaultValues();
-
-    //     for(Map.Entry<String, String> entry : configs.entrySet()) {
-    //         properties.put(entry.getKey(), entry.getValue());
-    //     }
-    //     properties.store(new FileOutputStream(defaultValuesFilePath), null);
-    // }
-    
-    // public static void removeConfigDefaultValues(HashMap<String, String> configs) throws IOException {
-    //     String defaultValuesFilePath = getConfigPath().get("DefaultValues", "PATH");
-
-    //     Properties properties = getConfigDefaultValues();
-
-    //     for(Map.Entry<String, String> entry : configs.entrySet()) {
-    //         properties.remove(entry.getKey());
-    //     }
-    //     properties.store(new FileOutputStream(defaultValuesFilePath), null);
-    // }
-
-    // public static Properties getQueries() throws IOException {
-    //     String queriesFilePath = getConfigPath().get("Queries", "PATH");
-        
-    //     Properties properties = new EncryptableProperties(getEncryptor());
-    //     properties.load(new FileInputStream(new File(queriesFilePath)));
-
-    //     return properties;
-    // }
-
-    // public static void setQueries(HashMap<String, String> queries) throws IOException {
-    //     String defaultQueriesFilePath = getConfigPath().get("Queries", "PATH");
-
-    //     Properties properties = getQueries();
-
-    //     StandardPBEStringEncryptor encryptor = getEncryptor();
-
-    //     for(Map.Entry<String, String> entry : queries.entrySet()) {
-    //         properties.put(entry.getKey(), "ENC(" + encryptor.encrypt(entry.getValue()) + ")");
-    //     }
-    //     properties.store(new FileOutputStream(defaultQueriesFilePath), null);
-    // }
-
-    // public static void removeQueries(HashMap<String, String> queries) throws IOException {
-    //     String defaultQueriesFilePath = getConfigPath().get("Queries", "PATH");
-
-    //     Properties properties = getQueries();
-
-    //     for (Map.Entry<String, String> entry : queries.entrySet()) {
-    //         properties.remove(entry.getKey());
-    //     }
-
-    //     properties.store(new FileOutputStream(defaultQueriesFilePath), null);
-    // }
-
-    // public static XMLEventReader getTemplate(String templateName) throws IOException, XMLStreamException  {
-    //     String templateFilePath = getConfigPath().get(templateName, "PATH");
-
-    //     XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
-    //     XMLEventReader reader = xmlInputFactory.createXMLEventReader(new FileInputStream(templateFilePath));
-
-    //     return reader;
-    // }
-
-    // public static Properties getConfigDatabase() throws IOException {
-    //     String databaseFilePath = getConfigPath().get("DatabaseConfig", "PATH");
-        
-    //     Properties properties = new EncryptableProperties(getEncryptor());
-    //     properties.load(new FileInputStream(new File(databaseFilePath)));
-
-    //     return properties;
-    // }
-
-    // public static void setConfigDatabase(HashMap<String, String> configs) throws IOException {
-    //     String databaseFilePath = getConfigPath().get("DatabaseConfig", "PATH");
-
-    //     Properties properties = getConfigDatabase();
-
-    //     StandardPBEStringEncryptor encryptor = getEncryptor();
-
-    //     for(Map.Entry<String, String> entry : configs.entrySet()) {
-    //         properties.put(entry.getKey(), "ENC(" + encryptor.encrypt(entry.getValue()) + ")");
-    //     }
-    //     properties.store(new FileOutputStream(databaseFilePath), null);
-    // }
-
-    // private static StandardPBEStringEncryptor getEncryptor() {
-    //     StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();     
-    //     encryptor.setPassword("OpenWayGroup");
-    //     encryptor.setAlgorithm("PBEWithHMACSHA512AndAES_256");
-    //     encryptor.setIVGenerator(new RandomIVGenerator());
-        
-    //     return encryptor;
-    // }
 
 }

@@ -55,6 +55,7 @@ public class Converter {
 
     private String convertSingleFileToXml(String inputFilePath, String structName) throws IOException {
         try {
+            structName = structName.trim().toLowerCase();
             String typeFile = Config.getStruct(structName, "TYPE_FILE");
             String header = Config.getStruct(structName, "HEADER");
             String typeList = Config.getStruct(structName, "TYPE_LIST");
@@ -250,19 +251,21 @@ public class Converter {
         throw new XMLStreamException("Document ended before root element closed");
     }
 
-    public DefaultTreeModel convertHeaderToJTree(String headerName) throws XMLStreamException, IOException {       
+    public DefaultTreeModel convertHeaderToJTree(String headerName) throws XMLStreamException, IOException {
+        headerName = headerName.toLowerCase();
         XMLEventReader template = Config.getHeaderTemplate(headerName);
         return convertXmlToJTree(template);
     }
 
-    public DefaultTreeModel convertObjectToJTree(String objectName) throws XMLStreamException, IOException {       
+    public DefaultTreeModel convertObjectToJTree(String objectName) throws XMLStreamException, IOException {
+        objectName = objectName.toLowerCase();
         XMLEventReader template = Config.getObjectTemplate(objectName);
         return convertXmlToJTree(template);
     }
 
     private static void traverseTree(XMLStreamWriter writer, DefaultMutableTreeNode node) throws XMLStreamException {
         String nodeText = node.getUserObject().toString();
-        
+
         if (nodeText.matches("^tag \\(\\w+\\)$")) {
             Pattern pattern = Pattern.compile("^tag \\((.+?)\\)$");
             Matcher matcher = pattern.matcher(nodeText);

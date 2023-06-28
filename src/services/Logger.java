@@ -18,12 +18,12 @@ public class Logger {
         FINEST
     }
 
-    private static String logErrorFilePath = "log/error.log";
-    private static String logDateFilePath = "log/date.log";
+    private static final String LOG_ERROR_FILE_PATH = "log/error.log";
+    private static final String LOG_DATE_FILE_PATH = "log/date.log";
 
     public static String getLogError() {
         try {
-            return new String(Files.readAllBytes(new File(logErrorFilePath).toPath()));
+            return new String(Files.readAllBytes(new File(LOG_ERROR_FILE_PATH).toPath()));
         } catch (IOException e) {
             System.out.println(e.getMessage());
             return "";
@@ -32,7 +32,7 @@ public class Logger {
 
     public static String getLogDate() {
         try {
-            return new String(Files.readAllBytes(new File(logDateFilePath).toPath()));
+            return new String(Files.readAllBytes(new File(LOG_DATE_FILE_PATH).toPath()));
         } catch (IOException e) {
             System.out.println(e.getMessage());
             return "";
@@ -42,7 +42,7 @@ public class Logger {
     public static void writeLogError(String message, LogType logType) {
         boolean append = true;
         try {
-            FileHandler handler = new FileHandler(logErrorFilePath, append);
+            FileHandler handler = new FileHandler(LOG_ERROR_FILE_PATH, append);
             handler.setFormatter(new LogFormatter());
             java.util.logging.Logger logger = java.util.logging.Logger.getLogger("SERVICES");
             logger.addHandler(handler);
@@ -78,7 +78,7 @@ public class Logger {
     public static void writeLogDate(String message, LogType logType) {
         boolean append = true;
         try {
-            FileHandler handler = new FileHandler(logDateFilePath, append);
+            FileHandler handler = new FileHandler(LOG_DATE_FILE_PATH, append);
             handler.setFormatter(new LogFormatter());
             java.util.logging.Logger logger = java.util.logging.Logger.getLogger("SERVICES");
             logger.addHandler(handler);
@@ -113,7 +113,7 @@ public class Logger {
 
     public static void cleanLogError() {
         try {
-            new FileOutputStream(new File(logErrorFilePath)).close();
+            new FileOutputStream(new File(LOG_ERROR_FILE_PATH)).close();
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -121,7 +121,7 @@ public class Logger {
 
     public static void cleanLogDate() {
         try {
-            new FileOutputStream(new File(logDateFilePath)).close();
+            new FileOutputStream(new File(LOG_DATE_FILE_PATH)).close();
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }

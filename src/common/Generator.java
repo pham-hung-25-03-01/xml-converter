@@ -8,7 +8,6 @@ import java.util.Random;
 import org.ini4j.InvalidFileFormatException;
 
 public class Generator {
-    
     public enum Type {
         CURRENT_DATE,
         CURRENT_TIME,
