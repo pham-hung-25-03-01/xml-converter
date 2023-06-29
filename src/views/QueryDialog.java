@@ -107,6 +107,11 @@ public class QueryDialog extends javax.swing.JDialog {
         });
 
         btnClear.setText("Clear");
+        btnClear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClearActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -176,6 +181,10 @@ public class QueryDialog extends javax.swing.JDialog {
     private void tblQueryMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblQueryMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_tblQueryMouseClicked
+
+    private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnClearActionPerformed
 
     /**
      * @param args the command line arguments
