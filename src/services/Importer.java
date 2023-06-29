@@ -91,17 +91,17 @@ public class Importer {
         }
     }
 
-    public String duplicateHeader(String sourceHeaderName, String targetHeaderName) throws IOException {
+    public HashMap<String, String> duplicateHeader(String sourceHeaderName, String targetHeaderName) throws IOException {
         String headerFolderPath = "config/header";
         return duplicateTemplate(Config.getHeaderFile(), headerFolderPath, sourceHeaderName, targetHeaderName);
     }
 
-    public String duplicateObject(String sourceObjectName, String targetObjectName) throws IOException {
+    public HashMap<String, String> duplicateObject(String sourceObjectName, String targetObjectName) throws IOException {
         String objectFolderPath = "config/object";
         return duplicateTemplate(Config.getObjectFile(), objectFolderPath, sourceObjectName, targetObjectName);
     }
 
-    private String duplicateTemplate(Wini store, String templateFolderPath, String sourceTemplateName, String targetTemplateName) {
+    private HashMap<String, String> duplicateTemplate(Wini store, String templateFolderPath, String sourceTemplateName, String targetTemplateName) {
         try {
             String sourceTemplatePath = store.get(sourceTemplateName, "PATH");
             File sourceFile = new File(sourceTemplatePath);
@@ -117,10 +117,13 @@ public class Importer {
             Config.setIniItem(store, targetTemplateName, new HashMap<String, String>() {{
                 put("PATH", targetTemplatePath);
             }});
-            return targetTemplateName;
+            HashMap<String, String> result = new HashMap<String, String>();
+            result.put("NAME", targetTemplateName);
+            result.put("PATH", targetTemplatePath);
+            return result;
         } catch (IOException e) {
             Logger.writeLogError(e.getMessage(), Logger.LogType.SEVERE);
-            return "";
+            return null;
         }
     }
 

@@ -12,9 +12,10 @@ import javax.swing.table.DefaultTableModel;
 
 import common.Config;
 import common.Database;
+import views.ProgressDialog;
 
 public class Configurator {
-    public String setConnectToDB(String host, String port, String dbname, String username, String password) throws IOException {
+    public String setConnectToDB(String host, String port, String dbname, String username, String password, ProgressDialog progress) throws IOException {
         if (host.isBlank() || port.isBlank() || dbname.isBlank() || username.isBlank()) {
             throw new IllegalArgumentException("All fields must be filled");
         }
@@ -24,7 +25,11 @@ public class Configurator {
         dbname = dbname.trim();
         username = username.trim();
 
+        progress.setProgress(45);
+
         if (Database.testConnection(host, port, dbname, username, password)) {
+            progress.setProgress(75);
+
             HashMap<String, String> attributes = new HashMap<String, String>();
             attributes.put("DB_HOST", host);
             attributes.put("DB_PORT", port);
@@ -32,10 +37,13 @@ public class Configurator {
             attributes.put("DB_USER", username);
             attributes.put("DB_PASSWORD", password);
             Config.setDatabase(attributes);
-            return "Connected to database successfully";
+
+            progress.setProgress(100);
+
+            return "Connected to database successfully!";
         }
 
-        throw new RuntimeException("Connection to database failed");
+        throw new RuntimeException("Connection to database failed!");
     }
 
     public HashMap<String, String> getConfigDatabase() throws IOException {
@@ -49,6 +57,20 @@ public class Configurator {
         DefaultTableModel model = new DefaultTableModel();
         model.addColumn("Name");
         model.addColumn("Value");
+        for (Map.Entry<String, String> entry : list.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            model.addRow(new Object[] { key, value });
+        }
+        return model;
+    }
+
+    public DefaultTableModel getConfigQuery() throws IOException {
+        Properties store = Config.getQueryFile();
+        HashMap<String, String> list = getListItem(store);
+        DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("Name");
+        model.addColumn("Query");
         for (Map.Entry<String, String> entry : list.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
@@ -130,6 +152,8 @@ public class Configurator {
     }
 
     private HashMap<String, String> prepareCreateItem(Properties store, String name, String value) throws IOException {
+        name = name.replaceAll("\\s+", " ");
+        value = value.replaceAll("\\s+", " ");
         if (name.isBlank() || value.isBlank()) {
             throw new IllegalArgumentException("All fields must be filled");
         }
@@ -146,12 +170,15 @@ public class Configurator {
         }
 
         HashMap<String, String> attributes = new HashMap<String, String>();
-        attributes.put(name, value);
+        attributes.put("NAME", name);
+        attributes.put("VALUE", value);
 
         return attributes;
     }
 
     private HashMap<String, String> prepareUpdateItem(Properties store, String name, String value) throws IOException {
+        name = name.replaceAll("\\s+", " ");
+        value = value.replaceAll("\\s+", " ");
         if (name.isBlank() || value.isBlank()) {
             throw new IllegalArgumentException("All fields must be filled");
         }
@@ -165,12 +192,14 @@ public class Configurator {
         }
 
         HashMap<String, String> attributes = new HashMap<String, String>();
-        attributes.put(name, value);
+        attributes.put("NAME", name);
+        attributes.put("VALUE", value);
 
         return attributes;
     }
 
     private String prepareDeleteItem(Properties store, String name) throws IOException {
+        name = name.replaceAll("\\s+", " ");
         if (name.isBlank()) {
             throw new IllegalArgumentException("All fields must be filled");
         }

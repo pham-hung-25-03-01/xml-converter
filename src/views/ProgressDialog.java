@@ -9,13 +9,37 @@ package views;
  * @author sing1
  */
 public class ProgressDialog extends javax.swing.JDialog {
-
+    private Thread mainThread;
     /**
      * Creates new form ProgressDialog
      */
-    public ProgressDialog(java.awt.Frame parent, boolean modal) {
+    public ProgressDialog(java.awt.Frame parent, boolean modal, String title, String label) {
         super(parent, modal);
         initComponents();
+        setDisplay(title, label);
+    }
+
+    public void setMainThread(Thread mainThread) {
+        this.mainThread = mainThread;
+    }
+
+    public void setProgress(int value) {
+        this.pgProcessing.setValue(value);
+    }
+
+    private void setDisplay(String title, String label) {
+        this.setTitle(title);
+        this.pgProcessing.setMinimum(0);
+        this.pgProcessing.setMaximum(100);
+        this.pgProcessing.setStringPainted(true);
+        this.pgProcessing.setString(label);
+        this.pgProcessing.setValue(0);
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                ProgressDialog.this.mainThread.interrupt();
+            }
+        });
     }
 
     /**
@@ -83,7 +107,7 @@ public class ProgressDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                ProgressDialog dialog = new ProgressDialog(new javax.swing.JFrame(), true);
+                ProgressDialog dialog = new ProgressDialog(new javax.swing.JFrame(), true, "Progress", "Processing...");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

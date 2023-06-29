@@ -12,6 +12,7 @@ import javax.swing.SwingConstants;
 
 import services.FolderPath;
 import services.Logger;
+import services.Templater;
 
 /**
  *
@@ -396,6 +397,10 @@ public class MainForm extends javax.swing.JFrame {
         return null;
     }
 
+    public void addStruct(String structName) {
+        cbbStruct.addItem(structName);
+    }
+
     private void menuExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuExitActionPerformed
         if (JOptionPane.showConfirmDialog(null, "Are you sure to exit?", "Confirm",
                 JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION)
@@ -411,11 +416,11 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_btnConvertActionPerformed
 
     private void menuLogErrorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuLogErrorActionPerformed
-        new LogDialog(this, true, "Log error", Logger.getLogError()).setVisible(true);
+        new LogDialog(this, true, "Log error", Logger.getLogError());
     }//GEN-LAST:event_menuLogErrorActionPerformed
 
     private void menuLogDateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuLogDateActionPerformed
-        new LogDialog(this, true, "Log date", Logger.getLogDate()).setVisible(true);
+        new LogDialog(this, true, "Log date", Logger.getLogDate());
     }//GEN-LAST:event_menuLogDateActionPerformed
 
     private void menuPathInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuPathInputActionPerformed
@@ -471,23 +476,23 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_menuPathProcessActionPerformed
 
     private void menuConfigConnectDBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuConfigConnectDBActionPerformed
-        new DBDialog(this, true).setVisible(true);
+        new DBDialog(this, true);
     }//GEN-LAST:event_menuConfigConnectDBActionPerformed
 
     private void menuConfigDefaultValueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuConfigDefaultValueActionPerformed
-        new DefaultValueDialog(this, true).setVisible(true);
+        new DefaultValueDialog(this, true);
     }//GEN-LAST:event_menuConfigDefaultValueActionPerformed
 
     private void menuConfigQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuConfigQueryActionPerformed
-        // TODO add your handling code here:
+        new QueryDialog(this, true);
     }//GEN-LAST:event_menuConfigQueryActionPerformed
 
     private void menuHeaderNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuHeaderNewActionPerformed
-        // TODO add your handling code here:
+        new TemplateDialog(this, true, Templater.Type.HEADER, "New header", null);
     }//GEN-LAST:event_menuHeaderNewActionPerformed
 
     private void menuHeaderListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuHeaderListActionPerformed
-        // TODO add your handling code here:
+        new ListTemplateDialog(this, true, Templater.Type.HEADER, "List headers");
     }//GEN-LAST:event_menuHeaderListActionPerformed
 
     private void menuHeaderImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuHeaderImportActionPerformed

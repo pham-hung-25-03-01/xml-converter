@@ -4,18 +4,41 @@
  */
 package views;
 
+import java.io.IOException;
+
+import javax.swing.JOptionPane;
+
+import services.Templater;
+
 /**
  *
  * @author sing1
  */
 public class InputDialog extends javax.swing.JDialog {
-
+    public interface InputDialogCondition {
+        public void execute(String input, Templater.Type type) throws IOException;
+    }
+    private Templater.Type type;
+    private InputDialogCondition condition;
+    private String input;
+    private boolean isOK = false;
+    public boolean isOK() {
+        return isOK;
+    }
+    public String getInput() {
+        return input;
+    }
     /**
      * Creates new form InputDialog
      */
-    public InputDialog(java.awt.Frame parent, boolean modal) {
+    public InputDialog(java.awt.Frame parent, boolean modal, Templater.Type type, String title, String label, InputDialogCondition condition) {
         super(parent, modal);
         initComponents();
+        setTitle(title);
+        this.type = type;
+        this.label.setText(label);
+        this.condition = condition;
+        this.setVisible(true);
     }
 
     /**
@@ -74,7 +97,15 @@ public class InputDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKActionPerformed
-        // TODO add your handling code here:
+        String text = txtInput.getText();
+        try {
+            condition.execute(text, this.type);
+            this.isOK = true;
+            this.input = text;
+            this.setVisible(false);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnOKActionPerformed
 
     /**
@@ -107,7 +138,7 @@ public class InputDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                InputDialog dialog = new InputDialog(new javax.swing.JFrame(), true);
+                InputDialog dialog = new InputDialog(new javax.swing.JFrame(), true, Templater.Type.HEADER, "Input", "Input", null);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

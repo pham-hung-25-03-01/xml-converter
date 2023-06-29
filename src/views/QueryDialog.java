@@ -4,18 +4,50 @@
  */
 package views;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+
+import services.Configurator;
+
 /**
  *
  * @author sing1
  */
 public class QueryDialog extends javax.swing.JDialog {
-
+    private Configurator configurator = new Configurator();
     /**
      * Creates new form QueryDialog
      */
     public QueryDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        try {
+            loadData();
+            reset();
+            this.setVisible(true);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this,"Cannot load data", "Error", JOptionPane.ERROR_MESSAGE);
+            this.dispose();
+        }
+    }
+
+    private void loadData() throws IOException {
+        DefaultTableCellRenderer renderer = (DefaultTableCellRenderer) this.tblQuery.getTableHeader().getDefaultRenderer();
+        renderer.setHorizontalAlignment((int) CENTER_ALIGNMENT);
+        this.tblQuery.setModel(configurator.getConfigQuery());
+        this.tblQuery.setDefaultEditor(Object.class, null);
+        this.tblQuery.setFocusable(false);
+        this.tblQuery.setAutoCreateRowSorter(true);
+        this.tblQuery.getColumnModel().getColumn(0).setMinWidth(80);
+        this.tblQuery.getColumnModel().getColumn(0).setPreferredWidth(80);
+        this.tblQuery.getColumnModel().getColumn(1).setMinWidth(300);
+        this.tblQuery.getColumnModel().getColumn(1).setPreferredWidth(400);
     }
 
     /**
@@ -166,24 +198,101 @@ public class QueryDialog extends javax.swing.JDialog {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void reset() {
+        this.txtName.setText("");
+        this.txtName.setEditable(true);
+        this.txtName.setFocusable(true);
+        this.txtQuery.setText("");
+        this.tblQuery.clearSelection();
+        this.btnAdd.setEnabled(true);
+        this.btnUpdate.setEnabled(false);
+        this.btnDelete.setEnabled(false);
+    }
+
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        // TODO add your handling code here:
+        String name = txtName.getText();
+        String query = txtQuery.getText();
+        try {
+            HashMap<String, String> defaultQuery = configurator.createDefaultQuery(name, query);
+            DefaultTableModel model = (DefaultTableModel) this.tblQuery.getModel();
+            model.addRow(new Object[]{defaultQuery.get("NAME"), defaultQuery.get("VALUE")});
+            reset();
+            JOptionPane.showMessageDialog(this, "Query added successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
-        // TODO add your handling code here:
+        if (this.tblQuery.getSelectedRowCount() > 1) {
+            JOptionPane.showMessageDialog(this, "Please select only one query to update", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (this.tblQuery.getSelectedRowCount() == 0) {
+            JOptionPane.showMessageDialog(this, "Please select a query to update", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to update this query?", "Confirm", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            String name = txtName.getText();
+            String query = txtQuery.getText();
+            try {
+                HashMap<String, String> defaultQuery = configurator.updateDefaultQuery(name, query);
+                DefaultTableModel model = (DefaultTableModel) this.tblQuery.getModel();
+                model.setValueAt(defaultQuery.get("VALUE"), this.tblQuery.getSelectedRow(), 1);
+                reset();
+                JOptionPane.showMessageDialog(this, "Query updated successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        // TODO add your handling code here:
+        int[] selectedRows = this.tblQuery.getSelectedRows();
+        if (selectedRows.length < 1) {
+            JOptionPane.showMessageDialog(this, "Please select a query to delete", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete the selected queries?", "Confirm", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            List<String> deleted = new ArrayList<String>();
+            List<String> notDeleted = new ArrayList<String>();
+            DefaultTableModel model = (DefaultTableModel) this.tblQuery.getModel();
+            for (int i = selectedRows.length - 1; i >= 0; i--) {
+                String name = (String) this.tblQuery.getValueAt(selectedRows[i], 0);
+                try {
+                    String result = configurator.deleteDefaultQuery(name);
+                    deleted.add(result);
+                    model.removeRow(selectedRows[i]);
+                } catch (Exception e) {
+                    notDeleted.add(name);
+                }
+            }
+            reset();
+            JOptionPane.showMessageDialog(this, "Deleted: " + String.join(", ", deleted) + "\nNot deleted: " + String.join(", ", notDeleted), "Message", JOptionPane.INFORMATION_MESSAGE);
+        }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void tblQueryMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblQueryMouseClicked
-        // TODO add your handling code here:
+        int selectedRow = this.tblQuery.getSelectedRow();
+        if (selectedRow < 0) {
+            reset();
+            return;
+        }
+        String name = (String) this.tblQuery.getValueAt(selectedRow, 0);
+        String query = (String) this.tblQuery.getValueAt(selectedRow, 1);
+        this.txtName.setText(name);
+        this.txtName.setEditable(false);
+        this.txtName.setFocusable(false);
+        this.txtQuery.setText(query);
+        this.btnAdd.setEnabled(false);
+        this.btnUpdate.setEnabled(true);
+        this.btnDelete.setEnabled(true);
     }//GEN-LAST:event_tblQueryMouseClicked
 
     private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
-        // TODO add your handling code here:
+        reset();
     }//GEN-LAST:event_btnClearActionPerformed
 
     /**

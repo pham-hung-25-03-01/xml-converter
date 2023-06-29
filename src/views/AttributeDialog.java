@@ -4,18 +4,48 @@
  */
 package views;
 
+import java.util.Arrays;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
+
+import common.Validator.FormatType;
+import common.Validator.UseType;
+import common.Validator.ValueType;
+
 /**
  *
  * @author sing1
  */
 public class AttributeDialog extends javax.swing.JDialog {
+    private String attributes;
+    private boolean isOK = false;
 
+    public String getAttributes() {
+        return attributes;
+    }
+
+    public boolean isOK() {
+        return isOK;
+    }
     /**
      * Creates new form AttributeDialog
      */
-    public AttributeDialog(java.awt.Frame parent, boolean modal) {
+    public AttributeDialog(java.awt.Frame parent, boolean modal, String title) {
         super(parent, modal);
         initComponents();
+        setTitle(title);
+        this.setVisible(true);
+        loadData();
+    }
+
+    private void loadData() {
+        String[] uses = Arrays.stream(UseType.values()).map(n -> n.name().toLowerCase()).toArray(String[]::new);
+        String[] types = Arrays.stream(ValueType.values()).map(n -> n.name().toLowerCase()).toArray(String[]::new);
+        String[] formats = Arrays.stream(FormatType.values()).map(n -> n.name().toLowerCase()).toArray(String[]::new);
+        this.cbbUse.setModel(new DefaultComboBoxModel<>(uses));
+        this.cbbType.setModel(new DefaultComboBoxModel<>(types));
+        this.cbbFormat.setModel(new DefaultComboBoxModel<>(formats));
     }
 
     /**
@@ -120,7 +150,31 @@ public class AttributeDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKActionPerformed
-        // TODO add your handling code here:
+        String ref = this.txtReference.getText();
+        if (!ref.matches("^(\\w+\\={0,1}\\w*\\;)*$")) {
+            JOptionPane.showMessageDialog(null, "Ref is invalid", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        String attributes = "";
+        if (!ref.isBlank()) {
+            attributes += "ref='" + ref + "', ";
+        }
+        if (cbbUse.getSelectedIndex() > 0) {
+            attributes += "use='" + this.cbbUse.getSelectedItem().toString() + "', ";
+        }
+        if (cbbType.getSelectedIndex() > 0) {
+            attributes += "type='" + this.cbbType.getSelectedItem().toString() + "', ";
+        }
+        if (cbbFormat.getSelectedIndex() > 0) {
+            attributes += "format='" + this.cbbFormat.getSelectedItem().toString() + "', ";
+        }
+        if (!attributes.isBlank()) {
+            attributes = attributes.substring(0, attributes.length() - 2);
+        }
+
+        this.attributes = attributes;
+        this.isOK = true;
+        this.setVisible(false);
     }//GEN-LAST:event_btnOKActionPerformed
 
     /**
@@ -153,7 +207,7 @@ public class AttributeDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                AttributeDialog dialog = new AttributeDialog(new javax.swing.JFrame(), true);
+                AttributeDialog dialog = new AttributeDialog(new javax.swing.JFrame(), true, "Attributes");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

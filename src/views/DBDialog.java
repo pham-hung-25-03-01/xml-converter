@@ -25,9 +25,10 @@ public class DBDialog extends javax.swing.JDialog {
         initComponents();
         try {
             loadConfigDB();
+            this.setVisible(true);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Cannot load data", "Error", JOptionPane.ERROR_MESSAGE);
             this.dispose();
+            JOptionPane.showMessageDialog(this, "Cannot load data", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -168,17 +169,37 @@ public class DBDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_cbShowPasswordActionPerformed
 
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
-        String host = txtHost.getText();
-        String port = txtPort.getText();
-        String dbname = txtDBname.getText();
-        String username = txtUsername.getText();
-        String password = new String(txtPassword.getPassword());
-        try {
-            configurator.setConnectToDB(host, port, dbname, username, password);
-            JOptionPane.showMessageDialog(this, "Connected to database successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
+        ProgressDialog progress = new ProgressDialog((MainForm)this.getParent(), true, "Connect to database", "Connecting...");
+        Thread mainThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                progress.setProgress(10);
+                String host = txtHost.getText();
+                String port = txtPort.getText();
+                String dbname = txtDBname.getText();
+                String username = txtUsername.getText();
+                String password = new String(txtPassword.getPassword());
+                progress.setProgress(25);
+                try {
+                    String msg = configurator.setConnectToDB(host, port, dbname, username, password, progress);
+                    DBDialog.this.dispose();
+                    JOptionPane.showMessageDialog(DBDialog.this, msg, "Success", JOptionPane.INFORMATION_MESSAGE);
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(DBDialog.this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                } finally {
+                    progress.dispose();
+                }
+            }
+        });
+        Thread progressThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                progress.setMainThread(mainThread);
+                progress.setVisible(true);
+            }
+        });
+        progressThread.start();
+        mainThread.start();
     }//GEN-LAST:event_btnConnectActionPerformed
 
     /**

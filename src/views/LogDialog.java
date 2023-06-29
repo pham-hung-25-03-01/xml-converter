@@ -23,6 +23,7 @@ public class LogDialog extends javax.swing.JDialog {
         initComponents();
         this.setTitle(title);
         this.txtLog.setText(log);
+        this.setVisible(true);
     }
 
     /**

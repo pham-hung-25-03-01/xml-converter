@@ -203,6 +203,10 @@ public class Config {
     private static XMLEventReader getTemplate(Wini ini, String templateName) throws IOException, XMLStreamException  {
         String templateFilePath = ini.get(templateName, "PATH");
 
+        if (templateFilePath == null || templateFilePath.isBlank()) {
+            throw new IllegalArgumentException("Template " + templateName + " not found");
+        }
+
         XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
         XMLEventReader reader = xmlInputFactory.createXMLEventReader(new FileInputStream(templateFilePath));
 

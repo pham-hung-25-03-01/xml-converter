@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 
-public class InitResource {
+public class Resource {
     public static void init() throws IOException {
         final String LOG_ERROR_PATH = "log/error.log";
         final String LOG_DATE_PATH = "log/date.log";

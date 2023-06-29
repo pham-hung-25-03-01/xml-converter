@@ -4,18 +4,55 @@
  */
 package views;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+
+import common.Config;
+import services.Templater;
+import views.InputDialog.InputDialogCondition;
+
 /**
  *
  * @author sing1
  */
 public class ListTemplateDialog extends javax.swing.JDialog {
-
+    private Templater templater = new Templater();
+    private Templater.Type type;
     /**
      * Creates new form ConfigTemplateDialog
      */
-    public ListTemplateDialog(java.awt.Frame parent, boolean modal) {
+    public ListTemplateDialog(java.awt.Frame parent, boolean modal, Templater.Type type, String title) {
         super(parent, modal);
         initComponents();
+        setTitle(title);
+        this.type = type;
+        try {
+            loadData();
+            reset();
+            this.setVisible(true);
+        } catch (Exception e) {
+            this.dispose();
+            JOptionPane.showMessageDialog(this, "Cannot load data", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void loadData() throws IOException {
+        DefaultTableCellRenderer renderer = (DefaultTableCellRenderer) this.tblTemplate.getTableHeader().getDefaultRenderer();
+        renderer.setHorizontalAlignment((int) CENTER_ALIGNMENT);
+        this.tblTemplate.setModel(templater.getListTemplates(this.type));
+        this.tblTemplate.setDefaultEditor(Object.class, null);
+        this.tblTemplate.setFocusable(false);
+        this.tblTemplate.setAutoCreateRowSorter(true);
+        this.tblTemplate.getColumnModel().getColumn(0).setMinWidth(160);
+        this.tblTemplate.getColumnModel().getColumn(0).setPreferredWidth(160);
+        this.tblTemplate.getColumnModel().getColumn(1).setMinWidth(300);
+        this.tblTemplate.getColumnModel().getColumn(1).setPreferredWidth(400);
     }
 
     /**
@@ -116,20 +153,123 @@ public class ListTemplateDialog extends javax.swing.JDialog {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void reset() {
+        this.tblTemplate.clearSelection();
+        this.btnEdit.setEnabled(false);
+        this.btnDelete.setEnabled(false);
+        this.btnDuplicate.setEnabled(false);
+    }
+
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        // TODO add your handling code here:
+        if (this.tblTemplate.getSelectedRowCount() > 1) {
+            JOptionPane.showMessageDialog(this, "Please select only one template to edit.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (this.tblTemplate.getSelectedRowCount() == 0) {
+            JOptionPane.showMessageDialog(this, "Please select a template to edit.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        int row = this.tblTemplate.getSelectedRow();
+        String name = (String) this.tblTemplate.getValueAt(row, 0);
+        String title = this.type == Templater.Type.HEADER ? "Edit header" : "Edit object";
+        new TemplateDialog((MainForm) this.getParent(), true, Templater.Type.HEADER, title, name);
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        // TODO add your handling code here:
+        int[] selectedRows = this.tblTemplate.getSelectedRows();
+        if (selectedRows.length < 1) {
+            JOptionPane.showMessageDialog(this, "Please select a template to delete.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete the selected templates?", "Confirm", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            List<String> deleted = new ArrayList<String>();
+            List<String> notDeleted = new ArrayList<String>();
+            DefaultTableModel model = (DefaultTableModel) this.tblTemplate.getModel();
+            for (int i = selectedRows.length - 1; i >= 0; i--) {
+                String name = (String) this.tblTemplate.getValueAt(selectedRows[i], 0);
+                try {
+                    String result = templater.deleteTemplate(Templater.Type.HEADER, name);
+                    deleted.add(result);
+                    model.removeRow(selectedRows[i]);
+                } catch (Exception e) {
+                    notDeleted.add(name);
+                }
+            }
+            reset();
+            JOptionPane.showMessageDialog(this, "Deleted: " + String.join(", ", deleted) + "\nNot deleted: " + String.join(", ", notDeleted), "Message", JOptionPane.INFORMATION_MESSAGE);
+        }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnDuplicateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDuplicateActionPerformed
-        // TODO add your handling code here:
+        if (this.tblTemplate.getSelectedRowCount() < 1) {
+            JOptionPane.showMessageDialog(this, "Please select a template to duplicate.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (this.tblTemplate.getSelectedRowCount() > 1) {
+            JOptionPane.showMessageDialog(this, "Please select only one template to duplicate.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        InputDialogCondition condition = (String input, Templater.Type type) -> {
+            input = input.trim().toLowerCase();
+            if (input == null || input.isEmpty()) {
+                throw new IllegalArgumentException("Name cannot be empty.");
+            }
+            if (!input.matches("\\w+")) {
+                throw new IllegalArgumentException("Name can only contain letters, numbers, and underscores.");
+            }
+            if (type == Templater.Type.HEADER) {
+                if (Config.getHeaderFile().containsKey(input)) {
+                    throw new IllegalArgumentException("Name already exists.");
+                }
+            } else {
+                if (Config.getObjectFile().containsKey(input)) {
+                    throw new IllegalArgumentException("Name already exists.");
+                }
+            }
+        };
+        MainForm rootParent = (MainForm) this.getParent();
+        InputDialog inputDialog = new InputDialog(rootParent, true, this.type, "Duplicate", "Name", condition);
+        try {
+            if (inputDialog.isOK()) {
+                String sourceTemplateName = (String) this.tblTemplate.getValueAt(this.tblTemplate.getSelectedRow(), 0);
+                HashMap<String, String> result = templater.duplicateTemplate(this.type, sourceTemplateName, inputDialog.getInput());
+                if (result == null) {
+                    throw new Exception("Failed to duplicate template. See log for more details.");
+                }
+                DefaultTableModel model = (DefaultTableModel) this.tblTemplate.getModel();
+                model.addRow(new Object[]{result.get("NAME"), result.get("PATH")});
+                rootParent.addStruct(result.get("NAME"));
+                reset();
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        inputDialog.dispose();
     }//GEN-LAST:event_btnDuplicateActionPerformed
 
     private void tblTemplateMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblTemplateMouseClicked
-        // TODO add your handling code here:
+        if (this.tblTemplate.getSelectedRowCount() > 1) {
+            this.btnEdit.setEnabled(false);
+            this.btnDuplicate.setEnabled(false);
+            this.btnDelete.setEnabled(true);
+            return;
+        }
+        if (this.tblTemplate.getSelectedRowCount() < 1) {
+            this.btnEdit.setEnabled(false);
+            this.btnDuplicate.setEnabled(false);
+            this.btnDelete.setEnabled(false);
+            return;
+        }
+        if (this.tblTemplate.getSelectedRowCount() == 1) {
+            this.btnEdit.setEnabled(true);
+            this.btnDuplicate.setEnabled(true);
+            this.btnDelete.setEnabled(true);
+                if (evt.getClickCount() == 2) {
+                    btnEditActionPerformed(null);
+                }
+            return;
+        }
     }//GEN-LAST:event_tblTemplateMouseClicked
 
     /**
@@ -163,7 +303,7 @@ public class ListTemplateDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                ListTemplateDialog dialog = new ListTemplateDialog(new javax.swing.JFrame(), true);
+                ListTemplateDialog dialog = new ListTemplateDialog(new javax.swing.JFrame(), true, Templater.Type.HEADER, null);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

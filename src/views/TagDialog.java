@@ -4,18 +4,31 @@
  */
 package views;
 
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author sing1
  */
 public class TagDialog extends javax.swing.JDialog {
+    private String tagName;
+    private boolean isOK = false;
 
+    public String getTagName() {
+        return tagName;
+    }
+
+    public boolean isOK() {
+        return isOK;
+    }
     /**
      * Creates new form TagDialog
      */
-    public TagDialog(java.awt.Frame parent, boolean modal) {
+    public TagDialog(java.awt.Frame parent, boolean modal, String title) {
         super(parent, modal);
         initComponents();
+        setTitle(title);
+        this.setVisible(true);
     }
 
     /**
@@ -75,7 +88,20 @@ public class TagDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKActionPerformed
-        // TODO add your handling code here:
+        String input = txtTagName.getText().trim();
+        if (input.isBlank()) {
+            this.isOK = false;
+            JOptionPane.showMessageDialog(null, "Tag name is not empty", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (!input.matches("^[a-zA-Z]\\w*$")) {
+            this.isOK = false;
+            JOptionPane.showMessageDialog(null, "Tag name must be start with a letter and not contain special characters or spaces except underscore", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        this.tagName = input;
+        this.isOK = true;
+        this.setVisible(false);
     }//GEN-LAST:event_btnOKActionPerformed
 
     /**
@@ -108,7 +134,7 @@ public class TagDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                TagDialog dialog = new TagDialog(new javax.swing.JFrame(), true);
+                TagDialog dialog = new TagDialog(new javax.swing.JFrame(), true, "Tag");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
