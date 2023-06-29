@@ -70,6 +70,12 @@ public class ValueDialog extends javax.swing.JDialog {
             }
         });
 
+        cbbValue.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbbValueActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -131,6 +137,10 @@ public class ValueDialog extends javax.swing.JDialog {
     private void btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnOKActionPerformed
+
+    private void cbbValueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbValueActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbbValueActionPerformed
 
     /**
      * @param args the command line arguments

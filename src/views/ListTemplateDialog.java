@@ -55,6 +55,11 @@ public class ListTemplateDialog extends javax.swing.JDialog {
                 return canEdit [columnIndex];
             }
         });
+        tblTemplate.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblTemplateMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblTemplate);
 
         btnEdit.setText(" Edit");
@@ -122,6 +127,10 @@ public class ListTemplateDialog extends javax.swing.JDialog {
     private void btnDuplicateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDuplicateActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnDuplicateActionPerformed
+
+    private void tblTemplateMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblTemplateMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tblTemplateMouseClicked
 
     /**
      * @param args the command line arguments

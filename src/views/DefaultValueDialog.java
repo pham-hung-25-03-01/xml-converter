@@ -73,7 +73,20 @@ public class DefaultValueDialog extends javax.swing.JDialog {
             new String [] {
                 "Name", "Value"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tblDefaultValue.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblDefaultValueMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblDefaultValue);
         if (tblDefaultValue.getColumnModel().getColumnCount() > 0) {
             tblDefaultValue.getColumnModel().getColumn(0).setMinWidth(120);
@@ -225,6 +238,10 @@ public class DefaultValueDialog extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Deleted: " + String.join(", ", deleted) + "\nNot deleted: " + String.join(", ", notDeleted), "Message", JOptionPane.INFORMATION_MESSAGE);
         }
     }//GEN-LAST:event_btnDeleteActionPerformed
+
+    private void tblDefaultValueMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDefaultValueMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tblDefaultValueMouseClicked
 
     /**
      * @param args the command line arguments

@@ -28,7 +28,7 @@ public class TemplateDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTreeXML = new javax.swing.JTree();
+        treeStruct = new javax.swing.JTree();
         cbbOption = new javax.swing.JComboBox<>();
         btnAdd = new javax.swing.JButton();
         btnEdit = new javax.swing.JButton();
@@ -41,8 +41,13 @@ public class TemplateDialog extends javax.swing.JDialog {
         setMinimumSize(new java.awt.Dimension(600, 550));
 
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
-        jTreeXML.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
-        jScrollPane1.setViewportView(jTreeXML);
+        treeStruct.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        treeStruct.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                treeStructMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(treeStruct);
 
         cbbOption.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "none", "tag", "attributes", "value" }));
 
@@ -69,7 +74,7 @@ public class TemplateDialog extends javax.swing.JDialog {
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("File name:");
+        jLabel1.setText("Name:");
 
         btnSave.setText("Save");
         btnSave.addActionListener(new java.awt.event.ActionListener() {
@@ -144,6 +149,10 @@ public class TemplateDialog extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnSaveActionPerformed
 
+    private void treeStructMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_treeStructMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_treeStructMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -194,7 +203,7 @@ public class TemplateDialog extends javax.swing.JDialog {
     private javax.swing.JComboBox<String> cbbOption;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTree jTreeXML;
+    private javax.swing.JTree treeStruct;
     private javax.swing.JTextField txtFileName;
     // End of variables declaration//GEN-END:variables
 }

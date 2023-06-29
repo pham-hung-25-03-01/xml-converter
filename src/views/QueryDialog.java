@@ -61,6 +61,11 @@ public class QueryDialog extends javax.swing.JDialog {
                 return canEdit [columnIndex];
             }
         });
+        tblQuery.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblQueryMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblQuery);
         if (tblQuery.getColumnModel().getColumnCount() > 0) {
             tblQuery.getColumnModel().getColumn(0).setMinWidth(80);
@@ -161,6 +166,10 @@ public class QueryDialog extends javax.swing.JDialog {
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnDeleteActionPerformed
+
+    private void tblQueryMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblQueryMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tblQueryMouseClicked
 
     /**
      * @param args the command line arguments
