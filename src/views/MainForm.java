@@ -67,7 +67,7 @@ public class MainForm extends javax.swing.JFrame {
         jSeparator6 = new javax.swing.JPopupMenu.Separator();
         menuConfigQuery = new javax.swing.JMenuItem();
         menuHeader = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        menuHeaderNew = new javax.swing.JMenuItem();
         jSeparator7 = new javax.swing.JPopupMenu.Separator();
         menuHeaderList = new javax.swing.JMenuItem();
         jSeparator8 = new javax.swing.JPopupMenu.Separator();
@@ -241,14 +241,14 @@ public class MainForm extends javax.swing.JFrame {
 
         menuHeader.setText("Header");
 
-        jMenuItem1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/new.png"))); // NOI18N
-        jMenuItem1.setText("New");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        menuHeaderNew.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/new.png"))); // NOI18N
+        menuHeaderNew.setText("New");
+        menuHeaderNew.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                menuHeaderNewActionPerformed(evt);
             }
         });
-        menuHeader.add(jMenuItem1);
+        menuHeader.add(menuHeaderNew);
         menuHeader.add(jSeparator7);
 
         menuHeaderList.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/list.png"))); // NOI18N
@@ -482,9 +482,9 @@ public class MainForm extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_menuConfigQueryActionPerformed
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+    private void menuHeaderNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuHeaderNewActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    }//GEN-LAST:event_menuHeaderNewActionPerformed
 
     private void menuHeaderListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuHeaderListActionPerformed
         // TODO add your handling code here:
@@ -558,7 +558,6 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator10;
@@ -582,6 +581,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenu menuHeader;
     private javax.swing.JMenuItem menuHeaderImport;
     private javax.swing.JMenuItem menuHeaderList;
+    private javax.swing.JMenuItem menuHeaderNew;
     private javax.swing.JMenu menuLog;
     private javax.swing.JMenuItem menuLogDate;
     private javax.swing.JMenuItem menuLogError;
