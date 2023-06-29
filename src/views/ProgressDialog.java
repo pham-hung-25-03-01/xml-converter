@@ -28,19 +28,14 @@ public class ProgressDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         pgProcessing = new javax.swing.JProgressBar();
-        lbProgress = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
-
-        lbProgress.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbProgress.setText("jLabel1");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lbProgress, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(pgProcessing, javax.swing.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE)
@@ -51,9 +46,7 @@ public class ProgressDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(pgProcessing, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(8, 8, 8)
-                .addComponent(lbProgress)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -103,7 +96,6 @@ public class ProgressDialog extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel lbProgress;
     private javax.swing.JProgressBar pgProcessing;
     // End of variables declaration//GEN-END:variables
 }
