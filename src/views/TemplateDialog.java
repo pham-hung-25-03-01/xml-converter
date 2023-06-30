@@ -50,6 +50,11 @@ public class TemplateDialog extends javax.swing.JDialog {
         jScrollPane1.setViewportView(treeStruct);
 
         cbbOption.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "none", "tag", "attributes", "value" }));
+        cbbOption.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbbOptionActionPerformed(evt);
+            }
+        });
 
         btnAdd.setText("Add");
         btnAdd.addActionListener(new java.awt.event.ActionListener() {
@@ -152,6 +157,10 @@ public class TemplateDialog extends javax.swing.JDialog {
     private void treeStructMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_treeStructMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_treeStructMouseClicked
+
+    private void cbbOptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbOptionActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbbOptionActionPerformed
 
     /**
      * @param args the command line arguments
