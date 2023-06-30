@@ -68,7 +68,7 @@ public class MainForm extends javax.swing.JFrame {
         menuObject = new javax.swing.JMenu();
         menuObjectNew = new javax.swing.JMenuItem();
         jSeparator9 = new javax.swing.JPopupMenu.Separator();
-        jMenuItem3 = new javax.swing.JMenuItem();
+        menuObjectList = new javax.swing.JMenuItem();
         jSeparator11 = new javax.swing.JPopupMenu.Separator();
         menuObjectImport = new javax.swing.JMenuItem();
         menuStruct = new javax.swing.JMenu();
@@ -277,14 +277,14 @@ public class MainForm extends javax.swing.JFrame {
         menuObject.add(menuObjectNew);
         menuObject.add(jSeparator9);
 
-        jMenuItem3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/list.png"))); // NOI18N
-        jMenuItem3.setText("List");
-        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+        menuObjectList.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/list.png"))); // NOI18N
+        menuObjectList.setText("List");
+        menuObjectList.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem3ActionPerformed(evt);
+                menuObjectListActionPerformed(evt);
             }
         });
-        menuObject.add(jMenuItem3);
+        menuObject.add(menuObjectList);
         menuObject.add(jSeparator11);
 
         menuObjectImport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/import-template.png"))); // NOI18N
@@ -443,9 +443,9 @@ public class MainForm extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_menuObjectNewActionPerformed
 
-    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+    private void menuObjectListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuObjectListActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jMenuItem3ActionPerformed
+    }//GEN-LAST:event_menuObjectListActionPerformed
 
     private void menuObjectImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuObjectImportActionPerformed
         // TODO add your handling code here:
@@ -503,7 +503,6 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator10;
     private javax.swing.JPopupMenu.Separator jSeparator11;
@@ -532,6 +531,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuLogError;
     private javax.swing.JMenu menuObject;
     private javax.swing.JMenuItem menuObjectImport;
+    private javax.swing.JMenuItem menuObjectList;
     private javax.swing.JMenuItem menuObjectNew;
     private javax.swing.JMenuItem menuPathError;
     private javax.swing.JMenu menuPathFolder;
