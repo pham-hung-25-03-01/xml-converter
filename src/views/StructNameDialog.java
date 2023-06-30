@@ -9,6 +9,16 @@ package views;
  * @author sing1
  */
 public class StructNameDialog extends javax.swing.JDialog {
+    private String structName;
+    private boolean isOK = false;
+
+    public String getStructName() {
+        return structName;
+    }
+
+    public boolean isOK() {
+        return isOK;
+    }
 
     /**
      * Creates new form StructNameDialog

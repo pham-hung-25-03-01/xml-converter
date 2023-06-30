@@ -243,6 +243,7 @@ public class ListTemplateDialog extends javax.swing.JDialog {
                 DefaultTableModel model = (DefaultTableModel) this.tblTemplate.getModel();
                 model.addRow(new Object[]{result.get("NAME"), result.get("PATH")});
                 reset();
+                JOptionPane.showMessageDialog(this, "Duplicated template: " + result.get("NAME"), "Message", JOptionPane.INFORMATION_MESSAGE);
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

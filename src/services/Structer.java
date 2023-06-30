@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.swing.table.DefaultTableModel;
 
 import org.ini4j.Wini;
+import org.ini4j.Profile.Section;
 
 import common.Config;
 
@@ -75,7 +76,7 @@ public class Structer {
         return tableModel;
     }
 
-    public String duplicateStruct(String structName, String newStructName) throws IOException {
+    public HashMap<String, String> duplicateStruct(String structName, String newStructName) throws IOException {
         structName = structName.trim().toLowerCase();
         newStructName = newStructName.trim().toLowerCase();
         if (structName.isBlank() || newStructName.isBlank()) {
@@ -87,8 +88,11 @@ public class Structer {
         if (Config.getStructFile().containsKey(newStructName)) {
             throw new IllegalArgumentException("Struct with name " + newStructName + " already exist");
         }
-        Config.setStruct(newStructName, new HashMap<String, String>(Config.getStructFile().get(structName)));
-        return newStructName;
+        Section attributes = Config.getStructFile().get(structName);
+        Config.setStruct(newStructName, new HashMap<String, String>(attributes));
+        HashMap<String, String> struct = new HashMap<String, String>(attributes);
+        struct.put("STRUCT_NAME", newStructName);
+        return struct;
     }
 
     private HashMap<String, String> setStruct(String structName, String typeFile, String header, String typeList, String object,

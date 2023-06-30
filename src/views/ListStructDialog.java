@@ -6,6 +6,7 @@ package views;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -218,6 +219,22 @@ public class ListStructDialog extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Please select only one struct to duplicate.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        MainForm rootParent = (MainForm) this.getParent();
+        StructNameDialog structNameDialog = new StructNameDialog(rootParent, true);
+        try {
+            if (structNameDialog.isOK()) {
+                String sourceStructName = (String) this.tblListStruct.getValueAt(this.tblListStruct.getSelectedRow(), 0);
+                HashMap<String, String> struct = structer.duplicateStruct(sourceStructName, structNameDialog.getStructName());
+                DefaultTableModel model = (DefaultTableModel) this.tblListStruct.getModel();
+                model.addRow(new Object[]{struct.get("STRUCT_NAME"), struct.get("TYPE_FILE"), struct.get("HEADER"), struct.get("TYPE_LIST"), struct.get("OBJECT")});
+                rootParent.addStruct(struct.get("STRUCT_NAME"));
+                reset();
+                JOptionPane.showMessageDialog(this, "Duplicated struct: " + struct.get("STRUCT_NAME"), "Message", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        structNameDialog.dispose();
     }//GEN-LAST:event_btnDuplicateActionPerformed
 
     private void tblListStructMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblListStructMouseClicked
