@@ -8,7 +8,7 @@ import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
-import services.Templater;
+import common.TemplateType;
 
 /**
  *
@@ -16,9 +16,9 @@ import services.Templater;
  */
 public class InputDialog extends javax.swing.JDialog {
     public interface InputDialogCondition {
-        public void execute(String input, Templater.Type type) throws IOException;
+        public void execute(String input, TemplateType type) throws IOException;
     }
-    private Templater.Type type;
+    private TemplateType type;
     private InputDialogCondition condition;
     private String input;
     private boolean isOK = false;
@@ -31,7 +31,7 @@ public class InputDialog extends javax.swing.JDialog {
     /**
      * Creates new form InputDialog
      */
-    public InputDialog(java.awt.Frame parent, boolean modal, Templater.Type type, String title, String label, InputDialogCondition condition) {
+    public InputDialog(java.awt.Frame parent, boolean modal, TemplateType type, String title, String label, InputDialogCondition condition) {
         super(parent, modal);
         initComponents();
         setTitle(title);
@@ -138,7 +138,7 @@ public class InputDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                InputDialog dialog = new InputDialog(new javax.swing.JFrame(), true, Templater.Type.HEADER, "Input", "Input", null);
+                InputDialog dialog = new InputDialog(new javax.swing.JFrame(), true, TemplateType.HEADER, "Input", "Input", null);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

@@ -5,11 +5,21 @@
 package views;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
+import common.Config;
+import common.FileTypeFilter;
+import common.TemplateType;
+import services.Converter;
 import services.FolderPath;
 import services.Logger;
 import services.Templater;
@@ -19,15 +29,30 @@ import services.Templater;
  * @author sing1
  */
 public class MainForm extends javax.swing.JFrame {
-
+    private Templater templater = new Templater();
+    private Converter converter = new Converter();
+    private List<String> selectedFilePaths = new ArrayList<>();
     /**
      * Creates new form MainForm
      */
     public MainForm() {
         initComponents();
         lbCopyRight.setHorizontalTextPosition(SwingConstants.LEFT);
-        
+        try {
+            loadData();
+            reset();
+            this.setVisible(true);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Cannot load data", "Error", JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
+        }
     }
+
+    private void loadData() throws IOException {
+        String[] structs = Config.getStructFile().keySet().toArray(String[]::new);
+        this.cbbStruct.setModel(new DefaultComboBoxModel<>(structs));
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -383,6 +408,14 @@ public class MainForm extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void reset() {
+        this.txtInput.setText("");
+        this.txtInput.setEditable(false);
+        this.txtInput.setFocusable(false);
+        this.cbbStruct.setSelectedIndex(0);
+        this.selectedFilePaths.clear();
+    }
+
     private String showDialogChooseFolderPath() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -396,8 +429,61 @@ public class MainForm extends javax.swing.JFrame {
         return null;
     }
 
+    private void importTemplates(TemplateType type) {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setMultiSelectionEnabled(true);
+
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(".xml", "xml");
+        fileChooser.setFileFilter(filter);
+        fileChooser.setAcceptAllFileFilterUsed(false);
+
+        int result = fileChooser.showOpenDialog(this);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File[] files = fileChooser.getSelectedFiles();
+            if (files.length < 1) {
+                JOptionPane.showMessageDialog(this, "Please choose at least one file", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            ProgressDialog progress = new ProgressDialog((MainForm)this.getParent(), true, "Import template", "Importing...");
+            Thread mainThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        String[] paths = Arrays.stream(files).map(File::getAbsolutePath).toArray(String[]::new);
+                        int countSuccess = 0;
+                        String[] templates = templater.importTemplates(type, paths, progress);
+                        for (String template : templates) {
+                            if (!template.equals("")) {
+                                countSuccess++;
+                            }
+                        }
+                        JOptionPane.showMessageDialog(MainForm.this, "Imported " + countSuccess + " out of " + templates.length + " templates", "Message", JOptionPane.INFORMATION_MESSAGE);
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(MainForm.this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    } finally {
+                        progress.dispose();
+                    }
+                }
+            });
+            Thread progressThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    progress.setMainThread(mainThread);
+                    progress.setVisible(true);
+                }
+            });
+            progressThread.start();
+            mainThread.start();
+        }
+    }
+
     public void addStruct(String structName) {
-        cbbStruct.addItem(structName);
+        this.cbbStruct.addItem(structName);
+    }
+
+    public void removeStruct(String structName) {
+        this.cbbStruct.removeItem(structName);
     }
 
     private void menuExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuExitActionPerformed
@@ -407,11 +493,84 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_menuExitActionPerformed
 
     private void btnChooseFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChooseFileActionPerformed
-        // TODO add your handling code here:
+        reset();
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        fileChooser.setMultiSelectionEnabled(true);
+        
+        FileFilter csvFilter = new FileTypeFilter(".csv", "CSV");
+        FileFilter xlsxFilter = new FileTypeFilter(".xlsx", "Excel");
+        FileFilter txtFilter = new FileTypeFilter(".txt", "Text");
+        
+        fileChooser.addChoosableFileFilter(csvFilter);
+        fileChooser.addChoosableFileFilter(xlsxFilter);
+        fileChooser.addChoosableFileFilter(txtFilter);
+        
+        String path;
+        try {
+            path = Config.getFolder("INPUT");
+        } catch (Exception e) {
+            path = null;
+        }
+        if (path != null && !path.isBlank())
+        {
+            fileChooser.setCurrentDirectory(new File(path));
+        }
+        
+        int result = fileChooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION)
+        {
+            List<String> selectedFileNames = new ArrayList<>();
+            File[] selectedFiles = fileChooser.getSelectedFiles();
+            for (File file : selectedFiles)
+            {
+                selectedFileNames.add(file.getName());
+                this.selectedFilePaths.add(file.getAbsolutePath());
+            }
+            String fileNames = String.join(", ", selectedFileNames);
+            this.txtInput.setText(fileNames);
+        }
     }//GEN-LAST:event_btnChooseFileActionPerformed
 
     private void btnConvertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConvertActionPerformed
-        // TODO add your handling code here:
+        if (this.selectedFilePaths.size() < 1) {
+            JOptionPane.showMessageDialog(this, "Please choose at least one file", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        String structName = this.cbbStruct.getSelectedItem().toString();
+        ProgressDialog progress = new ProgressDialog(this, true, "Convert", "Converting...");
+        Thread mainThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    List<String> targetFilePaths = converter.convertMultipleFilesToXml(MainForm.this.selectedFilePaths, structName, progress);
+                    progress.setProgress(95);
+                    int countSuccess = 0;
+                    for (String targetFilePath : targetFilePaths) {
+                        if (!targetFilePath.equals("")) {
+                            countSuccess++;
+                        }
+                    }
+                    
+                    progress.setProgress(100);
+                    reset();
+                    JOptionPane.showMessageDialog(MainForm.this, "Converted " + countSuccess + " out of " + targetFilePaths.size() + " files", "Message", JOptionPane.INFORMATION_MESSAGE);
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(MainForm.this, "Error when converting file!\nSee log file for more details.", "Error", JOptionPane.ERROR_MESSAGE);
+                } finally {
+                    progress.dispose();
+                }
+            }
+        });
+        Thread progressThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                progress.setMainThread(mainThread);
+                progress.setVisible(true);
+            }
+        });
+        progressThread.start();
+        mainThread.start();
     }//GEN-LAST:event_btnConvertActionPerformed
 
     private void menuLogErrorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuLogErrorActionPerformed
@@ -487,35 +646,35 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_menuConfigQueryActionPerformed
 
     private void menuHeaderNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuHeaderNewActionPerformed
-        new TemplateDialog(this, true, Templater.Type.HEADER, "New header", null);
+        new TemplateDialog(this, true, TemplateType.HEADER, "New header", null);
     }//GEN-LAST:event_menuHeaderNewActionPerformed
 
     private void menuHeaderListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuHeaderListActionPerformed
-        new ListTemplateDialog(this, true, Templater.Type.HEADER, "List headers");
+        new ListTemplateDialog(this, true, TemplateType.HEADER, "List headers");
     }//GEN-LAST:event_menuHeaderListActionPerformed
 
     private void menuHeaderImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuHeaderImportActionPerformed
-        // TODO add your handling code here:
+        importTemplates(TemplateType.HEADER);
     }//GEN-LAST:event_menuHeaderImportActionPerformed
 
     private void menuObjectNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuObjectNewActionPerformed
-        // TODO add your handling code here:
+        new TemplateDialog(this, true, TemplateType.OBJECT, "New object", null);
     }//GEN-LAST:event_menuObjectNewActionPerformed
 
     private void menuObjectListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuObjectListActionPerformed
-        // TODO add your handling code here:
+        new ListTemplateDialog(this, true, TemplateType.OBJECT, "List objects");
     }//GEN-LAST:event_menuObjectListActionPerformed
 
     private void menuObjectImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuObjectImportActionPerformed
-        // TODO add your handling code here:
+        importTemplates(TemplateType.OBJECT);
     }//GEN-LAST:event_menuObjectImportActionPerformed
 
     private void menuStructNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuStructNewActionPerformed
-        // TODO add your handling code here:
+        new StructDialog(this, true, null, "New struct", null);
     }//GEN-LAST:event_menuStructNewActionPerformed
 
     private void menuStructListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuStructListActionPerformed
-        // TODO add your handling code here:
+        new ListStructDialog(this, true, "List structs");
     }//GEN-LAST:event_menuStructListActionPerformed
 
     /**

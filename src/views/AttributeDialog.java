@@ -35,8 +35,8 @@ public class AttributeDialog extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         setTitle(title);
-        this.setVisible(true);
         loadData();
+        this.setVisible(true);
     }
 
     private void loadData() {

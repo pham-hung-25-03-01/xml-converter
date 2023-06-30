@@ -4,18 +4,56 @@
  */
 package views;
 
+import java.io.IOException;
+import java.util.HashMap;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
+
+import common.Config;
+import services.Structer;
+
 /**
  *
  * @author sing1
  */
 public class StructDialog extends javax.swing.JDialog {
-
+    private Structer structer = new Structer();
+    private ListStructDialog listStruct;
+    private String structName;
     /**
      * Creates new form AddStructDialog
      */
-    public StructDialog(java.awt.Frame parent, boolean modal) {
+    public StructDialog(java.awt.Frame parent, boolean modal, ListStructDialog listStruct, String title, String structName) {
         super(parent, modal);
         initComponents();
+        setTitle(title);
+        this.listStruct = listStruct;
+        this.structName = structName;
+        try {
+            loadData();
+            this.setVisible(true);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Cannot load data", "Error", JOptionPane.ERROR_MESSAGE);
+            this.dispose();
+        }
+    }
+
+    private void loadData() throws IOException {
+        String[] headers = Config.getHeaderFile().keySet().toArray(String[]::new);
+        String[] objects = Config.getObjectFile().keySet().toArray(String[]::new);
+        this.cbbHeader.setModel(new DefaultComboBoxModel<>(headers));
+        this.cbbObject.setModel(new DefaultComboBoxModel<>(objects));
+        if (this.structName != null) {
+            HashMap<String, String> struct = structer.readStruct(structName);
+            this.txtTypeFile.setText(struct.get("TYPE_FILE"));
+            this.txtTypeList.setText(struct.get("TYPE_LIST"));
+            this.cbbHeader.setSelectedItem(struct.get("HEADER"));
+            this.cbbObject.setSelectedItem(struct.get("OBJECT"));
+            this.txtStructName.setText(struct.get("STRUCT_NAME"));
+            this.txtStructName.setEditable(false);
+            this.txtStructName.setFocusable(false);
+        }
     }
 
     /**
@@ -135,7 +173,26 @@ public class StructDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        // TODO add your handling code here:
+        String typeFile = this.txtTypeFile.getText();
+        String typeList = this.txtTypeList.getText();
+        String header = this.cbbHeader.getSelectedItem().toString();
+        String object = this.cbbObject.getSelectedItem().toString();
+        String name = this.txtStructName.getText();
+        try {
+            if (this.structName == null) {
+                HashMap<String, String> struct = structer.createStruct(name, typeFile, header, typeList, object);
+                MainForm rootParent = (MainForm) this.getParent();
+                rootParent.addStruct(struct.get("STRUCT_NAME"));
+                JOptionPane.showMessageDialog(this, "Created struct: " + struct.get("STRUCT_NAME"), "Success", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                HashMap<String, String> struct = structer.updateStruct(name, typeFile, header, typeList, object);
+                this.listStruct.updateStruct(name, typeFile, header, typeList, object);
+                JOptionPane.showMessageDialog(this, "Updated struct: " + struct.get("STRUCT_NAME"), "Success", JOptionPane.INFORMATION_MESSAGE);
+            }
+            this.dispose();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnSaveActionPerformed
 
     /**
@@ -169,7 +226,7 @@ public class StructDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                StructDialog dialog = new StructDialog(new javax.swing.JFrame(), true);
+                StructDialog dialog = new StructDialog(new javax.swing.JFrame(), true, new ListStructDialog(null, true, null), "New struct", "Struct");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

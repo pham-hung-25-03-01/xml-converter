@@ -83,7 +83,10 @@ public class Configurator {
         Properties store = Config.getValueFile();
         HashMap<String, String> attributes = prepareCreateItem(store, name, value);
         Config.setValue(attributes);
-        return attributes;
+        return new HashMap<String, String>() {{
+            put("NAME", name);
+            put("VALUE", value);
+        }};
     }
 
     public HashMap<String, String> createDefaultQuery(String name, String value) throws IOException {
@@ -97,14 +100,20 @@ public class Configurator {
         Properties store = Config.getValueFile();
         HashMap<String, String> attributes = prepareUpdateItem(store, name, value);
         Config.setValue(attributes);
-        return attributes;
+        return new HashMap<String, String>() {{
+            put("NAME", name);
+            put("VALUE", value);
+        }};
     }
 
     public HashMap<String, String> updateDefaultQuery(String name, String value) throws IOException {
         Properties store = Config.getQueryFile();
         HashMap<String, String> attributes = prepareUpdateItem(store, name, value);
         Config.setQuery(attributes);
-        return attributes;
+        return new HashMap<String, String>() {{
+            put("NAME", name);
+            put("VALUE", value);
+        }};
     }
 
     public String deleteDefaultValue(String name) throws IOException {
@@ -123,32 +132,6 @@ public class Configurator {
         attributes.put(name, "");
         Config.removeQuery(attributes);
         return name;
-    }
-
-    public String deleteDefaultValues(List<String> names) {
-        List<String> deleted = new ArrayList<String>();
-        List<String> failed = new ArrayList<String>();
-        for (String name : names) {
-            try {
-                deleted.add(deleteDefaultValue(name));
-            } catch (Exception e) {
-                failed.add(name);
-            }
-        }
-        return "Deleted: " + String.join(", ", deleted) + "\nFailed: " + String.join(", ", failed);
-    }
-
-    public String deleteDefaultQueries(List<String> names) {
-        List<String> deleted = new ArrayList<String>();
-        List<String> failed = new ArrayList<String>();
-        for (String name : names) {
-            try {
-                deleted.add(deleteDefaultQuery(name));
-            } catch (Exception e) {
-                failed.add(name);
-            }
-        }
-        return "Deleted: " + String.join(", ", deleted) + "\nFailed: " + String.join(", ", failed);
     }
 
     private HashMap<String, String> prepareCreateItem(Properties store, String name, String value) throws IOException {
@@ -170,8 +153,7 @@ public class Configurator {
         }
 
         HashMap<String, String> attributes = new HashMap<String, String>();
-        attributes.put("NAME", name);
-        attributes.put("VALUE", value);
+        attributes.put(name, value);
 
         return attributes;
     }
@@ -192,8 +174,7 @@ public class Configurator {
         }
 
         HashMap<String, String> attributes = new HashMap<String, String>();
-        attributes.put("NAME", name);
-        attributes.put("VALUE", value);
+        attributes.put(name, value);
 
         return attributes;
     }

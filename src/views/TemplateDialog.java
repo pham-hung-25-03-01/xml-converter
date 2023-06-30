@@ -4,18 +4,125 @@
  */
 package views;
 
+import java.awt.Component;
+import java.awt.HeadlessException;
+import java.io.IOException;
+import java.util.HashMap;
+
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTree;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import javax.xml.stream.XMLStreamException;
+
+import common.TemplateType;
+import services.Converter;
+import services.Templater;
+
 /**
  *
  * @author sing1
  */
 public class TemplateDialog extends javax.swing.JDialog {
-
+    private Converter converter = new Converter();
+    private Templater templater = new Templater();
+    private TemplateType type;
+    private boolean isChanged = false;
+    private String templateName;
     /**
      * Creates new form TemplateDialog
      */
-    public TemplateDialog(java.awt.Frame parent, boolean modal) {
+    public TemplateDialog(java.awt.Frame parent, boolean modal, TemplateType type, String title, String templateName) {
         super(parent, modal);
         initComponents();
+        setTitle(title);
+        this.type = type;
+        this.templateName = templateName;
+        try {
+            loadTree();
+            reset();
+            this.setVisible(true);
+        } catch(Exception e) {
+            this.dispose();
+            JOptionPane.showMessageDialog(this, "Cannot load template", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void loadTree() throws XMLStreamException, IOException {
+        setNodeIcon();
+        DefaultTreeModel model;
+        if (this.templateName == null) {
+            DefaultMutableTreeNode root = new DefaultMutableTreeNode("tag (root)");
+            model = new DefaultTreeModel(root);
+        } else {
+            if (this.type == TemplateType.HEADER) {
+                model = converter.convertHeaderToJTree(this.templateName);
+            } else {
+                model = converter.convertObjectToJTree(this.templateName);
+            }
+            this.txtFileName.setText(this.templateName);
+            this.txtFileName.setEditable(false);
+            this.txtFileName.setFocusable(false);
+        }
+        this.treeStruct.setModel(model);
+        this.treeStruct.setFocusable(false);
+        this.treeStruct.getModel().addTreeModelListener(new TreeModelListener() {
+            public void treeNodesChanged(TreeModelEvent e) {
+                isChanged = true;
+            }
+
+            public void treeNodesInserted(TreeModelEvent e) {
+                isChanged = true;
+            }
+
+            public void treeNodesRemoved(TreeModelEvent e) {
+                isChanged = true;
+            }
+
+            public void treeStructureChanged(TreeModelEvent e) {
+                isChanged = true;
+            }
+        });
+    }
+
+    private void reset() {
+        this.treeStruct.clearSelection();
+        this.btnAdd.setEnabled(false);
+        this.btnEdit.setEnabled(false);
+        this.btnDelete.setEnabled(false);
+        this.cbbOption.setSelectedIndex(0);
+        this.btnSave.requestFocus(true);
+    }
+
+    private void setNodeIcon() {
+        DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer() {
+            @Override
+            public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected,
+                    boolean expanded, boolean leaf, int row, boolean hasFocus) {
+                JLabel label = (JLabel) super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
+                if (value instanceof DefaultMutableTreeNode) {
+                    DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+                    if (node.getUserObject().toString().contains("tag")) {
+                        ImageIcon icon = new ImageIcon(getClass().getResource("/images/tag.png"));
+                        label.setIcon(icon);
+                    } else if (node.getUserObject().toString().contains("attributes")) {
+                        ImageIcon icon = new ImageIcon(getClass().getResource("/images/attributes.png"));
+                        label.setIcon(icon);
+                    } else {
+                        ImageIcon icon = new ImageIcon(getClass().getResource("/images/value.png"));
+                        label.setIcon(icon);
+                    }
+                }
+                return label;
+            }
+        };
+        this.treeStruct.setCellRenderer(renderer);
     }
 
     /**
@@ -138,28 +245,263 @@ public class TemplateDialog extends javax.swing.JDialog {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private boolean isExisted(DefaultMutableTreeNode currNode, String regex) {
+        if (currNode == null) {
+            return false;
+        }
+        int countChildNode = currNode.getChildCount();
+        for (int i = 0; i < countChildNode; i++) {
+            DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) currNode.getChildAt(i);
+            if (childNode.getUserObject().toString().matches(regex)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void redrawTree(DefaultMutableTreeNode currNode, TreePath selectionPath) {
+        DefaultTreeModel model = (DefaultTreeModel) this.treeStruct.getModel();
+        model.nodeStructureChanged(currNode);
+        this.treeStruct.expandPath(selectionPath);
+    }
+
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        // TODO add your handling code here:
+        if (this.treeStruct.getSelectionCount() > 1) {
+            JOptionPane.showMessageDialog(this, "You can only select one node to add new node", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (this.treeStruct.getSelectionCount() < 1) {
+            JOptionPane.showMessageDialog(this, "You must select a node to add new node", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        MainForm rootParent = (MainForm) this.getParent();
+        String option = this.cbbOption.getSelectedItem().toString();
+        TreePath selectionPath = this.treeStruct.getSelectionPath();
+        DefaultMutableTreeNode currNode = (DefaultMutableTreeNode) selectionPath.getLastPathComponent();
+        boolean isSuccess = false;
+        switch(option) {
+            case "tag":
+                TagDialog addTagDialog = new TagDialog(rootParent, true, "New tag");
+                if (addTagDialog.isOK()) {
+                    String nodeName = "tag (" + addTagDialog.getTagName() + ")";
+                    DefaultMutableTreeNode node = new DefaultMutableTreeNode(nodeName);
+                    currNode.insert(node, currNode.getChildCount());
+                    isSuccess = true;
+                }
+                addTagDialog.dispose();
+                break;
+            case "attributes":
+                if (isExisted(currNode, "^attributes \\(.*\\)$")) {
+                    JOptionPane.showMessageDialog(null, "Attributes already exist", "Info", JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
+                AttributeDialog addAttributeDialog = new AttributeDialog(rootParent, true, "New attributes");
+                if (addAttributeDialog.isOK()) {
+                    String nodeName = "attributes (" + addAttributeDialog.getAttributes() + ")";
+                    DefaultMutableTreeNode node = new DefaultMutableTreeNode(nodeName);
+                    currNode.insert(node, 0);
+                    isSuccess = true;
+                }
+                addAttributeDialog.dispose();
+                break;
+            case "value":
+                if (isExisted(currNode, "^value \\(.*\\)$")) {
+                    JOptionPane.showMessageDialog(null, "Value already exist", "Info", JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
+                ValueDialog addValueDialog = new ValueDialog(rootParent, true, "New value");
+                if(addValueDialog.isOK()) {
+                    String nodeName = "value (" + addValueDialog.getValue() + ")";
+                    DefaultMutableTreeNode node = new DefaultMutableTreeNode(nodeName);
+                    if (currNode.getChildCount() == 0) {
+                        currNode.insert(node, 0);
+                    } else if (((DefaultMutableTreeNode)currNode.getFirstChild()).getUserObject().toString().contains("attributes")) {
+                        currNode.insert(node, 1);
+                    } else {
+                        currNode.insert(node, 0);
+                    }
+                    isSuccess = true;
+                }
+                addValueDialog.dispose();
+                break;
+        }
+        if (isSuccess) {
+            redrawTree(currNode, selectionPath);
+            this.cbbOption.setSelectedIndex(0);
+            this.treeStruct.setSelectionPath(selectionPath);
+            JOptionPane.showMessageDialog(null, "Add success", "Info", JOptionPane.INFORMATION_MESSAGE);
+        }
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        // TODO add your handling code here:
+        if (this.treeStruct.getSelectionCount() > 1) {
+            JOptionPane.showMessageDialog(this, "You can only select one node to edit", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (this.treeStruct.getSelectionCount() < 1) {
+            JOptionPane.showMessageDialog(this, "You must select a node to edit", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        MainForm rootParent = (MainForm) this.getParent();
+        TreePath selectionPath = this.treeStruct.getSelectionPath();
+        DefaultMutableTreeNode currNode = (DefaultMutableTreeNode) selectionPath.getLastPathComponent();
+        String nodeText = currNode.getUserObject().toString();
+        boolean isSuccess = false;
+        if (nodeText.contains("tag")) {
+            TagDialog editTagDialog = new TagDialog(rootParent, true, "Edit tag");
+            if (editTagDialog.isOK()) {
+                String nodeName = "tag (" + editTagDialog.getTagName() + ")";
+                currNode.setUserObject(nodeName);
+                isSuccess = true;
+            }
+            editTagDialog.dispose(); 
+        } else if (nodeText.contains("attributes")) {
+            AttributeDialog editAttributeDialog = new AttributeDialog(rootParent, true, "Edit attributes");
+            if (editAttributeDialog.isOK()) {
+                String nodeName = "attributes (" + editAttributeDialog.getAttributes() + ")";
+                currNode.setUserObject(nodeName);
+                isSuccess = true;
+            }
+            editAttributeDialog.dispose();
+        } else {
+            ValueDialog editValueDialog = new ValueDialog(rootParent, true, "Edit value");
+            if(editValueDialog.isOK()) {
+                String nodeName = "value (" + editValueDialog.getValue() + ")";
+                currNode.setUserObject(nodeName);
+                isSuccess = true;
+            }
+            editValueDialog.dispose();
+        }
+        if (isSuccess) {
+            redrawTree(currNode, selectionPath.getParentPath());
+            this.treeStruct.setSelectionPath(selectionPath);
+            JOptionPane.showMessageDialog(this, "Edit success", "Info", JOptionPane.INFORMATION_MESSAGE);
+        }
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        // TODO add your handling code here:
+        if (this.treeStruct.getSelectionCount() < 1) {
+            JOptionPane.showMessageDialog(this, "You must select a node to delete", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        TreePath[] selectionPaths = this.treeStruct.getSelectionPaths();
+        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure to delete selected nodes?", "Confirm", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            boolean isSuccess = false;
+            for (TreePath selectionPath : selectionPaths) {
+                if (selectionPath.getPathCount() == 1) {
+                    JOptionPane.showMessageDialog(this, "Cannot delete root node", "Warning", JOptionPane.WARNING_MESSAGE);
+                    continue;
+                }
+                TreePath parentPath = selectionPath.getParentPath();
+                DefaultMutableTreeNode currNode = (DefaultMutableTreeNode) selectionPath.getLastPathComponent();
+                DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) currNode.getParent();
+                parentNode.remove(currNode);
+                redrawTree(parentNode, parentPath);
+                isSuccess = true;
+            }
+            if (isSuccess) {
+                reset();
+                JOptionPane.showMessageDialog(this, "Delete success", "Info", JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        // TODO add your handling code here:
+        if (!isChanged) {
+            JOptionPane.showMessageDialog(this, "Nothing to save", "Info", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        String name = this.txtFileName.getText();
+        if (name.isBlank()) {
+            JOptionPane.showMessageDialog(this, "Name cannot be empty", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (!name.matches("\\w+")) {
+            JOptionPane.showMessageDialog(this, "Name can only contain letters, numbers and underscore", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (this.templateName == null) {
+            try {
+                if (templater.isTemplateExist(this.type, name)) {
+                    int confirm = JOptionPane.showConfirmDialog(this, "Template name already exist, do you want to overwrite?", "Confirm", JOptionPane.YES_NO_OPTION);
+                    if (confirm == JOptionPane.NO_OPTION || confirm == JOptionPane.CLOSED_OPTION) {
+                        return;
+                    }
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+        ProgressDialog progress = new ProgressDialog((MainForm)this.getParent(), true, "Save template", "Saving...");
+        Thread mainThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    templater.saveTemplate(TemplateDialog.this.type, TemplateDialog.this.treeStruct, name, progress);
+                    TemplateDialog.this.dispose();
+                    JOptionPane.showMessageDialog((MainForm) TemplateDialog.this.getParent(), "Save success", "Info", JOptionPane.INFORMATION_MESSAGE);
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(TemplateDialog.this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                } finally {
+                    progress.dispose();
+                }
+            }
+        });
+        Thread progressThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                progress.setMainThread(mainThread);
+                progress.setVisible(true);
+            }
+        });
+        progressThread.start();
+        mainThread.start();
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void treeStructMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_treeStructMouseClicked
-        // TODO add your handling code here:
+        if (this.treeStruct.getSelectionCount() > 1) {
+            this.btnAdd.setEnabled(false);
+            this.btnEdit.setEnabled(false);
+            this.btnDelete.setEnabled(true);
+            return;
+        }
+        if (this.treeStruct.getSelectionCount() == 1) {
+            if (cbbOption.getSelectedIndex() > 0) {
+                this.btnAdd.setEnabled(true);
+            } else {
+                this.btnAdd.setEnabled(false);
+            }
+            this.btnEdit.setEnabled(true);
+            this.btnDelete.setEnabled(true);
+            return;
+        }
+        if (this.treeStruct.getSelectionCount() < 1) {
+            this.btnAdd.setEnabled(false);
+            this.btnEdit.setEnabled(false);
+            this.btnDelete.setEnabled(false);
+            return;
+        }
     }//GEN-LAST:event_treeStructMouseClicked
 
     private void cbbOptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbOptionActionPerformed
-        // TODO add your handling code here:
+        if (this.cbbOption.getSelectedIndex() < 1) {
+            this.btnAdd.setEnabled(false);
+        } else {
+            TreePath currNode = this.treeStruct.getSelectionPath();
+            if (currNode != null) {
+                DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) currNode.getLastPathComponent();
+                String nodeText = selectedNode.getUserObject().toString();
+                if (nodeText.contains("tag")) {
+                    btnAdd.setEnabled(true);
+                } else {
+                    btnAdd.setEnabled(false);
+                }
+            } else {
+                btnAdd.setEnabled(false);
+            }
+        }
     }//GEN-LAST:event_cbbOptionActionPerformed
 
     /**
@@ -192,7 +534,7 @@ public class TemplateDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                TemplateDialog dialog = new TemplateDialog(new javax.swing.JFrame(), true);
+                TemplateDialog dialog = new TemplateDialog(new javax.swing.JFrame(), true, TemplateType.HEADER,"Template", "test");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

@@ -1,9 +1,7 @@
 package services;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 
 import javax.swing.table.DefaultTableModel;
@@ -17,13 +15,13 @@ public class Structer {
         public void execute() throws IOException;
     }
 
-    public String createStruct(String structName, String typeFile, String header, String typeList, String object) throws IOException {
-        String result = setStruct(structName, typeFile, header, typeList, object, () -> {
+    public HashMap<String, String> createStruct(String structName, String typeFile, String header, String typeList, String object) throws IOException {
+        HashMap<String, String> result = setStruct(structName, typeFile, header, typeList, object, () -> {
             if (Config.getStructFile().containsKey(structName)) {
                 throw new IllegalArgumentException("Struct with name " + structName + " already exist");
             }
         });
-        return "Created struct: " + result;
+        return result;
     }
 
     public HashMap<String, String> readStruct(String structName) throws IOException {
@@ -34,16 +32,18 @@ public class Structer {
         if (!Config.getStructFile().containsKey(structName)) {
             throw new IllegalArgumentException("Struct with name " + structName + " does not exist");
         }
-        return new HashMap<String, String>(Config.getStructFile().get(structName));
+        HashMap<String, String> struct = new HashMap<String, String>(Config.getStructFile().get(structName));
+        struct.put("STRUCT_NAME", structName);
+        return struct;
     }
 
-    public String updateStruct(String structName, String typeFile, String header, String typeList, String object) throws IOException {
-        String result = setStruct(structName, typeFile, header, typeList, object, () -> {
+    public HashMap<String, String> updateStruct(String structName, String typeFile, String header, String typeList, String object) throws IOException {
+        HashMap<String, String> result = setStruct(structName, typeFile, header, typeList, object, () -> {
             if (!Config.getStructFile().containsKey(structName)) {
                 throw new IllegalArgumentException("Struct with name " + structName + " does not exist");
             }
         });
-        return "Updated struct: " + result;
+        return result;
     }
 
     public String deleteStruct(String structName) throws IOException {
@@ -55,22 +55,7 @@ public class Structer {
             throw new IllegalArgumentException("Struct with name " + structName + " does not exist");
         }
         Config.removeStruct(structName);
-        return "Deleted struct: " + structName;
-    }
-
-    public String deleteStructs(List<String> structNames) {
-        List<String> deletedStructs = new ArrayList<String>();
-        List<String> notDeletedStructs = new ArrayList<String>();
-        for (String structName : structNames) {
-            try {
-                String result = deleteStruct(structName);
-                deletedStructs.add(result);
-            } catch (Exception e) {
-                notDeletedStructs.add(structName);
-            }
-        }
-        return "Deleted structs: " + String.join(", ", deletedStructs) +
-                "\nNot deleted structs: " + String.join(", ", notDeletedStructs);
+        return structName;
     }
 
     public DefaultTableModel getListStructs() throws IOException {
@@ -106,7 +91,7 @@ public class Structer {
         return newStructName;
     }
 
-    private String setStruct(String structName, String typeFile, String header, String typeList, String object,
+    private HashMap<String, String> setStruct(String structName, String typeFile, String header, String typeList, String object,
             Condition condition) throws IOException {
         if (structName.isBlank() || typeFile.isBlank() || header.isBlank() || typeList.isBlank() || object.isBlank()) {
             throw new IllegalArgumentException("All fields must be filled");
@@ -119,9 +104,9 @@ public class Structer {
         object = object.trim().toLowerCase();
 
         isNameValid(structName, "Struct name");
-        isNameValid(typeFile, "Type file");
+        isTagNameValid(typeFile, "Type file");
         isNameValid(header, "Header");
-        isNameValid(typeList, "Type list");
+        isTagNameValid(typeList, "Type list");
         isNameValid(object, "Object");
 
         condition.execute();
@@ -141,12 +126,21 @@ public class Structer {
 
         Config.setStruct(structName, attributes);
 
-        return structName;
+        attributes.put("STRUCT_NAME", structName);
+
+        return attributes;
     }
 
     private boolean isNameValid(String name, String type) {
         if (!name.matches("\\w+")) {
             throw new IllegalArgumentException(type + " must be contain only letters, numbers and underscore");
+        }
+        return true;
+    }
+
+    private boolean isTagNameValid(String name, String type) {
+        if (!name.matches("^[a-zA-Z]\\w*$")) {
+            throw new IllegalArgumentException(type + " must be start with letter and contain only letters, numbers and underscore");
         }
         return true;
     }

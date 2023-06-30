@@ -14,6 +14,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import common.Config;
+import common.TemplateType;
 import services.Templater;
 import views.InputDialog.InputDialogCondition;
 
@@ -23,11 +24,11 @@ import views.InputDialog.InputDialogCondition;
  */
 public class ListTemplateDialog extends javax.swing.JDialog {
     private Templater templater = new Templater();
-    private Templater.Type type;
+    private TemplateType type;
     /**
      * Creates new form ConfigTemplateDialog
      */
-    public ListTemplateDialog(java.awt.Frame parent, boolean modal, Templater.Type type, String title) {
+    public ListTemplateDialog(java.awt.Frame parent, boolean modal, TemplateType type, String title) {
         super(parent, modal);
         initComponents();
         setTitle(title);
@@ -171,8 +172,8 @@ public class ListTemplateDialog extends javax.swing.JDialog {
         }
         int row = this.tblTemplate.getSelectedRow();
         String name = (String) this.tblTemplate.getValueAt(row, 0);
-        String title = this.type == Templater.Type.HEADER ? "Edit header" : "Edit object";
-        new TemplateDialog((MainForm) this.getParent(), true, Templater.Type.HEADER, title, name);
+        String title = this.type == TemplateType.HEADER ? "Edit header" : "Edit object";
+        new TemplateDialog((MainForm) this.getParent(), true, this.type, title, name);
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
@@ -185,19 +186,22 @@ public class ListTemplateDialog extends javax.swing.JDialog {
         if (confirm == JOptionPane.YES_OPTION) {
             List<String> deleted = new ArrayList<String>();
             List<String> notDeleted = new ArrayList<String>();
+            List<String> errors = new ArrayList<String>();
             DefaultTableModel model = (DefaultTableModel) this.tblTemplate.getModel();
             for (int i = selectedRows.length - 1; i >= 0; i--) {
                 String name = (String) this.tblTemplate.getValueAt(selectedRows[i], 0);
                 try {
-                    String result = templater.deleteTemplate(Templater.Type.HEADER, name);
+                    String result = templater.deleteTemplate(this.type, name);
                     deleted.add(result);
                     model.removeRow(selectedRows[i]);
                 } catch (Exception e) {
                     notDeleted.add(name);
+                    errors.add(e.getMessage());
                 }
             }
             reset();
-            JOptionPane.showMessageDialog(this, "Deleted: " + String.join(", ", deleted) + "\nNot deleted: " + String.join(", ", notDeleted), "Message", JOptionPane.INFORMATION_MESSAGE);
+            String error = errors.size() > 0 ? "\nError: " + String.join("\n", errors) : "";
+            JOptionPane.showMessageDialog(this, "Deleted: " + String.join(", ", deleted) + "\nNot deleted: " + String.join(", ", notDeleted) + error, "Message", JOptionPane.INFORMATION_MESSAGE);
         }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
@@ -210,7 +214,7 @@ public class ListTemplateDialog extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Please select only one template to duplicate.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        InputDialogCondition condition = (String input, Templater.Type type) -> {
+        InputDialogCondition condition = (String input, TemplateType type) -> {
             input = input.trim().toLowerCase();
             if (input == null || input.isEmpty()) {
                 throw new IllegalArgumentException("Name cannot be empty.");
@@ -218,7 +222,7 @@ public class ListTemplateDialog extends javax.swing.JDialog {
             if (!input.matches("\\w+")) {
                 throw new IllegalArgumentException("Name can only contain letters, numbers, and underscores.");
             }
-            if (type == Templater.Type.HEADER) {
+            if (type == TemplateType.HEADER) {
                 if (Config.getHeaderFile().containsKey(input)) {
                     throw new IllegalArgumentException("Name already exists.");
                 }
@@ -228,8 +232,7 @@ public class ListTemplateDialog extends javax.swing.JDialog {
                 }
             }
         };
-        MainForm rootParent = (MainForm) this.getParent();
-        InputDialog inputDialog = new InputDialog(rootParent, true, this.type, "Duplicate", "Name", condition);
+        InputDialog inputDialog = new InputDialog((MainForm) this.getParent(), true, this.type, "Duplicate", "Name", condition);
         try {
             if (inputDialog.isOK()) {
                 String sourceTemplateName = (String) this.tblTemplate.getValueAt(this.tblTemplate.getSelectedRow(), 0);
@@ -239,7 +242,6 @@ public class ListTemplateDialog extends javax.swing.JDialog {
                 }
                 DefaultTableModel model = (DefaultTableModel) this.tblTemplate.getModel();
                 model.addRow(new Object[]{result.get("NAME"), result.get("PATH")});
-                rootParent.addStruct(result.get("NAME"));
                 reset();
             }
         } catch (Exception e) {
@@ -303,7 +305,7 @@ public class ListTemplateDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                ListTemplateDialog dialog = new ListTemplateDialog(new javax.swing.JFrame(), true, Templater.Type.HEADER, null);
+                ListTemplateDialog dialog = new ListTemplateDialog(new javax.swing.JFrame(), true, TemplateType.HEADER, null);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

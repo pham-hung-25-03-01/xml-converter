@@ -258,6 +258,7 @@ public class QueryDialog extends javax.swing.JDialog {
         if (confirm == JOptionPane.YES_OPTION) {
             List<String> deleted = new ArrayList<String>();
             List<String> notDeleted = new ArrayList<String>();
+            List<String> errors = new ArrayList<String>();
             DefaultTableModel model = (DefaultTableModel) this.tblQuery.getModel();
             for (int i = selectedRows.length - 1; i >= 0; i--) {
                 String name = (String) this.tblQuery.getValueAt(selectedRows[i], 0);
@@ -267,10 +268,12 @@ public class QueryDialog extends javax.swing.JDialog {
                     model.removeRow(selectedRows[i]);
                 } catch (Exception e) {
                     notDeleted.add(name);
+                    errors.add(e.getMessage());
                 }
             }
             reset();
-            JOptionPane.showMessageDialog(this, "Deleted: " + String.join(", ", deleted) + "\nNot deleted: " + String.join(", ", notDeleted), "Message", JOptionPane.INFORMATION_MESSAGE);
+            String error = errors.size() > 0 ? "\nError: " + String.join("\n", errors) : "";
+            JOptionPane.showMessageDialog(this, "Deleted: " + String.join(", ", deleted) + "\nNot deleted: " + String.join(", ", notDeleted) + error, "Message", JOptionPane.INFORMATION_MESSAGE);
         }
     }//GEN-LAST:event_btnDeleteActionPerformed
 

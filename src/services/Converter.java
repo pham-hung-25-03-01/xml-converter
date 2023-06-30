@@ -38,6 +38,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import org.ini4j.InvalidFileFormatException;
 import services.Logger.LogType;
+import views.ProgressDialog;
 import common.Config;
 import common.CurrentValues;
 import common.Data;
@@ -121,35 +122,37 @@ public class Converter {
         }
     }
 
-    public List<String> convertMultipleFilesToXml(List<String> inputFilePaths, String structName, JProgressBar progressBar) throws IOException {
+    public List<String> convertMultipleFilesToXml(List<String> inputFilePaths, String structName, ProgressDialog progress) throws IOException {
         List<String> outputFilePaths = new ArrayList<String>();
 
         Logger.cleanLogError();
+
+        progress.setProgress(5);
 
         int totalFiles = inputFilePaths.size();
 
         for (String inputFilePath : inputFilePaths) {
             String outputFilePath = convertSingleFileToXml(inputFilePath, structName);
             outputFilePaths.add(outputFilePath);
-            progressBar.setValue(progressBar.getValue() + (90 / totalFiles));
+            progress.setProgress(progress.getProgress() + (90 / totalFiles));
         }
 
         return outputFilePaths;
     }
 
-    private Map<String, String> convertJTreeToXml(JTree tree, String templateName, String templateFolderPath, JProgressBar progressBar) throws XMLStreamException, IOException, TransformerException {
+    private HashMap<String, String> convertJTreeToXml(JTree tree, String templateName, String templateFolderPath, ProgressDialog progress) throws XMLStreamException, IOException, TransformerException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
         XMLStreamWriter writer = outputFactory.createXMLStreamWriter(out);
 
         writer.writeStartDocument("utf-8", "1.0");
 
-        progressBar.setValue(10);
+        progress.setProgress(10);
 
         DefaultMutableTreeNode root = (DefaultMutableTreeNode) tree.getModel().getRoot();
         traverseTree(writer, root);
 
-        progressBar.setValue(50);
+        progress.setProgress(50);
 
         writer.writeEndDocument();
 
@@ -158,13 +161,13 @@ public class Converter {
 
         StringBuilder xml = new StringBuilder(new String(out.toByteArray(), StandardCharsets.UTF_8));
 
-        progressBar.setValue(55);
+        progress.setProgress(55);
 
         StringBuilder prettyPrintXml = formatXml(xml);
 
-        progressBar.setValue(60);
+        progress.setProgress(65);
 
-        templateName = templateName.toLowerCase();
+        templateName = templateName.trim().toLowerCase();
 
         String outputFilePath = templateFolderPath + "/" + templateName + ".xml";
         File outputFile = new File(outputFilePath) {{
@@ -176,32 +179,32 @@ public class Converter {
 
         Files.writeString(outputFile.toPath(), prettyPrintXml, StandardCharsets.UTF_8);
 
-        progressBar.setValue(95);
+        progress.setProgress(95);
         
-        Map<String, String> result = new HashMap<String, String>();
+        HashMap<String, String> result = new HashMap<String, String>();
         
-        result.put("templateName", templateName);
-        result.put("outputFilePath", outputFilePath);
+        result.put("NAME", templateName);
+        result.put("PATH", outputFilePath);
 
-        progressBar.setValue(100);
+        progress.setProgress(100);
 
         return result;
     }
 
-    public Map<String, String> convertJTreeToHeader(JTree tree, String headerName, JProgressBar progressBar) throws XMLStreamException, IOException, TransformerException {
+    public HashMap<String, String> convertJTreeToHeader(JTree tree, String headerName, ProgressDialog progress) throws XMLStreamException, IOException, TransformerException {
         String headerFolderPath = "config/header";
-        Map<String, String> result = convertJTreeToXml(tree, headerName, headerFolderPath, progressBar);
-        Config.setHeader(result.get("templateName"), new HashMap<String, String>() {{
-            put("PATH", result.get("outputFilePath"));
+        HashMap<String, String> result = convertJTreeToXml(tree, headerName, headerFolderPath, progress);
+        Config.setHeader(result.get("NAME"), new HashMap<String, String>() {{
+            put("PATH", result.get("PATH"));
         }});
         return result;
     }
 
-    public Map<String, String> convertJTreeToObject(JTree tree, String objectName, JProgressBar progressBar) throws XMLStreamException, IOException, TransformerException {
+    public HashMap<String, String> convertJTreeToObject(JTree tree, String objectName, ProgressDialog progress) throws XMLStreamException, IOException, TransformerException {
         String objectFolderPath = "config/object";
-        Map<String, String> result = convertJTreeToXml(tree, objectName, objectFolderPath, progressBar);
-        Config.setObject(result.get("templateName"), new HashMap<String, String>() {{
-            put("PATH", result.get("outputFilePath"));
+        HashMap<String, String> result = convertJTreeToXml(tree, objectName, objectFolderPath, progress);
+        Config.setObject(result.get("NAME"), new HashMap<String, String>() {{
+            put("PATH", result.get("PATH"));
         }});
         return result;
     }

@@ -3,21 +3,74 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
 package views;
-import javax.swing.JScrollPane;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
+
+import common.Config;
+import common.Data;
+import common.Generator;
 
 /**
  *
  * @author sing1
  */
 public class ValueDialog extends javax.swing.JDialog {
+    private String value;
+    private boolean isOK = false;
+    private HashMap<String, String[]> listData = new HashMap<String, String[]>();
 
+    public String getValue() {
+        return value;
+    }
+
+    public boolean isOK() {
+        return isOK;
+    }
     /**
      * Creates new form ValueDialog
      */
-    public ValueDialog(java.awt.Frame parent, boolean modal) {
+    public ValueDialog(java.awt.Frame parent, boolean modal, String title) {
         super(parent, modal);
         initComponents();
-        txtPreview.setText("scrollPane.setVerticalScrollBarPolicy(JScrollPane scrollPane.setVerticalScrollBarPolicy(JScrollPane scrollPane.setVerticalScrollBarPolicy(JScrollPane scrollPane.setVerticalScrollBarPolicy(JScrollPane");
+        setTitle(title);
+        loadOptions();
+        try {
+            loadData();
+            reset();
+            this.setVisible(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Cannot load data", "Error", JOptionPane.ERROR_MESSAGE);
+            this.dispose();
+        }
+    }
+
+    private void loadOptions() {
+        String[] options = Arrays.stream(Data.Type.values()).map(v -> v.toString().toLowerCase()).toArray(String[]::new);
+        this.cbbValue.setModel(new DefaultComboBoxModel<>(options));
+    }
+
+    private void loadData() throws IOException {
+        String[] fromDB = Config.getQueryFile().keySet().toArray(String[]::new);
+        String[] fromGenerator = Arrays.stream(Generator.Type.values()).map(Enum::name).toArray(String[]::new);
+        String[] fromDefaultValues = Config.getValueFile().keySet().toArray(String[]::new);
+        this.listData.put("from_db", fromDB);
+        this.listData.put("from_generator", fromGenerator);
+        this.listData.put("from_default_values", fromDefaultValues);
+    }
+
+    public void reset() {
+        this.txtPreview.setText("");
+        this.txtValue.setText("");
+        this.cbbDetailValue.setModel(new DefaultComboBoxModel<>());
+        this.cbbDetailValue.setEnabled(false);
+        this.cbbDetailValue.setFocusable(false);
+        this.cbbValue.setSelectedIndex(0);
     }
 
     /**
@@ -139,20 +192,82 @@ public class ValueDialog extends javax.swing.JDialog {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void loadDataForOption(String option) {
+        String[] data = listData.get(option);
+        this.cbbDetailValue.setModel(new DefaultComboBoxModel<>(data));
+    }
+
     private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
-        txtPreview.setText(null);
+        txtPreview.setText("");
     }//GEN-LAST:event_btnClearActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        // TODO add your handling code here:
+        String result = this.txtPreview.getText();
+        String option = this.cbbValue.getSelectedItem().toString();
+        String input = this.txtValue.getText();
+        String detailOption = this.cbbDetailValue.getItemCount() > 0 ? this.cbbDetailValue.getSelectedItem().toString() : "";
+        if (option.equals("from_file") && (input == null || input.isBlank())) {
+            JOptionPane.showMessageDialog(null, "Value is not empty", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (option.equals("from_template") && input.length() < 1) {
+            JOptionPane.showMessageDialog(null, "Value is not empty", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        };
+        switch(option) {
+            case "from_file":
+                result += "${" + input.trim() + "}";
+                break;
+            case "from_db":
+                result += "@{" + detailOption + "}";
+                break;
+            case "from_generator":
+                result += "#{" + detailOption + "}";
+                break;
+            case "from_default_values":
+                result += "*{" + detailOption + "}";
+                break;
+            case "from_template":
+                result += input;
+                break;
+            default:
+                JOptionPane.showMessageDialog(this, "Option is not valid", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+        }
+        this.txtPreview.setText(result);
+        this.cbbValue.setSelectedIndex(0);
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKActionPerformed
-        // TODO add your handling code here:
+        String input = txtPreview.getText().trim();
+        if (input == null || input.isBlank()) {
+            JOptionPane.showMessageDialog(this, "Value of preview is not empty", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        this.value = input;
+        this.isOK = true;
+        this.setVisible(false);
     }//GEN-LAST:event_btnOKActionPerformed
 
     private void cbbValueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbValueActionPerformed
-        // TODO add your handling code here:
+        String option = this.cbbValue.getSelectedItem().toString();
+        switch(option) {
+            case "from_file":
+            case "from_template":
+                this.txtValue.setEnabled(true);
+                this.txtValue.setFocusable(true);
+                this.cbbDetailValue.setModel(new DefaultComboBoxModel<>());
+                this.cbbDetailValue.setEnabled(false);
+                this.cbbDetailValue.setFocusable(false);
+                break;
+            default:
+                this.txtValue.setEnabled(false);
+                this.txtValue.setFocusable(false);
+                loadDataForOption(option);
+                this.cbbDetailValue.setEnabled(true);
+                this.cbbDetailValue.setFocusable(true);
+        }
+        this.txtValue.setText("");
     }//GEN-LAST:event_cbbValueActionPerformed
 
     /**
@@ -185,7 +300,7 @@ public class ValueDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                ValueDialog dialog = new ValueDialog(new javax.swing.JFrame(), true);
+                ValueDialog dialog = new ValueDialog(new javax.swing.JFrame(), true, "Value");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

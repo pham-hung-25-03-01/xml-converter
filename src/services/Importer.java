@@ -21,30 +21,33 @@ import javax.xml.stream.events.XMLEvent;
 import org.ini4j.Wini;
 import common.Config;
 import common.Validator;
+import views.ProgressDialog;
 
 public class Importer {
     private Validator validator = new Validator();
 
-    public List<String> importMultipleHeaders(List<String> headerFilePaths, JProgressBar progressBar) throws IOException {
+    public String[] importMultipleHeaders(String[] headerFilePaths, ProgressDialog progress) throws IOException {
         String headerFolderPath = "config/header";
-        return importMultipleTemplates(Config.getHeaderFile(), headerFolderPath, headerFilePaths, false, progressBar);
+        return importMultipleTemplates(Config.getHeaderFile(), headerFolderPath, headerFilePaths, false, progress);
     }
 
-    public List<String> importMultipleObjects(List<String> objectFilePaths, JProgressBar progressBar) throws IOException {
+    public String[] importMultipleObjects(String[] objectFilePaths, ProgressDialog progress) throws IOException {
         String objectFolderPath = "config/object";
-        return importMultipleTemplates(Config.getObjectFile(), objectFolderPath, objectFilePaths, true, progressBar);
+        return importMultipleTemplates(Config.getObjectFile(), objectFolderPath, objectFilePaths, true, progress);
     }
 
-    private List<String> importMultipleTemplates(Wini store, String templateFolderPath, List<String> templateFilePaths, boolean allowRefAttribute, JProgressBar progressBar) {
-        progressBar.setValue(10);
-        List<String> templates = new ArrayList<String>();
-        int totalFiles = templateFilePaths.size();
+    private String[] importMultipleTemplates(Wini store, String templateFolderPath, String[] templateFilePaths, boolean allowRefAttribute, ProgressDialog progress) {
+        progress.setProgress(10);
+
+        int totalFiles = templateFilePaths.length;
+        String[] templates = new String[totalFiles];
+
         Logger.cleanLogError();
 
-        for(String templateFilePath : templateFilePaths) {
-            String template = importSingleTemplate(store, templateFolderPath, templateFilePath, allowRefAttribute);
-            templates.add(template);
-            progressBar.setValue(progressBar.getValue() + 90 / totalFiles);
+        for (int i = 0; i < templateFilePaths.length; i++) {
+            String template = importSingleTemplate(store, templateFolderPath, templateFilePaths[i], allowRefAttribute);
+            templates[i] = template;
+            progress.setProgress(progress.getProgress() + 90 / totalFiles);
         }
 
         return templates;

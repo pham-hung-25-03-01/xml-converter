@@ -4,18 +4,49 @@
  */
 package views;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+
+import common.Config;
+import common.TemplateType;
+import services.Structer;
+import views.InputDialog.InputDialogCondition;
+
 /**
  *
  * @author sing1
  */
 public class ListStructDialog extends javax.swing.JDialog {
-
+    private Structer structer = new Structer();
     /**
      * Creates new form ListStructDialog
      */
-    public ListStructDialog(java.awt.Frame parent, boolean modal) {
+    public ListStructDialog(java.awt.Frame parent, boolean modal, String title) {
         super(parent, modal);
         initComponents();
+        setTitle(title);
+        try {
+            loadData();
+            reset();
+            this.setVisible(true);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Cannot load data", "Error", JOptionPane.ERROR_MESSAGE);
+            this.dispose();
+        }
+    }
+
+    private void loadData() throws IOException {
+        DefaultTableCellRenderer renderer = (DefaultTableCellRenderer) this.tblListStruct.getTableHeader().getDefaultRenderer();
+        renderer.setHorizontalAlignment((int) CENTER_ALIGNMENT);
+        this.tblListStruct.setModel(structer.getListStructs());
+        this.tblListStruct.setDefaultEditor(Object.class, null);
+        this.tblListStruct.setFocusable(false);
+        this.tblListStruct.setAutoCreateRowSorter(true);
     }
 
     /**
@@ -117,20 +148,100 @@ public class ListStructDialog extends javax.swing.JDialog {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void reset() {
+        this.tblListStruct.clearSelection();
+        this.btnEdit.setEnabled(false);
+        this.btnDelete.setEnabled(false);
+        this.btnDuplicate.setEnabled(false);
+    }
+
+    public void updateStruct(String structName, String typeFile, String header, String typeList, String object) {
+        int selectedRow = this.tblListStruct.getSelectedRow();
+        this.tblListStruct.setValueAt(structName, selectedRow, 0);
+        this.tblListStruct.setValueAt(typeFile, selectedRow, 1);
+        this.tblListStruct.setValueAt(header, selectedRow, 2);
+        this.tblListStruct.setValueAt(typeList, selectedRow, 3);
+        this.tblListStruct.setValueAt(object, selectedRow, 4);
+    }
+
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        // TODO add your handling code here:
+        if (this.tblListStruct.getSelectedRowCount() > 1) {
+            JOptionPane.showMessageDialog(this, "Please select only one struct to edit.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (this.tblListStruct.getSelectedRowCount() == 0) {
+            JOptionPane.showMessageDialog(this, "Please select a struct to edit.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        int row = this.tblListStruct.getSelectedRow();
+        String name = (String) this.tblListStruct.getValueAt(row, 0);
+        new StructDialog((MainForm) this.getParent(), true, this, "Edit struct", name);
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-        // TODO add your handling code here:
+        int[] selectedRows = this.tblListStruct.getSelectedRows();
+        if (selectedRows.length < 1) {
+            JOptionPane.showMessageDialog(this, "Please select a struct to delete", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete the selected structs?", "Confirm", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            List<String> deleted = new ArrayList<String>();
+            List<String> notDeleted = new ArrayList<String>();
+            List<String> errors = new ArrayList<String>();
+            DefaultTableModel model = (DefaultTableModel) this.tblListStruct.getModel();
+            MainForm rootParent = (MainForm) this.getParent();
+            for (int i = selectedRows.length - 1; i >= 0; i--) {
+                String name = (String) this.tblListStruct.getValueAt(selectedRows[i], 0);
+                try {
+                    String result = structer.deleteStruct(name);
+                    deleted.add(result);
+                    model.removeRow(selectedRows[i]);
+                    rootParent.removeStruct(result);
+                } catch (Exception e) {
+                    notDeleted.add(name);
+                    errors.add(e.getMessage());
+                }
+            }
+            reset();
+            String error = errors.size() > 0 ? "\nError: " + String.join("\n", errors) : "";
+            JOptionPane.showMessageDialog(this, "Deleted: " + String.join(", ", deleted) + "\nNot deleted: " + String.join(", ", notDeleted) + error, "Message", JOptionPane.INFORMATION_MESSAGE);
+        }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnDuplicateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDuplicateActionPerformed
-        // TODO add your handling code here:
+        if (this.tblListStruct.getSelectedRowCount() < 1) {
+            JOptionPane.showMessageDialog(this, "Please select a struct to duplicate.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (this.tblListStruct.getSelectedRowCount() > 1) {
+            JOptionPane.showMessageDialog(this, "Please select only one struct to duplicate.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
     }//GEN-LAST:event_btnDuplicateActionPerformed
 
     private void tblListStructMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblListStructMouseClicked
-        // TODO add your handling code here:
+        if (this.tblListStruct.getSelectedRowCount() > 1) {
+            this.btnEdit.setEnabled(false);
+            this.btnDuplicate.setEnabled(false);
+            this.btnDelete.setEnabled(true);
+            return;
+        }
+        if (this.tblListStruct.getSelectedRowCount() < 1) {
+            this.btnEdit.setEnabled(false);
+            this.btnDuplicate.setEnabled(false);
+            this.btnDelete.setEnabled(false);
+            return;
+        }
+        if (this.tblListStruct.getSelectedRowCount() == 1) {
+            this.btnEdit.setEnabled(true);
+            this.btnDuplicate.setEnabled(true);
+            this.btnDelete.setEnabled(true);
+                if (evt.getClickCount() == 2) {
+                    btnEditActionPerformed(null);
+                }
+            return;
+        }
     }//GEN-LAST:event_tblListStructMouseClicked
 
     /**
@@ -163,7 +274,7 @@ public class ListStructDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                ListStructDialog dialog = new ListStructDialog(new javax.swing.JFrame(), true);
+                ListStructDialog dialog = new ListStructDialog(new javax.swing.JFrame(), true, "List structs");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

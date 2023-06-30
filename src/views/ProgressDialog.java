@@ -27,6 +27,10 @@ public class ProgressDialog extends javax.swing.JDialog {
         this.pgProcessing.setValue(value);
     }
 
+    public int getProgress() {
+        return this.pgProcessing.getValue();
+    }
+
     private void setDisplay(String title, String label) {
         this.setTitle(title);
         this.pgProcessing.setMinimum(0);

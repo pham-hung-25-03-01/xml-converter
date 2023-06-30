@@ -41,6 +41,8 @@ public class Logger {
 
     public static void writeLogError(String message, LogType logType) {
         boolean append = true;
+        File file = new File(LOG_ERROR_FILE_PATH);
+        file.setWritable(true);
         try {
             FileHandler handler = new FileHandler(LOG_ERROR_FILE_PATH, append);
             handler.setFormatter(new LogFormatter());
@@ -72,11 +74,15 @@ public class Logger {
             handler.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            file.setReadOnly();
         }
     }
 
     public static void writeLogDate(String message, LogType logType) {
         boolean append = true;
+        File file = new File(LOG_DATE_FILE_PATH);
+        file.setWritable(true);
         try {
             FileHandler handler = new FileHandler(LOG_DATE_FILE_PATH, append);
             handler.setFormatter(new LogFormatter());
@@ -108,22 +114,32 @@ public class Logger {
             handler.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            file.setReadOnly();
         }
     }
 
     public static void cleanLogError() {
+        File file = new File(LOG_ERROR_FILE_PATH);
+        file.setWritable(true);
         try {
-            new FileOutputStream(new File(LOG_ERROR_FILE_PATH)).close();
+            new FileOutputStream(file).close();
         } catch (IOException e) {
             System.out.println(e.getMessage());
+        } finally {
+            file.setReadOnly();
         }
     }
 
     public static void cleanLogDate() {
+        File file = new File(LOG_DATE_FILE_PATH);
+        file.setWritable(true);
         try {
-            new FileOutputStream(new File(LOG_DATE_FILE_PATH)).close();
+            new FileOutputStream(file).close();
         } catch (IOException e) {
             System.out.println(e.getMessage());
+        } finally {
+            file.setReadOnly();
         }
     }
 }
