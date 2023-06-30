@@ -17,7 +17,7 @@ public class ValueDialog extends javax.swing.JDialog {
     public ValueDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        txtPreview.setRows(1);
+        txtPreview.setText("scrollPane.setVerticalScrollBarPolicy(JScrollPane scrollPane.setVerticalScrollBarPolicy(JScrollPane scrollPane.setVerticalScrollBarPolicy(JScrollPane scrollPane.setVerticalScrollBarPolicy(JScrollPane");
     }
 
     /**
@@ -78,7 +78,7 @@ public class ValueDialog extends javax.swing.JDialog {
 
         txtPreview.setEditable(false);
         txtPreview.setColumns(20);
-        txtPreview.setRows(5);
+        txtPreview.setRows(1);
         txtPreview.setFocusable(false);
         jScrollPane1.setViewportView(txtPreview);
 
