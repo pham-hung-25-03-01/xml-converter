@@ -5,14 +5,19 @@
 package views;
 
 import java.awt.Component;
-import java.awt.HeadlessException;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.util.HashMap;
 
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTree;
+import javax.swing.KeyStroke;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -41,6 +46,7 @@ public class TemplateDialog extends javax.swing.JDialog {
     public TemplateDialog(java.awt.Frame parent, boolean modal, TemplateType type, String title, String templateName) {
         super(parent, modal);
         initComponents();
+        setHotKeys();
         setTitle(title);
         this.type = type;
         this.templateName = templateName;
@@ -52,6 +58,28 @@ public class TemplateDialog extends javax.swing.JDialog {
             this.dispose();
             JOptionPane.showMessageDialog(this, "Cannot load template", "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private void setHotKeys() {
+        this.getRootPane().registerKeyboardAction(new ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                btnSaveActionPerformed(e);
+            }
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_S,KeyEvent.CTRL_DOWN_MASK),JComponent.WHEN_IN_FOCUSED_WINDOW);
+        this.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                if (isChanged) {
+                    int result = JOptionPane.showConfirmDialog((Component) null, "Do you want to save template before exit?", "Notification", JOptionPane.YES_NO_OPTION);
+                    if (result == JOptionPane.YES_OPTION) {
+                        return;
+                    }
+                }
+                dispose();
+            }
+        });
     }
 
     private void loadTree() throws XMLStreamException, IOException {

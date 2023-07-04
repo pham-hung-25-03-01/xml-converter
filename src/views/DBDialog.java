@@ -23,6 +23,7 @@ public class DBDialog extends javax.swing.JDialog {
     public DBDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        setHotKeys();
         try {
             loadConfigDB();
             this.setVisible(true);
@@ -30,6 +31,10 @@ public class DBDialog extends javax.swing.JDialog {
             this.dispose();
             JOptionPane.showMessageDialog(this, "Cannot load data", "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private void setHotKeys() {
+        this.getRootPane().setDefaultButton(btnConnect);
     }
 
     private void loadConfigDB() throws IOException {

@@ -26,6 +26,11 @@ public class StructNameDialog extends javax.swing.JDialog {
     public StructNameDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        setHotKeys();
+    }
+
+    private void setHotKeys() {
+        this.getRootPane().setDefaultButton(btnOK);
     }
 
     /**

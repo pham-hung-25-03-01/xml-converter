@@ -37,6 +37,7 @@ public class ValueDialog extends javax.swing.JDialog {
     public ValueDialog(java.awt.Frame parent, boolean modal, String title) {
         super(parent, modal);
         initComponents();
+        setHotKeys();
         setTitle(title);
         loadOptions();
         try {
@@ -48,6 +49,10 @@ public class ValueDialog extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Cannot load data", "Error", JOptionPane.ERROR_MESSAGE);
             this.dispose();
         }
+    }
+
+    private void setHotKeys() {
+        this.getRootPane().setDefaultButton(btnOK);
     }
 
     private void loadOptions() {

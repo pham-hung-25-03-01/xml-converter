@@ -34,11 +34,16 @@ public class InputDialog extends javax.swing.JDialog {
     public InputDialog(java.awt.Frame parent, boolean modal, TemplateType type, String title, String label, InputDialogCondition condition) {
         super(parent, modal);
         initComponents();
+        setHotKeys();
         setTitle(title);
         this.type = type;
         this.label.setText(label);
         this.condition = condition;
         this.setVisible(true);
+    }
+
+    private void setHotKeys() {
+        this.getRootPane().setDefaultButton(btnOK);
     }
 
     /**

@@ -34,9 +34,14 @@ public class AttributeDialog extends javax.swing.JDialog {
     public AttributeDialog(java.awt.Frame parent, boolean modal, String title) {
         super(parent, modal);
         initComponents();
+        setHotKeys();
         setTitle(title);
         loadData();
         this.setVisible(true);
+    }
+
+    private void setHotKeys() {
+        this.getRootPane().setDefaultButton(btnOK);
     }
 
     private void loadData() {

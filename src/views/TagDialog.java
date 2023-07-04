@@ -27,8 +27,13 @@ public class TagDialog extends javax.swing.JDialog {
     public TagDialog(java.awt.Frame parent, boolean modal, String title) {
         super(parent, modal);
         initComponents();
+        setHotKeys();
         setTitle(title);
         this.setVisible(true);
+    }
+
+    private void setHotKeys() {
+        this.getRootPane().setDefaultButton(btnOK);
     }
 
     /**

@@ -4,11 +4,16 @@
  */
 package views;
 
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.HashMap;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 
 import common.Config;
 import services.Structer;
@@ -27,6 +32,7 @@ public class StructDialog extends javax.swing.JDialog {
     public StructDialog(java.awt.Frame parent, boolean modal, ListStructDialog listStruct, String title, String structName) {
         super(parent, modal);
         initComponents();
+        setHotKeys();
         setTitle(title);
         this.listStruct = listStruct;
         this.structName = structName;
@@ -37,6 +43,15 @@ public class StructDialog extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Cannot load data", "Error", JOptionPane.ERROR_MESSAGE);
             this.dispose();
         }
+    }
+
+    private void setHotKeys() {
+        this.getRootPane().registerKeyboardAction(new ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                btnSaveActionPerformed(e);
+            }
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_S,KeyEvent.CTRL_DOWN_MASK),JComponent.WHEN_IN_FOCUSED_WINDOW);
     }
 
     private void loadData() throws IOException {

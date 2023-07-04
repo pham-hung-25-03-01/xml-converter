@@ -7,7 +7,12 @@ package views;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 
 /**
  *
@@ -21,9 +26,19 @@ public class LogDialog extends javax.swing.JDialog {
     public LogDialog(java.awt.Frame parent, boolean modal, String title, String log) {
         super(parent, modal);
         initComponents();
+        setHotKeys();
         this.setTitle(title);
         this.txtLog.setText(log);
         this.setVisible(true);
+    }
+
+    private void setHotKeys() {
+        this.getRootPane().registerKeyboardAction(new ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                btnCopyActionPerformed(e);
+            }
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_C,KeyEvent.CTRL_DOWN_MASK),JComponent.WHEN_IN_FOCUSED_WINDOW);
     }
 
     /**
