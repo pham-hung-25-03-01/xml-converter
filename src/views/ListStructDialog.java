@@ -64,6 +64,7 @@ public class ListStructDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("List struct");
+        setIconImage(((MainForm) this.getParent()).getIconImage());
         setMinimumSize(new java.awt.Dimension(550, 400));
 
         tblListStruct.setModel(new javax.swing.table.DefaultTableModel(

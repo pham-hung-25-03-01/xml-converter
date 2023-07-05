@@ -55,6 +55,7 @@ public class DelimiterDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Delimiter");
+        setIconImage(((MainForm) this.getParent()).getIconImage());
         setResizable(false);
 
         rdBtnTab.setText("Tab");
@@ -66,11 +67,6 @@ public class DelimiterDialog extends javax.swing.JDialog {
         rdBtnSpace.setText("Space");
 
         rdBtnOther.setText("Other:");
-        rdBtnOther.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rdBtnOtherActionPerformed(evt);
-            }
-        });
 
         btnOK.setText("OK");
         btnOK.addActionListener(new java.awt.event.ActionListener() {
@@ -182,10 +178,6 @@ public class DelimiterDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_btnOKActionPerformed
 
     
-    private void rdBtnOtherActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdBtnOtherActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_rdBtnOtherActionPerformed
-
     /**
      * @param args the command line arguments
      */

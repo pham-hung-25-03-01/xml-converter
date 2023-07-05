@@ -86,6 +86,7 @@ public class AttributeDialog extends javax.swing.JDialog {
         cbbFormat = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setIconImage(((MainForm) this.getParent()).getIconImage());
         setResizable(false);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N

@@ -13,7 +13,7 @@ import common.TemplateType;
  *
  * @author sing1
  */
-public class InputDialog extends javax.swing.JDialog {
+public class TemplateNameDialog extends javax.swing.JDialog {
     private TemplateType type;
     private String input;
     private boolean isOK = false;
@@ -26,7 +26,7 @@ public class InputDialog extends javax.swing.JDialog {
     /**
      * Creates new form InputDialog
      */
-    public InputDialog(java.awt.Frame parent, boolean modal, TemplateType type) {
+    public TemplateNameDialog(java.awt.Frame parent, boolean modal, TemplateType type) {
         super(parent, modal);
         initComponents();
         setHotKeys();
@@ -52,9 +52,11 @@ public class InputDialog extends javax.swing.JDialog {
         btnOK = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Template");
+        setIconImage(((MainForm) this.getParent()).getIconImage());
         setResizable(false);
 
-        label.setText("jLabel1");
+        label.setText("Name:");
 
         btnOK.setText("OK");
         btnOK.addActionListener(new java.awt.event.ActionListener() {
@@ -136,20 +138,21 @@ public class InputDialog extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(InputDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TemplateNameDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(InputDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TemplateNameDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(InputDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TemplateNameDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(InputDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TemplateNameDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                InputDialog dialog = new InputDialog(new javax.swing.JFrame(), true, TemplateType.HEADER);
+                TemplateNameDialog dialog = new TemplateNameDialog(new javax.swing.JFrame(), true, TemplateType.HEADER);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

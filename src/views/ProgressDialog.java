@@ -58,6 +58,7 @@ public class ProgressDialog extends javax.swing.JDialog {
         pgProcessing = new javax.swing.JProgressBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setIconImage(((MainForm) this.getParent()).getIconImage());
         setResizable(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

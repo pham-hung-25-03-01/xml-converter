@@ -73,6 +73,7 @@ public class QueryDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Config query");
+        setIconImage(((MainForm) this.getParent()).getIconImage());
         setMinimumSize(new java.awt.Dimension(700, 550));
 
         tblQuery.setModel(new javax.swing.table.DefaultTableModel(

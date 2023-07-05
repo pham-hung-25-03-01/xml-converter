@@ -56,6 +56,7 @@ public class LogDialog extends javax.swing.JDialog {
         btnCopy = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setIconImage(((MainForm) this.getParent()).getIconImage());
         setMinimumSize(new java.awt.Dimension(400, 250));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N

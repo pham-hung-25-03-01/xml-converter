@@ -173,6 +173,7 @@ public class TemplateDialog extends javax.swing.JDialog {
         btnSave = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setIconImage(((MainForm) this.getParent()).getIconImage());
         setMinimumSize(new java.awt.Dimension(600, 550));
 
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");

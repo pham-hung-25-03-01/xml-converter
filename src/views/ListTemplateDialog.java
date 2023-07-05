@@ -70,6 +70,7 @@ public class ListTemplateDialog extends javax.swing.JDialog {
         btnDuplicate = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setIconImage(((MainForm) this.getParent()).getIconImage());
         setMinimumSize(new java.awt.Dimension(500, 400));
 
         tblTemplate.setModel(new javax.swing.table.DefaultTableModel(
@@ -212,7 +213,7 @@ public class ListTemplateDialog extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Please select only one template to duplicate.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        InputDialog templateNameDialog = new InputDialog((MainForm) this.getParent(), true, this.type);
+        TemplateNameDialog templateNameDialog = new TemplateNameDialog((MainForm) this.getParent(), true, this.type);
         try {
             if (templateNameDialog.isOK()) {
                 String sourceTemplateName = (String) this.tblTemplate.getValueAt(this.tblTemplate.getSelectedRow(), 0);

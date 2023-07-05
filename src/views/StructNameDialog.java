@@ -53,6 +53,7 @@ public class StructNameDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Struct");
+        setIconImage(((MainForm) this.getParent()).getIconImage());
         setResizable(false);
 
         btnOK.setText("OK");

@@ -70,6 +70,7 @@ public class DBDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Connect to database");
+        setIconImage(((MainForm) this.getParent()).getIconImage());
         setResizable(false);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N

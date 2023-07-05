@@ -71,6 +71,7 @@ public class DefaultValueDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Config default value");
+        setIconImage(((MainForm) this.getParent()).getIconImage());
         setMinimumSize(new java.awt.Dimension(600, 450));
 
         tblDefaultValue.setModel(new javax.swing.table.DefaultTableModel(
