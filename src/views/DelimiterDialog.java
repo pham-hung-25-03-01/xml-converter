@@ -50,6 +50,11 @@ public class DelimiterDialog extends javax.swing.JDialog {
         rdBtnSpace.setText("Space");
 
         rdBtnOther.setText("Other:");
+        rdBtnOther.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rdBtnOtherActionPerformed(evt);
+            }
+        });
 
         btnOK.setText("OK");
         btnOK.addActionListener(new java.awt.event.ActionListener() {
@@ -113,6 +118,11 @@ public class DelimiterDialog extends javax.swing.JDialog {
     private void btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnOKActionPerformed
+
+    
+    private void rdBtnOtherActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdBtnOtherActionPerformed
+
+    }//GEN-LAST:event_rdBtnOtherActionPerformed
 
     /**
      * @param args the command line arguments
