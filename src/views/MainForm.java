@@ -698,7 +698,7 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_menuStructListActionPerformed
 
     private void menuSetDelimiterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSetDelimiterActionPerformed
-        // TODO add your handling code here:
+        new DelimiterDialog(this, true);
     }//GEN-LAST:event_menuSetDelimiterActionPerformed
 
     /**

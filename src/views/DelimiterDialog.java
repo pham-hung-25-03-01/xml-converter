@@ -4,19 +4,35 @@
  */
 package views;
 
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.io.IOException;
+import java.util.HashMap;
+
+import javax.swing.JOptionPane;
+
+import services.Configurator;
+
 /**
  *
  * @author sing1
  */
 public class DelimiterDialog extends javax.swing.JDialog {
-
+    private Configurator configurator = new Configurator();
+    private HashMap<String, String> delimiterMap = new HashMap<>() {{
+        put("Tab", "\t");
+        put("Semicolon", ";");
+        put("Comma", ",");
+        put("Space", " ");
+    }};
     /**
      * Creates new form DelimiterDialog
      */
     public DelimiterDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        addBtnToBtnGr();
+        setDisplay();
+        this.setVisible(true);
     }
 
     /**
@@ -106,22 +122,68 @@ public class DelimiterDialog extends javax.swing.JDialog {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void setDisplay() {
+        addBtnToBtnGr();
+        reset();
+    }
+
+    private void reset() {
+        this.rdBtnTab.setSelected(true);
+        this.txtDelimiter.setEnabled(false);
+        this.txtDelimiter.setFocusable(false);
+        this.txtDelimiter.setText("");
+    }
+
     private void addBtnToBtnGr()
     {
-        btnGroup.add(rdBtnTab);
-        btnGroup.add(rdBtnSemicolon);
-        btnGroup.add(rdBtnComma);
-        btnGroup.add(rdBtnSpace);
-        btnGroup.add(rdBtnOther);
+        this.rdBtnTab.setActionCommand("Tab");
+        this.rdBtnSemicolon.setActionCommand("Semicolon");
+        this.rdBtnComma.setActionCommand("Comma");
+        this.rdBtnSpace.setActionCommand("Space");
+        this.rdBtnOther.setActionCommand("Other");
+        this.rdBtnOther.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (rdBtnOther.isSelected()) {
+                    txtDelimiter.setEnabled(true);
+                    txtDelimiter.setFocusable(true);
+                } else {
+                    txtDelimiter.setEnabled(false);
+                    txtDelimiter.setFocusable(false);
+                }
+            }
+        });
+        this.btnGroup.add(rdBtnTab);
+        this.btnGroup.add(rdBtnSemicolon);
+        this.btnGroup.add(rdBtnComma);
+        this.btnGroup.add(rdBtnSpace);
+        this.btnGroup.add(rdBtnOther);
     }
     
     private void btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKActionPerformed
-        // TODO add your handling code here:
+        String delimiter = "";
+        if (this.rdBtnOther.isSelected()) {
+            delimiter = this.txtDelimiter.getText();
+            if (delimiter.length() != 1) {
+                JOptionPane.showMessageDialog(this, "Delimiter must be a single character");
+                return;
+            }
+        } else {
+            String typeDelimiter = this.btnGroup.getSelection().getActionCommand();
+            delimiter = delimiterMap.get(typeDelimiter);
+        }
+        try {
+            configurator.setDelimiter(delimiter);
+            JOptionPane.showMessageDialog(this, "Delimiter set successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+            this.dispose();
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error while setting delimiter", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnOKActionPerformed
 
     
     private void rdBtnOtherActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdBtnOtherActionPerformed
-
+        // TODO add your handling code here:
     }//GEN-LAST:event_rdBtnOtherActionPerformed
 
     /**
