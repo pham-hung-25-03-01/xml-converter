@@ -13,10 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-import common.Config;
-import common.TemplateType;
 import services.Structer;
-import views.InputDialog.InputDialogCondition;
 
 /**
  *

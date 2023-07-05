@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.JProgressBar;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -36,7 +35,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import org.ini4j.InvalidFileFormatException;
 import services.Logger.LogType;
 import views.ProgressDialog;
 import common.Config;
@@ -44,6 +42,7 @@ import common.CurrentValues;
 import common.Data;
 import common.Generator;
 import common.SqlDataReader;
+import common.TemplateType;
 import common.Validator;
 import common.Data.Type;
 import common.Validator.FormatType;
@@ -339,7 +338,7 @@ public class Converter {
         objectTemplate.close();
     }
 
-    private String getData(HashMap<String, Integer> headersInputFile, String[] rowData, String s) throws IOException, SQLException {
+    private String getData(TemplateType type, HashMap<String, Integer> headersInputFile, String[] rowData, String s) throws IOException, SQLException {
         List<String> listExpressionLanguage = Data.getListExpressionLanguage(s);
 
         String dataNameExtracted = "";
@@ -348,10 +347,13 @@ public class Converter {
         for (String expressionLanguage : listExpressionLanguage) {
             switch (Data.determineType(expressionLanguage)) {
                 case FROM_FILE:
+                    if (type == TemplateType.HEADER) {
+                        throw new IllegalArgumentException("Invalid expression language: " + expressionLanguage);
+                    }
                     dataNameExtracted = Data.extractDataName(expressionLanguage, Type.FROM_FILE);
                     Integer col = headersInputFile.get(dataNameExtracted);
                     if (col == null) {
-                        throw new InvalidFileFormatException("Invalid data name: " + dataNameExtracted);
+                        throw new IllegalArgumentException("Invalid data name: " + dataNameExtracted);
                     } else {
                         data = rowData[col] == null ? "" : rowData[col];
                     }
@@ -376,7 +378,7 @@ public class Converter {
             }
 
             if (validator.isRequired(CurrentValues.Attributes.get("USE")) && data.isBlank()) {
-                throw new InvalidFileFormatException("Required data is empty: " + dataNameExtracted);
+                throw new IllegalArgumentException("Required data is empty: " + dataNameExtracted);
             }
 
             s = s.replace(expressionLanguage, data);
@@ -388,7 +390,7 @@ public class Converter {
     }
 
     private void writeData(XMLStreamWriter writer, XMLEventReader template, HashMap<String, Integer> headersInputFile,
-            String[] rowData, boolean allowRefAttribute) throws XMLStreamException, IOException, SQLException {
+            String[] rowData, TemplateType type) throws XMLStreamException, IOException, SQLException {
         while (template.hasNext()) {
             XMLEvent event = template.nextEvent();
 
@@ -400,7 +402,7 @@ public class Converter {
                     Attribute attribute = attributes.next();
                     String attributeName = attribute.getName().getLocalPart().toUpperCase();
                     String attributeValue = attribute.getValue().toUpperCase();
-                    if (validator.validateAttribute(attributeName, attributeValue, allowRefAttribute)) {
+                    if (validator.validateAttribute(attributeName, attributeValue, type)) {
                         CurrentValues.Attributes.put(attributeName, attributeValue);
                     }
                 }
@@ -418,12 +420,12 @@ public class Converter {
                 Characters characters = event.asCharacters();
 
                 if (!characters.isWhiteSpace()) {
-                    String data = getData(headersInputFile, rowData, characters.getData());
+                    String data = getData(type, headersInputFile, rowData, characters.getData());
 
                     if (validator.validateValue(CurrentValues.Attributes.get("TYPE"), data)) {
                         writer.writeCharacters(data);
                     } else {
-                        throw new InvalidFileFormatException("Data is not " + CurrentValues.Attributes.get("TYPE") + " type: " + data);
+                        throw new IllegalArgumentException("Data is not " + CurrentValues.Attributes.get("TYPE") + " type: " + data);
                     }
                 }
 
@@ -442,12 +444,12 @@ public class Converter {
 
     private void writeDataHeader(XMLStreamWriter writer, XMLEventReader template, HashMap<String, Integer> headersInputFile,
             String[] rowData) throws XMLStreamException, IOException, SQLException {
-        writeData(writer, template, headersInputFile, rowData, false);
+        writeData(writer, template, headersInputFile, rowData, TemplateType.HEADER);
     }
 
     private void writeDataObject(XMLStreamWriter writer, XMLEventReader template, HashMap<String, Integer> headersInputFile,
             String[] rowData) throws XMLStreamException, IOException, SQLException {
-        writeData(writer, template, headersInputFile, rowData, true);
+        writeData(writer, template, headersInputFile, rowData, TemplateType.OBJECT);
     }
 
     private void skipChildTags(XMLEventReader template) throws XMLStreamException {

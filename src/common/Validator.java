@@ -34,7 +34,7 @@ public class Validator {
         ADD_INFO
     }
 
-    public boolean validateAttribute(String attributeName, String attributeValue, boolean allowRefAttribute) {
+    public boolean validateAttribute(String attributeName, String attributeValue, TemplateType type) {
         AttributeName attribute;
         try {
             attribute = AttributeName.valueOf(attributeName);
@@ -48,7 +48,7 @@ public class Validator {
             case USE:
                 return validateUseType(attributeValue);
             case REF:
-                if (allowRefAttribute) {
+                if (type == TemplateType.OBJECT) {
                     return validateRef(attributeValue);
                 }
                 throw new IllegalArgumentException("Invalid attribute name: " + attributeName);

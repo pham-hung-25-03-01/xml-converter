@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Random;
-import org.ini4j.InvalidFileFormatException;
 
 public class Generator {
     public enum Type {
@@ -15,7 +14,7 @@ public class Generator {
         SOURCE_FILE_NAME
     }
 
-    public String generateData(String dataName) throws InvalidFileFormatException, IOException {
+    public String generateData(String dataName) {
         try {
             Type type = Type.valueOf(dataName);
             switch (type) {
@@ -60,7 +59,7 @@ public class Generator {
         return new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
     }
 
-    private String generateRegNumber() throws InvalidFileFormatException, IOException {
+    private String generateRegNumber() {
         return new SimpleDateFormat("yyyyMMddHHmmss").format(Calendar.getInstance().getTime());
     }
 

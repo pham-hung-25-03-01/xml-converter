@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
@@ -37,7 +38,7 @@ public class MainForm extends javax.swing.JFrame {
      */
     public MainForm() {
         initComponents();
-        lbCopyRight.setHorizontalTextPosition(SwingConstants.LEFT);
+        setDisplay();
         try {
             loadData();
             reset();
@@ -46,6 +47,12 @@ public class MainForm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Cannot load data", "Error", JOptionPane.ERROR_MESSAGE);
             System.exit(0);
         }
+    }
+
+    private void setDisplay() {
+        ImageIcon icon = new ImageIcon(this.getClass().getResource("/images/openway-way4-logo.png"));
+        this.setIconImage(icon.getImage());
+        this.lbCopyRight.setHorizontalTextPosition(SwingConstants.LEFT);
     }
 
     private void loadData() throws IOException {

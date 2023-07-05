@@ -14,12 +14,14 @@ import javax.swing.JOptionPane;
 import common.Config;
 import common.Data;
 import common.Generator;
+import common.TemplateType;
 
 /**
  *
  * @author sing1
  */
 public class ValueDialog extends javax.swing.JDialog {
+    private TemplateType type;
     private String value;
     private boolean isOK = false;
     private HashMap<String, String[]> listData = new HashMap<String, String[]>();
@@ -34,20 +36,30 @@ public class ValueDialog extends javax.swing.JDialog {
     /**
      * Creates new form ValueDialog
      */
-    public ValueDialog(java.awt.Frame parent, boolean modal, String title) {
+    public ValueDialog(java.awt.Frame parent, boolean modal, TemplateType type, String title) {
         super(parent, modal);
         initComponents();
         setHotKeys();
         setTitle(title);
+        this.type = type;
         loadOptions();
         try {
             loadData();
             reset();
+            setDisplay();
             this.setVisible(true);
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Cannot load data", "Error", JOptionPane.ERROR_MESSAGE);
             this.dispose();
+        }
+    }
+
+    private void setDisplay() {
+        if (this.type == TemplateType.HEADER) {
+            this.cbbValue.removeItem("from_file");
+            this.txtValue.setEnabled(false);
+            this.txtValue.setFocusable(false);
         }
     }
 
@@ -305,7 +317,7 @@ public class ValueDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                ValueDialog dialog = new ValueDialog(new javax.swing.JFrame(), true, "Value");
+                ValueDialog dialog = new ValueDialog(new javax.swing.JFrame(), true, TemplateType.HEADER, "Value");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

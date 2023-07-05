@@ -323,7 +323,7 @@ public class TemplateDialog extends javax.swing.JDialog {
                     JOptionPane.showMessageDialog(null, "Attributes already exist", "Info", JOptionPane.INFORMATION_MESSAGE);
                     return;
                 }
-                AttributeDialog addAttributeDialog = new AttributeDialog(rootParent, true, "New attributes");
+                AttributeDialog addAttributeDialog = new AttributeDialog(rootParent, true, this.type, "New attributes");
                 if (addAttributeDialog.isOK()) {
                     String nodeName = "attributes (" + addAttributeDialog.getAttributes() + ")";
                     DefaultMutableTreeNode node = new DefaultMutableTreeNode(nodeName);
@@ -337,7 +337,7 @@ public class TemplateDialog extends javax.swing.JDialog {
                     JOptionPane.showMessageDialog(null, "Value already exist", "Info", JOptionPane.INFORMATION_MESSAGE);
                     return;
                 }
-                ValueDialog addValueDialog = new ValueDialog(rootParent, true, "New value");
+                ValueDialog addValueDialog = new ValueDialog(rootParent, true, this.type, "New value");
                 if(addValueDialog.isOK()) {
                     String nodeName = "value (" + addValueDialog.getValue() + ")";
                     DefaultMutableTreeNode node = new DefaultMutableTreeNode(nodeName);
@@ -384,7 +384,7 @@ public class TemplateDialog extends javax.swing.JDialog {
             }
             editTagDialog.dispose(); 
         } else if (nodeText.contains("attributes")) {
-            AttributeDialog editAttributeDialog = new AttributeDialog(rootParent, true, "Edit attributes");
+            AttributeDialog editAttributeDialog = new AttributeDialog(rootParent, true, this.type, "Edit attributes");
             if (editAttributeDialog.isOK()) {
                 String nodeName = "attributes (" + editAttributeDialog.getAttributes() + ")";
                 currNode.setUserObject(nodeName);
@@ -392,7 +392,7 @@ public class TemplateDialog extends javax.swing.JDialog {
             }
             editAttributeDialog.dispose();
         } else {
-            ValueDialog editValueDialog = new ValueDialog(rootParent, true, "Edit value");
+            ValueDialog editValueDialog = new ValueDialog(rootParent, true, this.type, "Edit value");
             if(editValueDialog.isOK()) {
                 String nodeName = "value (" + editValueDialog.getValue() + ")";
                 currNode.setUserObject(nodeName);

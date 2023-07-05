@@ -9,6 +9,7 @@ import java.util.Arrays;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 
+import common.TemplateType;
 import common.Validator.FormatType;
 import common.Validator.UseType;
 import common.Validator.ValueType;
@@ -18,6 +19,7 @@ import common.Validator.ValueType;
  * @author sing1
  */
 public class AttributeDialog extends javax.swing.JDialog {
+    private TemplateType type;
     private String attributes;
     private boolean isOK = false;
 
@@ -31,13 +33,23 @@ public class AttributeDialog extends javax.swing.JDialog {
     /**
      * Creates new form AttributeDialog
      */
-    public AttributeDialog(java.awt.Frame parent, boolean modal, String title) {
+    public AttributeDialog(java.awt.Frame parent, boolean modal, TemplateType type, String title) {
         super(parent, modal);
         initComponents();
         setHotKeys();
         setTitle(title);
+        this.type = type;
         loadData();
+        setDisplay();
         this.setVisible(true);
+    }
+
+    private void setDisplay() {
+        if (this.type == TemplateType.HEADER) {
+            this.txtReference.setEnabled(false);
+            this.txtReference.setFocusable(false);
+            this.txtReference.setEditable(false);
+        }
     }
 
     private void setHotKeys() {
@@ -212,7 +224,7 @@ public class AttributeDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                AttributeDialog dialog = new AttributeDialog(new javax.swing.JFrame(), true, "Attributes");
+                AttributeDialog dialog = new AttributeDialog(new javax.swing.JFrame(), true, TemplateType.HEADER, "Attributes");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

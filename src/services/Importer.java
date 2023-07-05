@@ -5,21 +5,23 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
-import javax.swing.JProgressBar;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
+
 import org.ini4j.Wini;
 import common.Config;
+import common.Data;
+import common.TemplateType;
 import common.Validator;
 import views.ProgressDialog;
 
@@ -28,15 +30,15 @@ public class Importer {
 
     public String[] importMultipleHeaders(String[] headerFilePaths, ProgressDialog progress) throws IOException {
         String headerFolderPath = "config/header";
-        return importMultipleTemplates(Config.getHeaderFile(), headerFolderPath, headerFilePaths, false, progress);
+        return importMultipleTemplates(Config.getHeaderFile(), headerFolderPath, headerFilePaths, TemplateType.HEADER, progress);
     }
 
     public String[] importMultipleObjects(String[] objectFilePaths, ProgressDialog progress) throws IOException {
         String objectFolderPath = "config/object";
-        return importMultipleTemplates(Config.getObjectFile(), objectFolderPath, objectFilePaths, true, progress);
+        return importMultipleTemplates(Config.getObjectFile(), objectFolderPath, objectFilePaths, TemplateType.OBJECT, progress);
     }
 
-    private String[] importMultipleTemplates(Wini store, String templateFolderPath, String[] templateFilePaths, boolean allowRefAttribute, ProgressDialog progress) {
+    private String[] importMultipleTemplates(Wini store, String templateFolderPath, String[] templateFilePaths, TemplateType type, ProgressDialog progress) {
         progress.setProgress(10);
 
         int totalFiles = templateFilePaths.length;
@@ -45,7 +47,7 @@ public class Importer {
         Logger.cleanLogError();
 
         for (int i = 0; i < templateFilePaths.length; i++) {
-            String template = importSingleTemplate(store, templateFolderPath, templateFilePaths[i], allowRefAttribute);
+            String template = importSingleTemplate(store, templateFolderPath, templateFilePaths[i], type);
             templates[i] = template;
             progress.setProgress(progress.getProgress() + 90 / totalFiles);
         }
@@ -53,7 +55,7 @@ public class Importer {
         return templates;
     }
 
-    private String importSingleTemplate(Wini store, String templateFolderPath, String templatePath, boolean allowRefAttribute) {
+    private String importSingleTemplate(Wini store, String templateFolderPath, String templatePath, TemplateType type) {
         try {
             File sourceFile = new File(templatePath);
 
@@ -70,7 +72,7 @@ public class Importer {
 
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
             XMLEventReader reader = inputFactory.createXMLEventReader(new FileInputStream(sourceFile));
-            validateTemplate(reader, allowRefAttribute);
+            validateTemplate(reader, type);
 
             String outputFilePath = templateFolderPath + "/" + templateName + ".xml";
             File outputFile = new File(outputFilePath) {{
@@ -130,7 +132,7 @@ public class Importer {
         }
     }
 
-    private boolean validateTemplate(XMLEventReader template, boolean allowRefAttribute) throws XMLStreamException {
+    private boolean validateTemplate(XMLEventReader template, TemplateType type) throws XMLStreamException {
         if (!template.hasNext()) {
             throw new IllegalArgumentException("Template is empty");
         }
@@ -148,10 +150,22 @@ public class Importer {
                     Attribute attribute = attributes.next();
                     String attributeName = attribute.getName().getLocalPart().toUpperCase();
                     String attributeValue = attribute.getValue().toUpperCase();
-                    validator.validateAttribute(attributeName, attributeValue, allowRefAttribute);
+                    validator.validateAttribute(attributeName, attributeValue, type);
                 }
                 stack.push(tagName);
                 continue;
+            }
+
+            if (event.isCharacters() && type == TemplateType.HEADER) {
+                Characters characters = event.asCharacters();
+                if (!characters.isWhiteSpace()) {
+                    List<String> listExpressionLanguage = Data.getListExpressionLanguage(characters.getData());
+                    for (String expressionLanguage : listExpressionLanguage) {
+                        if (Data.determineType(expressionLanguage) == Data.Type.FROM_FILE) {
+                            throw new IllegalArgumentException("Invalid expression language: " + expressionLanguage);
+                        }
+                    }
+                }
             }
 
             if (event.isEndElement()) {
