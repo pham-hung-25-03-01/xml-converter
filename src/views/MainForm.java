@@ -79,6 +79,8 @@ public class MainForm extends javax.swing.JFrame {
         lbCopyRight = new javax.swing.JLabel();
         menuBar = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        menuSetDelimiter = new javax.swing.JMenuItem();
+        jSeparator13 = new javax.swing.JPopupMenu.Separator();
         menuExit = new javax.swing.JMenuItem();
         menuLog = new javax.swing.JMenu();
         menuLogError = new javax.swing.JMenuItem();
@@ -150,6 +152,17 @@ public class MainForm extends javax.swing.JFrame {
         lbCopyRight.setText("Copyright 2023 © by");
 
         jMenu1.setText("System");
+
+        menuSetDelimiter.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_DOWN_MASK));
+        menuSetDelimiter.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/set-delimiter.png"))); // NOI18N
+        menuSetDelimiter.setText("Set delimiter");
+        menuSetDelimiter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuSetDelimiterActionPerformed(evt);
+            }
+        });
+        jMenu1.add(menuSetDelimiter);
+        jMenu1.add(jSeparator13);
 
         menuExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_DOWN_MASK));
         menuExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/exit.png"))); // NOI18N
@@ -684,6 +697,10 @@ public class MainForm extends javax.swing.JFrame {
         new ListStructDialog(this, true, "List structs");
     }//GEN-LAST:event_menuStructListActionPerformed
 
+    private void menuSetDelimiterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSetDelimiterActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_menuSetDelimiterActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -731,6 +748,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator10;
     private javax.swing.JPopupMenu.Separator jSeparator11;
+    private javax.swing.JPopupMenu.Separator jSeparator13;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
@@ -762,6 +780,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuPathInput;
     private javax.swing.JMenuItem menuPathOutput;
     private javax.swing.JMenuItem menuPathProcess;
+    private javax.swing.JMenuItem menuSetDelimiter;
     private javax.swing.JMenu menuStruct;
     private javax.swing.JMenuItem menuStructList;
     private javax.swing.JMenuItem menuStructNew;
