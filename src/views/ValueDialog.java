@@ -49,7 +49,6 @@ public class ValueDialog extends javax.swing.JDialog {
             setDisplay();
             this.setVisible(true);
         } catch (Exception e) {
-            e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Cannot load data", "Error", JOptionPane.ERROR_MESSAGE);
             this.dispose();
         }

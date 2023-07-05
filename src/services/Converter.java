@@ -99,7 +99,15 @@ public class Converter {
 
             Files.move(CurrentValues.SourceFile.toPath(), fprocess.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-            return outputFile.getAbsolutePath();
+            String outputFileAbsolutePath = outputFile.getAbsolutePath();
+
+            try {
+                Logger.writeLogDate("File converted: " + CurrentValues.SourceFile.getName() + " -> " + outputFileAbsolutePath);
+            } catch (Exception e) {
+                Logger.writeLogError(e.getMessage(), LogType.SEVERE);
+            }
+
+            return outputFileAbsolutePath;
         } catch (Exception e) {
             String message = e.getMessage() + "::" + CurrentValues.SourceFile.getName();
             Logger.writeLogError(message, LogType.SEVERE);

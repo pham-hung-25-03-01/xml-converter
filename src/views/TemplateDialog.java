@@ -73,7 +73,7 @@ public class TemplateDialog extends javax.swing.JDialog {
             public void windowClosing(WindowEvent e) {
                 if (isChanged) {
                     int result = JOptionPane.showConfirmDialog((Component) null, "Do you want to save template before exit?", "Notification", JOptionPane.YES_NO_OPTION);
-                    if (result == JOptionPane.YES_OPTION) {
+                    if (result == JOptionPane.YES_OPTION || result == JOptionPane.CLOSED_OPTION) {
                         return;
                     }
                 }

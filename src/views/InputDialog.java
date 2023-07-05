@@ -4,10 +4,9 @@
  */
 package views;
 
-import java.io.IOException;
-
 import javax.swing.JOptionPane;
 
+import common.Config;
 import common.TemplateType;
 
 /**
@@ -15,11 +14,7 @@ import common.TemplateType;
  * @author sing1
  */
 public class InputDialog extends javax.swing.JDialog {
-    public interface InputDialogCondition {
-        public void execute(String input, TemplateType type) throws IOException;
-    }
     private TemplateType type;
-    private InputDialogCondition condition;
     private String input;
     private boolean isOK = false;
     public boolean isOK() {
@@ -31,14 +26,11 @@ public class InputDialog extends javax.swing.JDialog {
     /**
      * Creates new form InputDialog
      */
-    public InputDialog(java.awt.Frame parent, boolean modal, TemplateType type, String title, String label, InputDialogCondition condition) {
+    public InputDialog(java.awt.Frame parent, boolean modal, TemplateType type) {
         super(parent, modal);
         initComponents();
         setHotKeys();
-        setTitle(title);
         this.type = type;
-        this.label.setText(label);
-        this.condition = condition;
         this.setVisible(true);
     }
 
@@ -102,9 +94,23 @@ public class InputDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKActionPerformed
-        String text = txtInput.getText();
+        String text = this.txtInput.getText().trim().toLowerCase();
         try {
-            condition.execute(text, this.type);
+            if (text.isBlank()) {
+                throw new IllegalArgumentException("Name cannot be empty.");
+            }
+            if (!text.matches("\\w+")) {
+                throw new IllegalArgumentException("Name can only contain letters, numbers, and underscores.");
+            }
+            if (this.type == TemplateType.HEADER) {
+                if (Config.getHeaderFile().containsKey(text)) {
+                    throw new IllegalArgumentException("Name already exists.");
+                }
+            } else {
+                if (Config.getObjectFile().containsKey(text)) {
+                    throw new IllegalArgumentException("Name already exists.");
+                }
+            }
             this.isOK = true;
             this.input = text;
             this.setVisible(false);
@@ -143,7 +149,7 @@ public class InputDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                InputDialog dialog = new InputDialog(new javax.swing.JFrame(), true, TemplateType.HEADER, "Input", "Input", null);
+                InputDialog dialog = new InputDialog(new javax.swing.JFrame(), true, TemplateType.HEADER);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

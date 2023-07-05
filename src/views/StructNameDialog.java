@@ -4,6 +4,10 @@
  */
 package views;
 
+import javax.swing.JOptionPane;
+
+import common.Config;
+
 /**
  *
  * @author sing1
@@ -27,6 +31,7 @@ public class StructNameDialog extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         setHotKeys();
+        this.setVisible(true);
     }
 
     private void setHotKeys() {
@@ -93,7 +98,23 @@ public class StructNameDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKActionPerformed
-        // TODO add your handling code here:
+        String text = this.txtStructName.getText().trim().toLowerCase();
+        try {
+            if (text.isBlank()) {
+                throw new IllegalArgumentException("Name cannot be empty");
+            }
+            if (!text.matches("\\w+")) {
+                throw new IllegalArgumentException("Name must be contain only letters, numbers, and underscore");
+            }
+            if (Config.getStructFile().containsKey(text)) {
+                throw new IllegalArgumentException("Struct with name " + text + " already exist");
+            }
+            this.isOK = true;
+            this.structName = text;
+            this.setVisible(false);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnOKActionPerformed
 
     /**

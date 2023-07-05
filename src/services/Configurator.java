@@ -200,4 +200,14 @@ public class Configurator {
         }
         return attributes;
     }
+
+    public void setDelimiter(String delimiter) throws IOException {
+        if (delimiter.length() != 1) {
+            throw new IllegalArgumentException("Delimiter must be a single character");
+        }
+
+        Config.setSystem(new HashMap<String, String>() {{
+            put("DELIMITER", delimiter);
+        }});
+    }
 }

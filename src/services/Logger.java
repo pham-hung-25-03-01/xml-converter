@@ -4,7 +4,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.logging.FileHandler;
+
+import common.Config;
 import common.LogFormatter;
 
 public class Logger {
@@ -25,8 +31,7 @@ public class Logger {
         try {
             return new String(Files.readAllBytes(new File(LOG_ERROR_FILE_PATH).toPath()));
         } catch (IOException e) {
-            System.out.println(e.getMessage());
-            return "";
+            throw new RuntimeException("File not found: " + LOG_ERROR_FILE_PATH);
         }
     }
 
@@ -34,8 +39,7 @@ public class Logger {
         try {
             return new String(Files.readAllBytes(new File(LOG_DATE_FILE_PATH).toPath()));
         } catch (IOException e) {
-            System.out.println(e.getMessage());
-            return "";
+            throw new RuntimeException("File not found: " + LOG_DATE_FILE_PATH);
         }
     }
 
@@ -72,48 +76,40 @@ public class Logger {
                     break;
             }
             handler.close();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (IOException e) {
+            throw new RuntimeException("File not found: " + LOG_ERROR_FILE_PATH);
         } finally {
             file.setReadOnly();
         }
     }
 
-    public static void writeLogDate(String message, LogType logType) {
-        boolean append = true;
+    public static void writeLogDate(String message) {
         File file = new File(LOG_DATE_FILE_PATH);
         file.setWritable(true);
         try {
+            boolean append = false;
+            String lastConversionDate = Config.getSystem("LAST_CONVERSION_DATE");
+            String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+            if (lastConversionDate == null || lastConversionDate.isBlank()) {
+                new FileOutputStream(file).close();
+            } else {
+                if (lastConversionDate.equals(currentDate)) {
+                    append = true;
+                } else {
+                    new FileOutputStream(file).close();
+                }
+            }
             FileHandler handler = new FileHandler(LOG_DATE_FILE_PATH, append);
             handler.setFormatter(new LogFormatter());
             java.util.logging.Logger logger = java.util.logging.Logger.getLogger("SERVICES");
             logger.addHandler(handler);
-            switch (logType) {
-                case SEVERE:
-                    logger.severe(message);
-                    break;
-                case WARNING:
-                    logger.warning(message);
-                    break;
-                case INFO:
-                    logger.info(message);
-                    break;
-                case CONFIG:
-                    logger.config(message);
-                    break;
-                case FINE:
-                    logger.fine(message);
-                    break;
-                case FINER:
-                    logger.finer(message);
-                    break;
-                case FINEST:
-                    logger.finest(message);
-                    break;
-            }
+            logger.info(message);
             handler.close();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+            Config.setSystem(new HashMap<String, String>() {{
+                put("LAST_CONVERSION_DATE", currentDate);
+            }});
+        } catch (IOException e) {
+            throw new RuntimeException("File not found: " + LOG_DATE_FILE_PATH);
         } finally {
             file.setReadOnly();
         }
@@ -125,7 +121,7 @@ public class Logger {
         try {
             new FileOutputStream(file).close();
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            throw new RuntimeException("File not found: " + LOG_ERROR_FILE_PATH);
         } finally {
             file.setReadOnly();
         }
@@ -137,7 +133,7 @@ public class Logger {
         try {
             new FileOutputStream(file).close();
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            throw new RuntimeException("File not found: " + LOG_DATE_FILE_PATH);
         } finally {
             file.setReadOnly();
         }

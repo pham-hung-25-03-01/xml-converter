@@ -98,17 +98,30 @@ public class Config {
         return encryptor;
     }
 
-    private static Properties getPropertiesFile(String path) throws IOException {
+    private static Properties getEncryptPropertiesFile(String path) throws IOException {
         Properties properties = new EncryptableProperties(getEncryptor());
         properties.load(new FileInputStream(new File(path)));
         return properties;
     }
 
-    private static void setPropertiesItem(String path, Properties properties, HashMap<String, String> keyValues) throws IOException {
+    private static Properties getPropertiesFile(String path) throws IOException {
+        return new Properties() {{
+            load(new FileInputStream(new File(path)));
+        }};
+    }
+
+    private static void setEncryptPropertiesItem(String path, Properties properties, HashMap<String, String> keyValues) throws IOException {
         StandardPBEStringEncryptor encryptor = getEncryptor();
 
         for(Map.Entry<String, String> entry : keyValues.entrySet()) {
             properties.put(entry.getKey(), "ENC(" + encryptor.encrypt(entry.getValue()) + ")");
+        }
+        properties.store(new FileOutputStream(path), null);
+    }
+
+    private static void setPropertiesItem(String path, Properties properties, HashMap<String, String> keyValues) throws IOException {
+        for(Map.Entry<String, String> entry : keyValues.entrySet()) {
+            properties.put(entry.getKey(), entry.getValue());
         }
         properties.store(new FileOutputStream(path), null);
     }
@@ -129,11 +142,17 @@ public class Config {
     }
 
     public static void setSystem(HashMap<String, String> keyValues) throws IOException {
-        setPropertiesItem("config/.system.properties", getSystemFile(), keyValues);
+        File file = new File("config/.system.properties");
+        file.setWritable(true);
+        setPropertiesItem(file.getPath(), getSystemFile(), keyValues);
+        file.setReadOnly();
     }
 
     public static void removeSystem(HashMap<String, String> keyValues) throws IOException {
-        removePropertiesItem("config/.system.properties", getSystemFile(), keyValues);
+        File file = new File("config/.system.properties");
+        file.setWritable(true);
+        removePropertiesItem(file.getPath(), getSystemFile(), keyValues);
+        file.setReadOnly();
     }
 
     private static Properties getFolderFile() throws IOException {
@@ -153,7 +172,7 @@ public class Config {
     }
 
     public static Properties getDatabaseFile() throws IOException {
-        return getPropertiesFile("config/default/database.properties");
+        return getEncryptPropertiesFile("config/default/database.properties");
     }
 
     public static String getDatabase(String key) throws IOException {
@@ -161,7 +180,7 @@ public class Config {
     }
 
     public static void setDatabase(HashMap<String, String> keyValues) throws IOException {
-        setPropertiesItem("config/default/database.properties", getDatabaseFile(), keyValues);
+        setEncryptPropertiesItem("config/default/database.properties", getDatabaseFile(), keyValues);
     }
 
     public static void removeDatabase(HashMap<String, String> keyValues) throws IOException {
@@ -169,7 +188,7 @@ public class Config {
     }
 
     public static Properties getQueryFile() throws IOException {
-        return getPropertiesFile("config/default/query.properties");
+        return getEncryptPropertiesFile("config/default/query.properties");
     }
 
     public static String getQuery(String key) throws IOException {
@@ -177,7 +196,7 @@ public class Config {
     }
 
     public static void setQuery(HashMap<String, String> keyValues) throws IOException {
-        setPropertiesItem("config/default/query.properties", getQueryFile(), keyValues);
+        setEncryptPropertiesItem("config/default/query.properties", getQueryFile(), keyValues);
     }
 
     public static void removeQuery(HashMap<String, String> keyValues) throws IOException {

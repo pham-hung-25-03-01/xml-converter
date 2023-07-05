@@ -41,8 +41,6 @@ public class Database {
                 DriverManager.setLoginTimeout(10);
 
                 connection = DriverManager.getConnection(url, user, password);
-
-                System.out.println("Connected to Oracle Database successfully");
             } catch (ClassNotFoundException | SQLException | IOException e) {
                 throw new RuntimeException(e);
             }

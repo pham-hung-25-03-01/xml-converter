@@ -13,10 +13,8 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-import common.Config;
 import common.TemplateType;
 import services.Templater;
-import views.InputDialog.InputDialogCondition;
 
 /**
  *
@@ -214,29 +212,11 @@ public class ListTemplateDialog extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Please select only one template to duplicate.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        InputDialogCondition condition = (String input, TemplateType type) -> {
-            input = input.trim().toLowerCase();
-            if (input == null || input.isEmpty()) {
-                throw new IllegalArgumentException("Name cannot be empty.");
-            }
-            if (!input.matches("\\w+")) {
-                throw new IllegalArgumentException("Name can only contain letters, numbers, and underscores.");
-            }
-            if (type == TemplateType.HEADER) {
-                if (Config.getHeaderFile().containsKey(input)) {
-                    throw new IllegalArgumentException("Name already exists.");
-                }
-            } else {
-                if (Config.getObjectFile().containsKey(input)) {
-                    throw new IllegalArgumentException("Name already exists.");
-                }
-            }
-        };
-        InputDialog inputDialog = new InputDialog((MainForm) this.getParent(), true, this.type, "Duplicate", "Name", condition);
+        InputDialog templateNameDialog = new InputDialog((MainForm) this.getParent(), true, this.type);
         try {
-            if (inputDialog.isOK()) {
+            if (templateNameDialog.isOK()) {
                 String sourceTemplateName = (String) this.tblTemplate.getValueAt(this.tblTemplate.getSelectedRow(), 0);
-                HashMap<String, String> result = templater.duplicateTemplate(this.type, sourceTemplateName, inputDialog.getInput());
+                HashMap<String, String> result = templater.duplicateTemplate(this.type, sourceTemplateName, templateNameDialog.getInput());
                 if (result == null) {
                     throw new Exception("Failed to duplicate template. See log for more details.");
                 }
@@ -248,7 +228,7 @@ public class ListTemplateDialog extends javax.swing.JDialog {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-        inputDialog.dispose();
+        templateNameDialog.dispose();
     }//GEN-LAST:event_btnDuplicateActionPerformed
 
     private void tblTemplateMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblTemplateMouseClicked

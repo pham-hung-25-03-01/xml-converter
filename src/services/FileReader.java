@@ -37,6 +37,11 @@ public class FileReader {
         List<String[]> rows = parser.parseAll(inputReader);
 
         String[] parsedHeaders = parser.getRecordMetadata().headers();
+
+        if (parsedHeaders == null || parsedHeaders.length == 0 || rows.size() == 0 || rows == null) {
+            throw new RuntimeException("Input file format invalid");
+        }
+
         HashMap<String, Integer> headers = new HashMap<>();
         int index = 0;
         for (String header : parsedHeaders) {
@@ -44,6 +49,8 @@ public class FileReader {
         }
 
         parser.stopParsing();
+
+        inputReader.close();
 
         Map<String, Object> result = new HashMap<>();
         result.put("headers", headers);
