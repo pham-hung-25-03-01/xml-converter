@@ -97,6 +97,8 @@ public class MainForm extends javax.swing.JFrame {
         menuPathError = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
         menuPathProcess = new javax.swing.JMenuItem();
+        jSeparator12 = new javax.swing.JPopupMenu.Separator();
+        menuPathSeePath = new javax.swing.JMenuItem();
         menuConfig = new javax.swing.JMenu();
         menuConfigConnectDB = new javax.swing.JMenuItem();
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
@@ -251,6 +253,17 @@ public class MainForm extends javax.swing.JFrame {
             }
         });
         menuPathFolder.add(menuPathProcess);
+        menuPathFolder.add(jSeparator12);
+
+        menuPathSeePath.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_DOWN_MASK | java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        menuPathSeePath.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/see-path-folder.png"))); // NOI18N
+        menuPathSeePath.setText("See path");
+        menuPathSeePath.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuPathSeePathActionPerformed(evt);
+            }
+        });
+        menuPathFolder.add(menuPathSeePath);
 
         menuBar.add(menuPathFolder);
 
@@ -719,6 +732,10 @@ public class MainForm extends javax.swing.JFrame {
         new DelimiterDialog(this, true);
     }//GEN-LAST:event_menuSetDelimiterActionPerformed
 
+    private void menuPathSeePathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuPathSeePathActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_menuPathSeePathActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -767,6 +784,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator10;
     private javax.swing.JPopupMenu.Separator jSeparator11;
+    private javax.swing.JPopupMenu.Separator jSeparator12;
     private javax.swing.JPopupMenu.Separator jSeparator13;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
@@ -799,6 +817,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuPathInput;
     private javax.swing.JMenuItem menuPathOutput;
     private javax.swing.JMenuItem menuPathProcess;
+    private javax.swing.JMenuItem menuPathSeePath;
     private javax.swing.JMenuItem menuSetDelimiter;
     private javax.swing.JMenu menuStruct;
     private javax.swing.JMenuItem menuStructList;
