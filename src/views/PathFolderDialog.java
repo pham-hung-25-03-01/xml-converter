@@ -4,22 +4,40 @@
  */
 package views;
 
-import java.awt.Dimension;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+import java.io.IOException;
+import java.util.HashMap;
+
+import javax.swing.JOptionPane;
+
+import services.FolderPath;
 
 /**
  *
  * @author sing1
  */
 public class PathFolderDialog extends javax.swing.JDialog {
-
+    private FolderPath folderPath = new FolderPath();
     /**
      * Creates new form PathFolderDialog
      */
     public PathFolderDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        try {
+            loadData();
+            this.setVisible(true);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Cannot load data", "Error", JOptionPane.ERROR_MESSAGE);
+            this.dispose();
+        }
+    }
+
+    private void loadData() throws IOException {
+        HashMap<String, String> data = folderPath.getFolderPath();
+        this.txtInput.setText(data.get("INPUT"));
+        this.txtOutput.setText(data.get("OUTPUT"));
+        this.txtProcess.setText(data.get("PROCESS"));
+        this.txtError.setText(data.get("ERROR"));
     }
 
     /**

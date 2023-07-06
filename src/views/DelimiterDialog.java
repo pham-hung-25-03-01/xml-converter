@@ -208,7 +208,6 @@ public class DelimiterDialog extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Delimiter set successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
             this.dispose();
         } catch (IOException e) {
-            e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error while setting delimiter", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnOKActionPerformed

@@ -35,4 +35,13 @@ public class FolderPath {
         Config.setFolder(attributes);
         return "Set " + typeFolder.toLowerCase() + ": " + path;
     }
+
+    public HashMap<String, String> getFolderPath() throws IOException {
+        return new HashMap<String, String>() {{
+            put("INPUT", Config.getFolder("INPUT"));
+            put("OUTPUT", Config.getFolder("OUTPUT"));
+            put("PROCESS", Config.getFolder("PROCESS"));
+            put("ERROR", Config.getFolder("ERROR"));
+        }};
+    }
 }
