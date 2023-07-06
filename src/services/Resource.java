@@ -57,9 +57,7 @@ public class Resource {
                 }
             }
         };
-        system.setWritable(true);
         Files.setAttribute(system.toPath(), "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
-        system.setReadOnly();
 
         File struct = new File(STRUCT_PATH) {
             {
@@ -74,9 +72,7 @@ public class Resource {
                 }
             }
         };
-        struct.setWritable(true);
         Files.setAttribute(struct.toPath(), "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
-        struct.setReadOnly();
 
         File header = new File(HEADER_PATH) {
             {
@@ -91,9 +87,7 @@ public class Resource {
                 }
             }
         };
-        header.setWritable(true);
         Files.setAttribute(header.toPath(), "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
-        header.setReadOnly();
 
         File object = new File(OBJECT_PATH) {
             {
@@ -108,9 +102,7 @@ public class Resource {
                 }
             }
         };
-        object.setWritable(true);
         Files.setAttribute(object.toPath(), "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
-        object.setReadOnly();
 
         new File(DEFAULT_FOLDER_PATH) {
             {

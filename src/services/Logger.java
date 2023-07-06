@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,31 +23,31 @@ public class Logger {
         FINEST
     }
 
-    private static final String LOG_ERROR_FILE_PATH = "log/error.log";
-    private static final String LOG_DATE_FILE_PATH = "log/date.log";
+    private static final String LOG_ERROR_PATH = "log/error.log";
+    private static final String LOG_DATE_PATH = "log/date.log";
 
     public static String getLogError() {
         try {
-            return new String(Files.readAllBytes(new File(LOG_ERROR_FILE_PATH).toPath()));
+            return new String(Files.readAllBytes(new File(LOG_ERROR_PATH).toPath()));
         } catch (IOException e) {
-            throw new RuntimeException("File not found: " + LOG_ERROR_FILE_PATH);
+            throw new RuntimeException("File not found: " + LOG_ERROR_PATH);
         }
     }
 
     public static String getLogDate() {
         try {
-            return new String(Files.readAllBytes(new File(LOG_DATE_FILE_PATH).toPath()));
+            return new String(Files.readAllBytes(new File(LOG_DATE_PATH).toPath()));
         } catch (IOException e) {
-            throw new RuntimeException("File not found: " + LOG_DATE_FILE_PATH);
+            throw new RuntimeException("File not found: " + LOG_DATE_PATH);
         }
     }
 
     public static void writeLogError(String message, LogType logType) {
         boolean append = true;
-        File file = new File(LOG_ERROR_FILE_PATH);
+        File file = new File(LOG_ERROR_PATH);
         file.setWritable(true);
         try {
-            FileHandler handler = new FileHandler(LOG_ERROR_FILE_PATH, append);
+            FileHandler handler = new FileHandler(LOG_ERROR_PATH, append);
             handler.setFormatter(new LogFormatter());
             java.util.logging.Logger logger = java.util.logging.Logger.getLogger("SERVICES");
             logger.addHandler(handler);
@@ -77,14 +76,14 @@ public class Logger {
             }
             handler.close();
         } catch (IOException e) {
-            throw new RuntimeException("File not found: " + LOG_ERROR_FILE_PATH);
+            throw new RuntimeException("File not found: " + LOG_ERROR_PATH);
         } finally {
             file.setReadOnly();
         }
     }
 
     public static void writeLogDate(String message) {
-        File file = new File(LOG_DATE_FILE_PATH);
+        File file = new File(LOG_DATE_PATH);
         file.setWritable(true);
         try {
             boolean append = false;
@@ -99,7 +98,7 @@ public class Logger {
                     new FileOutputStream(file).close();
                 }
             }
-            FileHandler handler = new FileHandler(LOG_DATE_FILE_PATH, append);
+            FileHandler handler = new FileHandler(LOG_DATE_PATH, append);
             handler.setFormatter(new LogFormatter());
             java.util.logging.Logger logger = java.util.logging.Logger.getLogger("SERVICES");
             logger.addHandler(handler);
@@ -109,31 +108,31 @@ public class Logger {
                 put("LAST_CONVERSION_DATE", currentDate);
             }});
         } catch (IOException e) {
-            throw new RuntimeException("File not found: " + LOG_DATE_FILE_PATH);
+            throw new RuntimeException("File not found: " + LOG_DATE_PATH);
         } finally {
             file.setReadOnly();
         }
     }
 
     public static void cleanLogError() {
-        File file = new File(LOG_ERROR_FILE_PATH);
+        File file = new File(LOG_ERROR_PATH);
         file.setWritable(true);
         try {
             new FileOutputStream(file).close();
         } catch (IOException e) {
-            throw new RuntimeException("File not found: " + LOG_ERROR_FILE_PATH);
+            throw new RuntimeException("File not found: " + LOG_ERROR_PATH);
         } finally {
             file.setReadOnly();
         }
     }
 
     public static void cleanLogDate() {
-        File file = new File(LOG_DATE_FILE_PATH);
+        File file = new File(LOG_DATE_PATH);
         file.setWritable(true);
         try {
             new FileOutputStream(file).close();
         } catch (IOException e) {
-            throw new RuntimeException("File not found: " + LOG_DATE_FILE_PATH);
+            throw new RuntimeException("File not found: " + LOG_DATE_PATH);
         } finally {
             file.setReadOnly();
         }

@@ -11,6 +11,7 @@ import java.util.HashMap;
 
 import javax.swing.JOptionPane;
 
+import common.Config;
 import services.Configurator;
 
 /**
@@ -31,8 +32,14 @@ public class DelimiterDialog extends javax.swing.JDialog {
     public DelimiterDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        setDisplay();
-        this.setVisible(true);
+        setHotKeys();
+        try {
+            loadData();
+            this.setVisible(true);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Something went wrong!", "Error", JOptionPane.ERROR_MESSAGE);
+            this.dispose();
+        }
     }
 
     /**
@@ -118,16 +125,39 @@ public class DelimiterDialog extends javax.swing.JDialog {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void setDisplay() {
+    private void loadData() throws IOException {
         addBtnToBtnGr();
-        reset();
+        this.btnOK.requestFocus();
+        String delimiter = Config.getSystem("DELIMITER");
+        if (delimiter != null && delimiter.length() > 0) {
+            switch(delimiter) {
+                case "\t":
+                    this.rdBtnTab.setSelected(true);
+                    break;
+                case ";":
+                    this.rdBtnSemicolon.setSelected(true);
+                    break;
+                case ",":
+                    this.rdBtnComma.setSelected(true);
+                    break;
+                case " ":
+                    this.rdBtnSpace.setSelected(true);
+                    break;
+                default:
+                    this.rdBtnOther.setSelected(true);
+                    this.txtDelimiter.setText(delimiter);
+                    break;
+            }
+        }
+        if (!this.rdBtnOther.isSelected()) {
+            this.txtDelimiter.setEnabled(false);
+            this.txtDelimiter.setFocusable(false);
+            this.txtDelimiter.setText("");
+        }
     }
 
-    private void reset() {
-        this.rdBtnTab.setSelected(true);
-        this.txtDelimiter.setEnabled(false);
-        this.txtDelimiter.setFocusable(false);
-        this.txtDelimiter.setText("");
+    private void setHotKeys() {
+        this.getRootPane().setDefaultButton(btnOK);
     }
 
     private void addBtnToBtnGr()
@@ -146,6 +176,7 @@ public class DelimiterDialog extends javax.swing.JDialog {
                 } else {
                     txtDelimiter.setEnabled(false);
                     txtDelimiter.setFocusable(false);
+                    txtDelimiter.setText("");
                 }
             }
         });
@@ -157,6 +188,10 @@ public class DelimiterDialog extends javax.swing.JDialog {
     }
     
     private void btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKActionPerformed
+        if (this.btnGroup.getSelection() == null) {
+            JOptionPane.showMessageDialog(this, "Please select a delimiter");
+            return;
+        }
         String delimiter = "";
         if (this.rdBtnOther.isSelected()) {
             delimiter = this.txtDelimiter.getText();

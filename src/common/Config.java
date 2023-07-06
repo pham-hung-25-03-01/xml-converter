@@ -17,6 +17,14 @@ import org.jasypt.salt.RandomIVGenerator;
 
 
 public class Config {
+    private static final String SYSTEM_PATH = "config/.system.properties";
+    private static final String STRUCT_PATH = "config/.struct.ini";
+    private static final String HEADER_PATH = "config/header/.header.ini";
+    private static final String OBJECT_PATH = "config/object/.object.ini";
+    private static final String DEFAULT_FOLDER_PATH = "config/default/folder.properties";
+    private static final String DEFAULT_DATABASE_PATH = "config/default/database.properties";
+    private static final String DEFAULT_QUERY_PATH = "config/default/query.properties";
+    private static final String DEFAULT_VALUE_PATH = "config/default/value.properties";
     private static Wini getIniFile(String path) throws IOException {
         return new Wini(new File(path)) {{
             setConfig(new org.ini4j.Config() {{
@@ -26,23 +34,19 @@ public class Config {
     }
 
     public static void setIniItem(Wini ini, String section, HashMap<String, String> keyValues) throws IOException {
-        ini.getFile().setWritable(true);
         for(Map.Entry<String, String> entry : keyValues.entrySet()) {
             ini.put(section, entry.getKey(), entry.getValue());
         }
         ini.store();
-        ini.getFile().setReadOnly();
     }
 
     public static void removeIniItem(Wini ini, String section) throws IOException {
-        ini.getFile().setWritable(true);
         ini.remove(ini.get(section));
         ini.store();
-        ini.getFile().setReadOnly();
     }
 
     public static Wini getStructFile() throws IOException {
-        return getIniFile("config/.struct.ini");
+        return getIniFile(STRUCT_PATH);
     }
 
     public static String getStruct(String section, String key) throws IOException {
@@ -58,7 +62,7 @@ public class Config {
     }
 
     public static Wini getHeaderFile() throws IOException {
-        return getIniFile("config/header/.header.ini");
+        return getIniFile(HEADER_PATH);
     }
 
     public static String getHeader(String section, String key) throws IOException {
@@ -74,7 +78,7 @@ public class Config {
     }
 
     public static Wini getObjectFile() throws IOException {
-        return getIniFile("config/object/.object.ini");
+        return getIniFile(OBJECT_PATH);
     }
 
     public static String getObject(String section, String key) throws IOException {
@@ -134,7 +138,7 @@ public class Config {
     }
 
     private static Properties getSystemFile() throws IOException {
-        return getPropertiesFile("config/.system.properties");
+        return getPropertiesFile(SYSTEM_PATH);
     }
 
     public static String getSystem(String key) throws IOException {
@@ -142,21 +146,15 @@ public class Config {
     }
 
     public static void setSystem(HashMap<String, String> keyValues) throws IOException {
-        File file = new File("config/.system.properties");
-        file.setWritable(true);
-        setPropertiesItem(file.getPath(), getSystemFile(), keyValues);
-        file.setReadOnly();
+        setPropertiesItem(SYSTEM_PATH, getSystemFile(), keyValues);
     }
 
     public static void removeSystem(HashMap<String, String> keyValues) throws IOException {
-        File file = new File("config/.system.properties");
-        file.setWritable(true);
-        removePropertiesItem(file.getPath(), getSystemFile(), keyValues);
-        file.setReadOnly();
+        removePropertiesItem(SYSTEM_PATH, getSystemFile(), keyValues);
     }
 
     private static Properties getFolderFile() throws IOException {
-        return getPropertiesFile("config/default/folder.properties");
+        return getPropertiesFile(DEFAULT_FOLDER_PATH);
     }
 
     public static String getFolder(String key) throws IOException {
@@ -164,15 +162,15 @@ public class Config {
     }
 
     public static void setFolder(HashMap<String, String> keyValues) throws IOException {
-        setPropertiesItem("config/default/folder.properties", getFolderFile(), keyValues);
+        setPropertiesItem(DEFAULT_FOLDER_PATH, getFolderFile(), keyValues);
     }
 
     public static void removeFolder(HashMap<String, String> keyValues) throws IOException {
-        removePropertiesItem("config/default/folder.properties", getFolderFile(), keyValues);
+        removePropertiesItem(DEFAULT_FOLDER_PATH, getFolderFile(), keyValues);
     }
 
     public static Properties getDatabaseFile() throws IOException {
-        return getEncryptPropertiesFile("config/default/database.properties");
+        return getEncryptPropertiesFile(DEFAULT_DATABASE_PATH);
     }
 
     public static String getDatabase(String key) throws IOException {
@@ -180,15 +178,15 @@ public class Config {
     }
 
     public static void setDatabase(HashMap<String, String> keyValues) throws IOException {
-        setEncryptPropertiesItem("config/default/database.properties", getDatabaseFile(), keyValues);
+        setEncryptPropertiesItem(DEFAULT_DATABASE_PATH, getDatabaseFile(), keyValues);
     }
 
     public static void removeDatabase(HashMap<String, String> keyValues) throws IOException {
-        removePropertiesItem("config/default/database.properties", getDatabaseFile(), keyValues);
+        removePropertiesItem(DEFAULT_DATABASE_PATH, getDatabaseFile(), keyValues);
     }
 
     public static Properties getQueryFile() throws IOException {
-        return getEncryptPropertiesFile("config/default/query.properties");
+        return getEncryptPropertiesFile(DEFAULT_QUERY_PATH);
     }
 
     public static String getQuery(String key) throws IOException {
@@ -196,15 +194,15 @@ public class Config {
     }
 
     public static void setQuery(HashMap<String, String> keyValues) throws IOException {
-        setEncryptPropertiesItem("config/default/query.properties", getQueryFile(), keyValues);
+        setEncryptPropertiesItem(DEFAULT_QUERY_PATH, getQueryFile(), keyValues);
     }
 
     public static void removeQuery(HashMap<String, String> keyValues) throws IOException {
-        removePropertiesItem("config/default/query.properties", getQueryFile(), keyValues);
+        removePropertiesItem(DEFAULT_QUERY_PATH, getQueryFile(), keyValues);
     }
 
     public static Properties getValueFile() throws IOException {
-        return getPropertiesFile("config/default/value.properties");
+        return getPropertiesFile(DEFAULT_VALUE_PATH);
     }
 
     public static String getValue(String key) throws IOException {
@@ -212,11 +210,11 @@ public class Config {
     }
 
     public static void setValue(HashMap<String, String> keyValues) throws IOException {
-        setPropertiesItem("config/default/value.properties", getValueFile(), keyValues);
+        setPropertiesItem(DEFAULT_VALUE_PATH, getValueFile(), keyValues);
     }
 
     public static void removeValue(HashMap<String, String> keyValues) throws IOException {
-        removePropertiesItem("config/default/value.properties", getValueFile(), keyValues);
+        removePropertiesItem(DEFAULT_VALUE_PATH, getValueFile(), keyValues);
     }
 
     private static XMLEventReader getTemplate(Wini ini, String templateName) throws IOException, XMLStreamException  {
