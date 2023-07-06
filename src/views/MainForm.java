@@ -733,7 +733,7 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_menuSetDelimiterActionPerformed
 
     private void menuPathSeePathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuPathSeePathActionPerformed
-        new PathFolderDialog(this, true);
+        new FolderPathDialog(this, true);
     }//GEN-LAST:event_menuPathSeePathActionPerformed
 
     /**
