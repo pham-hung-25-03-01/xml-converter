@@ -1,9 +1,12 @@
 package services;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Scanner;
 import java.util.Set;
 
 import javax.swing.JTree;
@@ -45,13 +48,19 @@ public class Templater {
         }
         if (type == TemplateType.HEADER) {
             if (!Config.getHeaderFile().containsKey(templateName)) {
-                throw new IllegalArgumentException("Template with name " + templateName + " does not exist");
+                throw new IllegalArgumentException("Header with name " + templateName + " does not exist");
+            }
+            if (isTemplateInUse(templateName)) {
+                throw new IllegalArgumentException("Header with name " + templateName + " is in use");
             }
             Files.deleteIfExists(Paths.get(Config.getHeader(templateName, "PATH")));
             Config.removeHeader(templateName);
         } else {
             if (!Config.getObjectFile().containsKey(templateName)) {
-                throw new IllegalArgumentException("Template with name " + templateName + " does not exist");
+                throw new IllegalArgumentException("Object with name " + templateName + " does not exist");
+            }
+            if (isTemplateInUse(templateName)) {
+                throw new IllegalArgumentException("Object with name " + templateName + " is in use");
             }
             Files.deleteIfExists(Paths.get(Config.getObject(templateName, "PATH")));
             Config.removeObject(templateName);
@@ -96,5 +105,16 @@ public class Templater {
         default:
             throw new IllegalArgumentException("Template type is not supported");
         }
+    }
+
+    private boolean isTemplateInUse(String templateName) throws FileNotFoundException {
+        String structFilePath = "config/.struct.ini";
+        Scanner scanner = new Scanner(new File(structFilePath));
+        if (scanner.useDelimiter("\\Z").next().contains(templateName)) {
+            scanner.close();
+            return true;
+        }
+        scanner.close();
+        return false;
     }
 }

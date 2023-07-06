@@ -463,7 +463,7 @@ public class TemplateDialog extends javax.swing.JDialog {
                 return;
             }
         }
-        ProgressDialog progress = new ProgressDialog((MainForm)this.getParent(), true, "Save template", "Saving...");
+        ProgressDialog progress = new ProgressDialog((MainForm) this.getParent(), true, "Save template", "Saving...");
         Thread mainThread = new Thread(new Runnable() {
             @Override
             public void run() {

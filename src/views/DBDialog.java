@@ -175,7 +175,7 @@ public class DBDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_cbShowPasswordActionPerformed
 
     private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
-        ProgressDialog progress = new ProgressDialog((MainForm)this.getParent(), true, "Connect to database", "Connecting...");
+        ProgressDialog progress = new ProgressDialog((MainForm) this.getParent(), true, "Connect to database", "Connecting...");
         Thread mainThread = new Thread(new Runnable() {
             @Override
             public void run() {

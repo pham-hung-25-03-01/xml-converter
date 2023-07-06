@@ -60,9 +60,9 @@ public class AttributeDialog extends javax.swing.JDialog {
         String[] uses = Arrays.stream(UseType.values()).map(n -> n.name().toLowerCase()).toArray(String[]::new);
         String[] types = Arrays.stream(ValueType.values()).map(n -> n.name().toLowerCase()).toArray(String[]::new);
         String[] formats = Arrays.stream(FormatType.values()).map(n -> n.name().toLowerCase()).toArray(String[]::new);
-        this.cbbUse.setModel(new DefaultComboBoxModel<>(uses));
-        this.cbbType.setModel(new DefaultComboBoxModel<>(types));
-        this.cbbFormat.setModel(new DefaultComboBoxModel<>(formats));
+        this.cbbUse.setModel(new DefaultComboBoxModel<String>(uses));
+        this.cbbType.setModel(new DefaultComboBoxModel<String>(types));
+        this.cbbFormat.setModel(new DefaultComboBoxModel<String>(formats));
     }
 
     /**

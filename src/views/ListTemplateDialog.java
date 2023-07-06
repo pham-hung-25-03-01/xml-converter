@@ -44,7 +44,7 @@ public class ListTemplateDialog extends javax.swing.JDialog {
     private void loadData() throws IOException {
         DefaultTableCellRenderer renderer = (DefaultTableCellRenderer) this.tblTemplate.getTableHeader().getDefaultRenderer();
         renderer.setHorizontalAlignment((int) CENTER_ALIGNMENT);
-        this.tblTemplate.setModel(templater.getListTemplates(this.type));
+        this.tblTemplate.setModel(this.templater.getListTemplates(this.type));
         this.tblTemplate.setDefaultEditor(Object.class, null);
         this.tblTemplate.setFocusable(false);
         this.tblTemplate.setAutoCreateRowSorter(true);
@@ -190,7 +190,7 @@ public class ListTemplateDialog extends javax.swing.JDialog {
             for (int i = selectedRows.length - 1; i >= 0; i--) {
                 String name = (String) this.tblTemplate.getValueAt(selectedRows[i], 0);
                 try {
-                    String result = templater.deleteTemplate(this.type, name);
+                    String result = this.templater.deleteTemplate(this.type, name);
                     deleted.add(result);
                     model.removeRow(selectedRows[i]);
                 } catch (Exception e) {
@@ -217,7 +217,7 @@ public class ListTemplateDialog extends javax.swing.JDialog {
         try {
             if (templateNameDialog.isOK()) {
                 String sourceTemplateName = (String) this.tblTemplate.getValueAt(this.tblTemplate.getSelectedRow(), 0);
-                HashMap<String, String> result = templater.duplicateTemplate(this.type, sourceTemplateName, templateNameDialog.getInput());
+                HashMap<String, String> result = this.templater.duplicateTemplate(this.type, sourceTemplateName, templateNameDialog.getInput());
                 if (result == null) {
                     throw new Exception("Failed to duplicate template. See log for more details.");
                 }

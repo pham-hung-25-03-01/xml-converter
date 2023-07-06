@@ -57,7 +57,9 @@ public class MainForm extends javax.swing.JFrame {
 
     private void loadData() throws IOException {
         String[] structs = Config.getStructFile().keySet().toArray(String[]::new);
-        this.cbbStruct.setModel(new DefaultComboBoxModel<>(structs));
+        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>(structs);
+        model.insertElementAt("none", 0);
+        this.cbbStruct.setModel(model);
     }
 
     /**
@@ -477,7 +479,7 @@ public class MainForm extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "Please choose at least one file", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            ProgressDialog progress = new ProgressDialog((MainForm)this.getParent(), true, "Import template", "Importing...");
+            ProgressDialog progress = new ProgressDialog(this, true, "Import template", "Importing...");
             Thread mainThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -567,6 +569,10 @@ public class MainForm extends javax.swing.JFrame {
     private void btnConvertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConvertActionPerformed
         if (this.selectedFilePaths.size() < 1) {
             JOptionPane.showMessageDialog(this, "Please choose at least one file", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (this.cbbStruct.getSelectedIndex() < 1) {
+            JOptionPane.showMessageDialog(this, "Please choose a struct", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         String structName = this.cbbStruct.getSelectedItem().toString();

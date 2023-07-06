@@ -68,13 +68,15 @@ public class ValueDialog extends javax.swing.JDialog {
 
     private void loadOptions() {
         String[] options = Arrays.stream(Data.Type.values()).map(v -> v.toString().toLowerCase()).toArray(String[]::new);
-        this.cbbValue.setModel(new DefaultComboBoxModel<>(options));
+        this.cbbValue.setModel(new DefaultComboBoxModel<String>(options));
     }
 
     private void loadData() throws IOException {
         String[] fromDB = Config.getQueryFile().keySet().toArray(String[]::new);
         String[] fromGenerator = Arrays.stream(Generator.Type.values()).map(Enum::name).toArray(String[]::new);
         String[] fromDefaultValues = Config.getValueFile().keySet().toArray(String[]::new);
+        this.listData.put("from_file", new String[]{});
+        this.listData.put("from_template", new String[]{});
         this.listData.put("from_db", fromDB);
         this.listData.put("from_generator", fromGenerator);
         this.listData.put("from_default_values", fromDefaultValues);
@@ -83,7 +85,6 @@ public class ValueDialog extends javax.swing.JDialog {
     public void reset() {
         this.txtPreview.setText("");
         this.txtValue.setText("");
-        this.cbbDetailValue.setModel(new DefaultComboBoxModel<>());
         this.cbbDetailValue.setEnabled(false);
         this.cbbDetailValue.setFocusable(false);
         this.cbbValue.setSelectedIndex(0);
@@ -211,7 +212,9 @@ public class ValueDialog extends javax.swing.JDialog {
 
     private void loadDataForOption(String option) {
         String[] data = listData.get(option);
-        this.cbbDetailValue.setModel(new DefaultComboBoxModel<>(data));
+        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>(data);
+        model.insertElementAt("none", 0);
+        this.cbbDetailValue.setModel(model);
     }
 
     private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
@@ -222,7 +225,7 @@ public class ValueDialog extends javax.swing.JDialog {
         String result = this.txtPreview.getText();
         String option = this.cbbValue.getSelectedItem().toString();
         String input = this.txtValue.getText();
-        String detailOption = this.cbbDetailValue.getItemCount() > 0 ? this.cbbDetailValue.getSelectedItem().toString() : "";
+        String detailOption = this.cbbDetailValue.getItemCount() > 1 ? this.cbbDetailValue.getSelectedItem().toString() : "";
         if (option.equals("from_file") && (input == null || input.isBlank())) {
             JOptionPane.showMessageDialog(null, "Value is not empty", "Error", JOptionPane.ERROR_MESSAGE);
             return;
@@ -231,6 +234,10 @@ public class ValueDialog extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(null, "Value is not empty", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         };
+        if ((option.equals("from_db") || option.equals("from_generator") || option.equals("from_default_values")) && this.cbbDetailValue.getSelectedIndex() < 1) {
+            JOptionPane.showMessageDialog(this, "Please choose detail option", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         switch(option) {
             case "from_file":
                 result += "${" + input.trim() + "}";
@@ -273,17 +280,17 @@ public class ValueDialog extends javax.swing.JDialog {
             case "from_template":
                 this.txtValue.setEnabled(true);
                 this.txtValue.setFocusable(true);
-                this.cbbDetailValue.setModel(new DefaultComboBoxModel<>());
                 this.cbbDetailValue.setEnabled(false);
                 this.cbbDetailValue.setFocusable(false);
                 break;
             default:
                 this.txtValue.setEnabled(false);
                 this.txtValue.setFocusable(false);
-                loadDataForOption(option);
                 this.cbbDetailValue.setEnabled(true);
                 this.cbbDetailValue.setFocusable(true);
         }
+        loadDataForOption(option);
+        this.cbbDetailValue.setSelectedIndex(0);
         this.txtValue.setText("");
     }//GEN-LAST:event_cbbValueActionPerformed
 

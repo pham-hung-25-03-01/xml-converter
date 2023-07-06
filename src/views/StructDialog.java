@@ -56,8 +56,12 @@ public class StructDialog extends javax.swing.JDialog {
     private void loadData() throws IOException {
         String[] headers = Config.getHeaderFile().keySet().toArray(String[]::new);
         String[] objects = Config.getObjectFile().keySet().toArray(String[]::new);
-        this.cbbHeader.setModel(new DefaultComboBoxModel<>(headers));
-        this.cbbObject.setModel(new DefaultComboBoxModel<>(objects));
+        DefaultComboBoxModel<String> modelHeaders = new DefaultComboBoxModel<String>(headers);
+        modelHeaders.insertElementAt("none", 0);
+        DefaultComboBoxModel<String> modelObjects = new DefaultComboBoxModel<String>(objects);
+        modelObjects.insertElementAt("none", 0);
+        this.cbbHeader.setModel(modelHeaders);
+        this.cbbObject.setModel(modelObjects);
         if (this.structName != null) {
             HashMap<String, String> struct = structer.readStruct(structName);
             this.txtTypeFile.setText(struct.get("TYPE_FILE"));
@@ -67,6 +71,9 @@ public class StructDialog extends javax.swing.JDialog {
             this.txtStructName.setText(struct.get("STRUCT_NAME"));
             this.txtStructName.setEditable(false);
             this.txtStructName.setFocusable(false);
+        } else {
+            this.cbbHeader.setSelectedIndex(0);
+            this.cbbObject.setSelectedIndex(0);
         }
     }
 
@@ -188,6 +195,14 @@ public class StructDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        if (this.cbbHeader.getSelectedIndex() < 1) {
+            JOptionPane.showMessageDialog(this, "Please select header", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (this.cbbObject.getSelectedIndex() < 1) {
+            JOptionPane.showMessageDialog(this, "Please select object", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         String typeFile = this.txtTypeFile.getText();
         String typeList = this.txtTypeList.getText();
         String header = this.cbbHeader.getSelectedItem().toString();

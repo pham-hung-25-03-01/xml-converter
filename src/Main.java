@@ -36,17 +36,17 @@ public class Main {
                     break;
                 }
             }
+            //</editor-fold>
+
+            /* Create and display the form */
+            java.awt.EventQueue.invokeAndWait(new Runnable() {
+                public void run() {
+                    new MainForm().setVisible(true);
+                }
+            });
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeAndWait(new Runnable() {
-            public void run() {
-                new MainForm().setVisible(true);
-            }
-        });
 
     }
 
