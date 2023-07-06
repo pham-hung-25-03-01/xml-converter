@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -34,15 +36,23 @@ public class Config {
     }
 
     public static void setIniItem(Wini ini, String section, HashMap<String, String> keyValues) throws IOException {
+        ini.getFile().setWritable(true);
+        Files.setAttribute(ini.getFile().toPath(), "dos:hidden", false, LinkOption.NOFOLLOW_LINKS);
         for(Map.Entry<String, String> entry : keyValues.entrySet()) {
             ini.put(section, entry.getKey(), entry.getValue());
         }
         ini.store();
+        Files.setAttribute(ini.getFile().toPath(), "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
+        ini.getFile().setReadOnly();
     }
 
     public static void removeIniItem(Wini ini, String section) throws IOException {
+        ini.getFile().setWritable(true);
+        Files.setAttribute(ini.getFile().toPath(), "dos:hidden", false, LinkOption.NOFOLLOW_LINKS);
         ini.remove(ini.get(section));
         ini.store();
+        Files.setAttribute(ini.getFile().toPath(), "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
+        ini.getFile().setReadOnly();
     }
 
     public static Wini getStructFile() throws IOException {
@@ -146,11 +156,21 @@ public class Config {
     }
 
     public static void setSystem(HashMap<String, String> keyValues) throws IOException {
+        File file = new File(SYSTEM_PATH);
+        file.setWritable(true);
+        Files.setAttribute(file.toPath(), "dos:hidden", false, LinkOption.NOFOLLOW_LINKS);
         setPropertiesItem(SYSTEM_PATH, getSystemFile(), keyValues);
+        Files.setAttribute(file.toPath(), "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
+        file.setReadOnly();
     }
 
     public static void removeSystem(HashMap<String, String> keyValues) throws IOException {
+        File file = new File(SYSTEM_PATH);
+        file.setWritable(true);
+        Files.setAttribute(file.toPath(), "dos:hidden", false, LinkOption.NOFOLLOW_LINKS);
         removePropertiesItem(SYSTEM_PATH, getSystemFile(), keyValues);
+        Files.setAttribute(file.toPath(), "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
+        file.setReadOnly();
     }
 
     private static Properties getFolderFile() throws IOException {
