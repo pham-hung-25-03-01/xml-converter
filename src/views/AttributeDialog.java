@@ -170,7 +170,7 @@ public class AttributeDialog extends javax.swing.JDialog {
     private void btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKActionPerformed
         String ref = this.txtReference.getText();
         if (!ref.matches("^(\\w+\\={0,1}\\w*\\;)*$")) {
-            JOptionPane.showMessageDialog(null, "Ref is invalid", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Ref is invalid", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         String attributes = "";

@@ -218,7 +218,7 @@ public class ValueDialog extends javax.swing.JDialog {
     }
 
     private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
-        txtPreview.setText("");
+        this.txtPreview.setText("");
     }//GEN-LAST:event_btnClearActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
@@ -227,11 +227,11 @@ public class ValueDialog extends javax.swing.JDialog {
         String input = this.txtValue.getText();
         String detailOption = this.cbbDetailValue.getItemCount() > 1 ? this.cbbDetailValue.getSelectedItem().toString() : "";
         if (option.equals("from_file") && (input == null || input.isBlank())) {
-            JOptionPane.showMessageDialog(null, "Value is not empty", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Value is not empty", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         if (option.equals("from_template") && input.length() < 1) {
-            JOptionPane.showMessageDialog(null, "Value is not empty", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Value is not empty", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         };
         if ((option.equals("from_db") || option.equals("from_generator") || option.equals("from_default_values")) && this.cbbDetailValue.getSelectedIndex() < 1) {
@@ -263,7 +263,7 @@ public class ValueDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKActionPerformed
-        String input = txtPreview.getText().trim();
+        String input = this.txtPreview.getText().trim();
         if (input == null || input.isBlank()) {
             JOptionPane.showMessageDialog(this, "Value of preview is not empty", "Error", JOptionPane.ERROR_MESSAGE);
             return;

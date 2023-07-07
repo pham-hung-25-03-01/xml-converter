@@ -68,6 +68,7 @@ public class StructDialog extends javax.swing.JDialog {
             this.txtTypeList.setText(struct.get("TYPE_LIST"));
             this.cbbHeader.setSelectedItem(struct.get("HEADER"));
             this.cbbObject.setSelectedItem(struct.get("OBJECT"));
+            this.txtFilenameOutput.setText(struct.get("FILE_NAME_OUTPUT"));
             this.txtStructName.setText(struct.get("STRUCT_NAME"));
             this.txtStructName.setEditable(false);
             this.txtStructName.setFocusable(false);
@@ -242,16 +243,17 @@ public class StructDialog extends javax.swing.JDialog {
         String typeList = this.txtTypeList.getText();
         String header = this.cbbHeader.getSelectedItem().toString();
         String object = this.cbbObject.getSelectedItem().toString();
+        String fileNameOutput = this.txtFilenameOutput.getText();
         String name = this.txtStructName.getText();
         try {
             if (this.structName == null) {
-                HashMap<String, String> struct = structer.createStruct(name, typeFile, header, typeList, object);
+                HashMap<String, String> struct = structer.createStruct(name, typeFile, header, typeList, object, fileNameOutput);
                 MainForm rootParent = (MainForm) this.getParent();
                 rootParent.addStruct(struct.get("STRUCT_NAME"));
                 JOptionPane.showMessageDialog(this, "Created struct: " + struct.get("STRUCT_NAME"), "Success", JOptionPane.INFORMATION_MESSAGE);
             } else {
-                HashMap<String, String> struct = structer.updateStruct(name, typeFile, header, typeList, object);
-                this.listStruct.updateStruct(name, typeFile, header, typeList, object);
+                HashMap<String, String> struct = structer.updateStruct(name, typeFile, header, typeList, object, fileNameOutput);
+                this.listStruct.updateStruct(struct.get("STRUCT_NAME"), struct.get("TYPE_FILE"), struct.get("HEADER"), struct.get("TYPE_LIST"), struct.get("OBJECT"), struct.get("FILE_NAME_OUTPUT"));
                 JOptionPane.showMessageDialog(this, "Updated struct: " + struct.get("STRUCT_NAME"), "Success", JOptionPane.INFORMATION_MESSAGE);
             }
             this.dispose();
@@ -261,7 +263,11 @@ public class StructDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void btnSetFilenameOutputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSetFilenameOutputActionPerformed
-        // TODO add your handling code here:
+        FileNameOutputDialog fileNameOutputDialog = new FileNameOutputDialog((MainForm) this.getParent(), true);
+        if (fileNameOutputDialog.isOK()) {
+            this.txtFilenameOutput.setText(fileNameOutputDialog.getFileNameOutput());
+        }
+        fileNameOutputDialog.dispose();
     }//GEN-LAST:event_btnSetFilenameOutputActionPerformed
 
     /**

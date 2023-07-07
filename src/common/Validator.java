@@ -1,5 +1,8 @@
 package common;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 
 public class Validator {
@@ -18,8 +21,17 @@ public class Validator {
         LETTERS,
         EMAIL,
         PHONE,
-        DATE,
-        TIME
+        DATE_dd_MM_yyyy,
+        DATE_yyyy_MM_dd,
+        DATE_MM_dd_yyyy,
+        DATE_dd_MM_yyyy_HYPHEN,
+        DATE_yyyy_MM_dd_HYPHEN,
+        DATE_MM_dd_yyyy_HYPHEN,
+        DATE_dd_MM_yyyy_SLASH,
+        DATE_yyyy_MM_dd_SLASH,
+        DATE_MM_dd_yyyy_SLASH,
+        TIME_HH_mm_ss,
+        TIME_HH_mm_ss_COLON,
     }
 
     // if add new use type, please add it to last position
@@ -102,10 +114,28 @@ public class Validator {
                     return isValidEmail(value);
                 case PHONE:
                     return isValidPhone(value);
-                case DATE:
-                    return isValidDate(value);
-                case TIME:
-                    return isValidTime(value);
+                case DATE_dd_MM_yyyy:
+                    return isValidDate(value, "ddMMyyyy");
+                case DATE_yyyy_MM_dd:
+                    return isValidDate(value, "yyyyMMdd");
+                case DATE_MM_dd_yyyy:
+                    return isValidDate(value, "MMddyyyy");
+                case DATE_dd_MM_yyyy_HYPHEN:
+                    return isValidDate(value, "dd-MM-yyyy");
+                case DATE_yyyy_MM_dd_HYPHEN:
+                    return isValidDate(value, "yyyy-MM-dd");
+                case DATE_MM_dd_yyyy_HYPHEN:
+                    return isValidDate(value, "MM-dd-yyyy");
+                case DATE_dd_MM_yyyy_SLASH:
+                    return isValidDate(value, "dd/MM/yyyy");
+                case DATE_yyyy_MM_dd_SLASH:
+                    return isValidDate(value, "yyyy/MM/dd");
+                case DATE_MM_dd_yyyy_SLASH:
+                    return isValidDate(value, "MM/dd/yyyy");
+                case TIME_HH_mm_ss:
+                    return isValidTime(value, "HHmmss");
+                case TIME_HH_mm_ss_COLON:
+                    return isValidTime(value, "HH:mm:ss");
                 default:
                     return true;
             }
@@ -196,15 +226,29 @@ public class Validator {
     }
 
     private boolean isValidPhone(String value) {
-        return value.matches("^0[0-9]{9,10}$");
+        return value.matches("^(\\+{0,1}84|0)[0-9]{9}$");
     }
 
-    private boolean isValidDate(String value) {
-        return value.matches("^19[0-9]{2}|2[0-9]{3}\\-(0[1-9]|1[012])\\-(0[1-9]|[12][0-9]|3[01])$");
+    private boolean isValidDate(String date, String format) {
+        try {
+            DateFormat df = new SimpleDateFormat(format);
+            df.setLenient(false);
+            df.parse(date);
+            return true;
+        } catch (ParseException e) {
+            return false;
+        }
     }
 
-    private boolean isValidTime(String value) {
-        return value.matches("^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$");
+    private boolean isValidTime(String time, String format) {
+        try {
+            DateFormat df = new SimpleDateFormat(format);
+            df.setLenient(false);
+            df.parse(time);
+            return true;
+        } catch (ParseException e) {
+            return false;
+        }
     }
 
 }

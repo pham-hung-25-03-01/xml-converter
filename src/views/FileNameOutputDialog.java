@@ -4,11 +4,32 @@
  */
 package views;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
+
+import common.Config;
+import common.Generator;
+
 /**
  *
  * @author sing1
  */
 public class FileNameOutputDialog extends javax.swing.JDialog {
+    private String fileNameOutput;
+    private boolean isOK = false;
+    private HashMap<String, String[]> listData = new HashMap<String, String[]>();
+
+    public String getFileNameOutput() {
+        return fileNameOutput;
+    }
+
+    public boolean isOK() {
+        return isOK;
+    }
 
     /**
      * Creates new form OutputFileNameDialog
@@ -16,6 +37,41 @@ public class FileNameOutputDialog extends javax.swing.JDialog {
     public FileNameOutputDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        setHotKeys();
+        loadOptions();
+        try {
+            loadData();
+            reset();
+            this.setVisible(true);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Cannot load data", "Error", JOptionPane.ERROR_MESSAGE);
+            this.dispose();
+        }
+    }
+
+    private void setHotKeys() {
+        this.getRootPane().setDefaultButton(btnOK);
+    }
+
+    private void loadOptions() {
+        this.cbbValue.setModel(new DefaultComboBoxModel<String>(new String[]{"from_struct", "from_db", "from_generator", "from_default_values"}));
+    }
+
+    private void loadData() throws IOException {
+        String[] fromDB = Config.getQueryFile().keySet().toArray(String[]::new);
+        String[] fromGenerator = Arrays.stream(Generator.Type.values()).map(Enum::name).toArray(String[]::new);
+        String[] fromDefaultValues = Config.getValueFile().keySet().toArray(String[]::new);
+        this.listData.put("from_struct", new String[]{});
+        this.listData.put("from_db", fromDB);
+        this.listData.put("from_generator", fromGenerator);
+        this.listData.put("from_default_values", fromDefaultValues);
+    }
+
+    private void loadDataForOption(String option) {
+        String[] data = listData.get(option);
+        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>(data);
+        model.insertElementAt("none", 0);
+        this.cbbDetailValue.setModel(model);
     }
 
     /**
@@ -139,20 +195,86 @@ public class FileNameOutputDialog extends javax.swing.JDialog {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void cbbValueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbValueActionPerformed
+    public void reset() {
+        this.txtPreview.setText("");
+        this.txtValue.setText("");
+        this.cbbDetailValue.setEnabled(false);
+        this.cbbDetailValue.setFocusable(false);
+        this.cbbValue.setSelectedIndex(0);
+    }
 
+    private void cbbValueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbValueActionPerformed
+        String option = this.cbbValue.getSelectedItem().toString();
+        switch(option) {
+            case "from_struct":
+                this.txtValue.setEnabled(true);
+                this.txtValue.setFocusable(true);
+                this.cbbDetailValue.setEnabled(false);
+                this.cbbDetailValue.setFocusable(false);
+                break;
+            default:
+                this.txtValue.setEnabled(false);
+                this.txtValue.setFocusable(false);
+                this.cbbDetailValue.setEnabled(true);
+                this.cbbDetailValue.setFocusable(true);
+        }
+        loadDataForOption(option);
+        this.cbbDetailValue.setSelectedIndex(0);
+        this.txtValue.setText("");
     }//GEN-LAST:event_cbbValueActionPerformed
 
     private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
-        txtPreview.setText("");
+        this.txtPreview.setText("");
     }//GEN-LAST:event_btnClearActionPerformed
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        
+        String result = this.txtPreview.getText();
+        String option = this.cbbValue.getSelectedItem().toString();
+        String input = this.txtValue.getText();
+        String detailOption = this.cbbDetailValue.getItemCount() > 1 ? this.cbbDetailValue.getSelectedItem().toString() : "";
+        if (option.equals("from_struct") && input.length() < 1) {
+            JOptionPane.showMessageDialog(this, "Value is not empty", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        };
+        if (input.length() > 0 && !input.matches("^[^~)('!*<>:;,?\\\"*|\\\\/]+$")) {
+            JOptionPane.showMessageDialog(this, "A file name cannot contain any of the following characters:\n"
+                    + "~ ) ( ' ! * < > : ; , ? \" | \\ /", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if ((option.equals("from_db") || option.equals("from_generator") || option.equals("from_default_values")) && this.cbbDetailValue.getSelectedIndex() < 1) {
+            JOptionPane.showMessageDialog(this, "Please choose detail option", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        switch(option) {
+            case "from_struct":
+                result += input;
+                break;
+            case "from_db":
+                result += "@{" + detailOption + "}";
+                break;
+            case "from_generator":
+                result += "#{" + detailOption + "}";
+                break;
+            case "from_default_values":
+                result += "*{" + detailOption + "}";
+                break;
+            default:
+                JOptionPane.showMessageDialog(this, "Option is not valid", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+        }
+        this.txtPreview.setText(result);
+        this.cbbValue.setSelectedIndex(0);
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOKActionPerformed
-       
+        String name = this.txtPreview.getText().trim();
+        if (name == null || name.isBlank()) {
+            JOptionPane.showMessageDialog(this, "Value of preview is not empty", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        this.fileNameOutput = name;
+        this.isOK = true;
+        this.setVisible(false);
     }//GEN-LAST:event_btnOKActionPerformed
 
     /**

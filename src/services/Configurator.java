@@ -91,7 +91,10 @@ public class Configurator {
         Properties store = Config.getQueryFile();
         HashMap<String, String> attributes = prepareCreateItem(store, name, value);
         Config.setQuery(attributes);
-        return attributes;
+        return new HashMap<String, String>() {{
+            put("NAME", name);
+            put("VALUE", value);
+        }};
     }
 
     public HashMap<String, String> updateDefaultValue(String name, String value) throws IOException {
