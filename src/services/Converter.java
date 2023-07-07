@@ -368,7 +368,11 @@ public class Converter {
                     break;
                 case FROM_DB:
                     dataNameExtracted = Data.extractDataName(expressionLanguage, Type.FROM_DB);
-                    data = SqlDataReader.getData(dataNameExtracted);
+                    String query = Config.getQuery(dataNameExtracted);
+                    if (query == null || query.isBlank()) {
+                        throw new IllegalArgumentException("Invalid query type: " + dataNameExtracted);
+                    }
+                    data = SqlDataReader.getData(query);
                     break;
                 case FROM_GENERATOR:
                     dataNameExtracted = Data.extractDataName(expressionLanguage, Type.FROM_GENERATOR);
