@@ -225,7 +225,7 @@ public class AttributeDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                AttributeDialog dialog = new AttributeDialog(new javax.swing.JFrame(), true, TemplateType.HEADER, "Attributes");
+                AttributeDialog dialog = new AttributeDialog(new MainForm(), true, TemplateType.HEADER, "Attributes");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

@@ -238,7 +238,7 @@ public class DBDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                DBDialog dialog = new DBDialog(new javax.swing.JFrame(), true);
+                DBDialog dialog = new DBDialog(new MainForm(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
