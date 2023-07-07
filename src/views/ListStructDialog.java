@@ -154,13 +154,14 @@ public class ListStructDialog extends javax.swing.JDialog {
         this.btnDuplicate.setEnabled(false);
     }
 
-    public void updateStruct(String structName, String typeFile, String header, String typeList, String object) {
+    public void updateStruct(String structName, String typeFile, String header, String typeList, String object, String fileNameOutput) {
         int selectedRow = this.tblListStruct.getSelectedRow();
         this.tblListStruct.setValueAt(structName, selectedRow, 0);
         this.tblListStruct.setValueAt(typeFile, selectedRow, 1);
         this.tblListStruct.setValueAt(header, selectedRow, 2);
         this.tblListStruct.setValueAt(typeList, selectedRow, 3);
         this.tblListStruct.setValueAt(object, selectedRow, 4);
+        this.tblListStruct.setValueAt(fileNameOutput, selectedRow, 5);
     }
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
@@ -224,7 +225,7 @@ public class ListStructDialog extends javax.swing.JDialog {
                 String sourceStructName = (String) this.tblListStruct.getValueAt(this.tblListStruct.getSelectedRow(), 0);
                 HashMap<String, String> struct = structer.duplicateStruct(sourceStructName, structNameDialog.getStructName());
                 DefaultTableModel model = (DefaultTableModel) this.tblListStruct.getModel();
-                model.addRow(new Object[]{struct.get("STRUCT_NAME"), struct.get("TYPE_FILE"), struct.get("HEADER"), struct.get("TYPE_LIST"), struct.get("OBJECT")});
+                model.addRow(new Object[]{struct.get("STRUCT_NAME"), struct.get("TYPE_FILE"), struct.get("HEADER"), struct.get("TYPE_LIST"), struct.get("OBJECT"), struct.get("FILE_NAME_OUTPUT")});
                 rootParent.addStruct(struct.get("STRUCT_NAME"));
                 reset();
                 JOptionPane.showMessageDialog(this, "Duplicated struct: " + struct.get("STRUCT_NAME"), "Message", JOptionPane.INFORMATION_MESSAGE);

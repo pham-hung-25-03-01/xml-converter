@@ -16,8 +16,8 @@ public class Structer {
         public void execute() throws IOException;
     }
 
-    public HashMap<String, String> createStruct(String structName, String typeFile, String header, String typeList, String object) throws IOException {
-        HashMap<String, String> result = setStruct(structName, typeFile, header, typeList, object, () -> {
+    public HashMap<String, String> createStruct(String structName, String typeFile, String header, String typeList, String object, String fileNameOutput) throws IOException {
+        HashMap<String, String> result = setStruct(structName, typeFile, header, typeList, object, fileNameOutput, () -> {
             if (Config.getStructFile().containsKey(structName)) {
                 throw new IllegalArgumentException("Struct with name " + structName + " already exist");
             }
@@ -38,8 +38,8 @@ public class Structer {
         return struct;
     }
 
-    public HashMap<String, String> updateStruct(String structName, String typeFile, String header, String typeList, String object) throws IOException {
-        HashMap<String, String> result = setStruct(structName, typeFile, header, typeList, object, () -> {
+    public HashMap<String, String> updateStruct(String structName, String typeFile, String header, String typeList, String object, String fileNameOutput) throws IOException {
+        HashMap<String, String> result = setStruct(structName, typeFile, header, typeList, object, fileNameOutput, () -> {
             if (!Config.getStructFile().containsKey(structName)) {
                 throw new IllegalArgumentException("Struct with name " + structName + " does not exist");
             }
@@ -66,12 +66,13 @@ public class Structer {
         tableModel.addColumn("Header");
         tableModel.addColumn("Type list");
         tableModel.addColumn("Object");
+        tableModel.addColumn("File name output");
         Wini structFile = Config.getStructFile();
         Set<String> structNames = structFile.keySet();
         for (String structName : structNames) {
             HashMap<String, String> struct = new HashMap<String, String>(structFile.get(structName));
             tableModel.addRow(new Object[] { structName, struct.get("TYPE_FILE"), struct.get("HEADER"),
-                    struct.get("TYPE_LIST"), struct.get("OBJECT") });
+                    struct.get("TYPE_LIST"), struct.get("OBJECT"), struct.get("FILE_NAME_OUTPUT") });
         }
         return tableModel;
     }
@@ -95,9 +96,9 @@ public class Structer {
         return struct;
     }
 
-    private HashMap<String, String> setStruct(String structName, String typeFile, String header, String typeList, String object,
+    private HashMap<String, String> setStruct(String structName, String typeFile, String header, String typeList, String object, String fileNameOutput,
             Condition condition) throws IOException {
-        if (structName.isBlank() || typeFile.isBlank() || header.isBlank() || typeList.isBlank() || object.isBlank()) {
+        if (structName.isBlank() || typeFile.isBlank() || header.isBlank() || typeList.isBlank() || object.isBlank() || fileNameOutput.isBlank()) {
             throw new IllegalArgumentException("All fields must be filled");
         }
 
@@ -106,6 +107,7 @@ public class Structer {
         header = header.trim().toLowerCase();
         typeList = typeList.trim();
         object = object.trim().toLowerCase();
+        fileNameOutput = "\"" + fileNameOutput.trim() + "\"";
 
         isNameValid(structName, "Struct name");
         isTagNameValid(typeFile, "Type file");
@@ -127,6 +129,7 @@ public class Structer {
         attributes.put("HEADER", header);
         attributes.put("TYPE_LIST", typeList);
         attributes.put("OBJECT", object);
+        attributes.put("FILE_NAME_OUTPUT", fileNameOutput);
 
         Config.setStruct(structName, attributes);
 

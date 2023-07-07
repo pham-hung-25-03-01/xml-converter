@@ -78,7 +78,7 @@ public class Converter {
 
             StringBuilder prettyPrintXml = formatXml(xmlCleaned);
 
-            String outputFileName = generator.generateTargetFileName(structName);
+            String outputFileName = generator.generateFileNameOutput(structName);
             String outputFilePath = Config.getFolder("OUTPUT") + "/" + outputFileName;
             File outputFile = new File(outputFilePath) {{
                 if (!exists()) {

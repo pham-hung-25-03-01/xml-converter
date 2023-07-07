@@ -97,12 +97,12 @@ public class TagDialog extends javax.swing.JDialog {
         String input = txtTagName.getText().trim();
         if (input.isBlank()) {
             this.isOK = false;
-            JOptionPane.showMessageDialog(null, "Tag name is not empty", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Tag name is not empty", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         if (!input.matches("^[a-zA-Z]\\w*$")) {
             this.isOK = false;
-            JOptionPane.showMessageDialog(null, "Tag name must be start with a letter and not contain special characters or spaces except underscore", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Tag name must be start with a letter and not contain special characters or spaces except underscore", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         this.tagName = input;

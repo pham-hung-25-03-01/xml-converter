@@ -321,7 +321,7 @@ public class TemplateDialog extends javax.swing.JDialog {
                 break;
             case "attributes":
                 if (isExisted(currNode, "^attributes \\(.*\\)$")) {
-                    JOptionPane.showMessageDialog(null, "Attributes already exist", "Info", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Attributes already exist", "Info", JOptionPane.INFORMATION_MESSAGE);
                     return;
                 }
                 AttributeDialog addAttributeDialog = new AttributeDialog(rootParent, true, this.type, "New attributes");
@@ -335,7 +335,7 @@ public class TemplateDialog extends javax.swing.JDialog {
                 break;
             case "value":
                 if (isExisted(currNode, "^value \\(.*\\)$")) {
-                    JOptionPane.showMessageDialog(null, "Value already exist", "Info", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Value already exist", "Info", JOptionPane.INFORMATION_MESSAGE);
                     return;
                 }
                 ValueDialog addValueDialog = new ValueDialog(rootParent, true, this.type, "New value");
@@ -358,7 +358,7 @@ public class TemplateDialog extends javax.swing.JDialog {
             redrawTree(currNode, selectionPath);
             this.cbbOption.setSelectedIndex(0);
             this.treeStruct.setSelectionPath(selectionPath);
-            JOptionPane.showMessageDialog(null, "Add success", "Info", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Add success", "Info", JOptionPane.INFORMATION_MESSAGE);
         }
     }//GEN-LAST:event_btnAddActionPerformed
 
