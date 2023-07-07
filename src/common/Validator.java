@@ -196,7 +196,7 @@ public class Validator {
     }
 
     private boolean isValidPhone(String value) {
-        return value.matches("^0[0-9]{9,10}$");
+        return value.matches("^(\\+{0,1}84|0)[0-9]{9}$");
     }
 
     private boolean isValidDate(String value) {
