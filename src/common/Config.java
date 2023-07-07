@@ -28,11 +28,16 @@ public class Config {
     private static final String DEFAULT_QUERY_PATH = "config/default/query.properties";
     private static final String DEFAULT_VALUE_PATH = "config/default/value.properties";
     private static Wini getIniFile(String path) throws IOException {
-        return new Wini(new File(path)) {{
-            setConfig(new org.ini4j.Config() {{
-                setStrictOperator(true);
-            }});
-        }};
+//        return new Wini(new File(path)) {{
+//            setConfig(new org.ini4j.Config() {{
+//                setStrictOperator(true);
+//            }});
+//        }};
+        Wini ini = new Wini(new File(path));
+        org.ini4j.Config cfg = ini.getConfig();
+        cfg.setStrictOperator(true);
+        ini.setConfig(cfg);
+        return ini;
     }
 
     public static void setIniItem(Wini ini, String section, HashMap<String, String> keyValues) throws IOException {

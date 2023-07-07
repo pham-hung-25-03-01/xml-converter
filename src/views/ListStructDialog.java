@@ -289,7 +289,7 @@ public class ListStructDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                ListStructDialog dialog = new ListStructDialog(new javax.swing.JFrame(), true, "List structs");
+                ListStructDialog dialog = new ListStructDialog(new MainForm(), true, "List structs");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

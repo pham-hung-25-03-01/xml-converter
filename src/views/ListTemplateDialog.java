@@ -287,7 +287,7 @@ public class ListTemplateDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                ListTemplateDialog dialog = new ListTemplateDialog(new javax.swing.JFrame(), true, TemplateType.HEADER, null);
+                ListTemplateDialog dialog = new ListTemplateDialog(new MainForm(), true, TemplateType.HEADER, null);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
