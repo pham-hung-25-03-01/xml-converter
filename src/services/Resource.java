@@ -9,7 +9,6 @@ import java.nio.file.LinkOption;
 public class Resource {
     public static void init() throws IOException {
         final String LOG_ERROR_PATH = "log/error.log";
-        final String LOG_DATE_PATH = "log/date.log";
         final String SYSTEM_PATH = "config/.system.properties";
         final String STRUCT_PATH = "config/.struct.ini";
         final String HEADER_PATH = "config/header/.header.ini";
@@ -34,16 +33,6 @@ public class Resource {
             }
         };
 
-        new File(LOG_DATE_PATH) {
-            {
-                if (!exists()) {
-                    getParentFile().mkdirs();
-                    createNewFile();
-                }
-                setReadOnly();
-            }
-        };
-
         File system = new File(SYSTEM_PATH) {
             {
                 if (!exists()) {
@@ -51,7 +40,7 @@ public class Resource {
                     createNewFile();
                     if (length() == 0) {
                         FileOutputStream fos = new FileOutputStream(this);
-                        fos.write((WARNING + "DELIMITER=\nLAST_CONVERSION_DATE=\n").getBytes());
+                        fos.write((WARNING + "DELIMITER=\n").getBytes());
                         fos.close();
                     }
                 }
