@@ -63,6 +63,8 @@ public class Converter {
 
             CurrentValues.SourceFile = new File(inputFilePath);
 
+            CurrentValues.StoreNumber = camelToSnake(typeFile + typeList);
+
             Map<String, Object> inputFile = fileReader.readFile(CurrentValues.SourceFile);
 
             HashMap<String, Integer> headersInputFile = (HashMap<String, Integer>) inputFile.get("headers");
@@ -125,6 +127,7 @@ public class Converter {
             return "";
         } finally {
             CurrentValues.SourceFile = null;
+            CurrentValues.StoreNumber = null;
             CurrentValues.setDefaultAttributes();
         }
     }
@@ -503,6 +506,13 @@ public class Converter {
         StringWriter output = new StringWriter();
         transformer.transform(source, new StreamResult(output));
         return new StringBuilder(output.toString());
+    }
+
+    private static String camelToSnake(String str) {
+        String regex = "([a-z])([A-Z]+)";
+        String replacement = "$1_$2";
+        str = str.replaceAll(regex, replacement).toUpperCase();
+        return str;
     }
 
 }

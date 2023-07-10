@@ -6,10 +6,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.logging.FileHandler;
 
-import common.Config;
 import common.LogFormatter;
 
 public class Logger {

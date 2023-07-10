@@ -25,6 +25,7 @@ public class Main {
     public static void main(String[] args) throws InterruptedException, InvocationTargetException {
         try {
             Resource.init();
+            Resource.refresh();
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Cannot create resource files", "Error", JOptionPane.ERROR_MESSAGE);
             System.exit(0);

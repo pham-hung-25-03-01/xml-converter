@@ -21,6 +21,7 @@ import org.jasypt.salt.RandomIVGenerator;
 public class Config {
     private static final String SYSTEM_PATH = "config/.system.properties";
     private static final String STRUCT_PATH = "config/.struct.ini";
+    private static final String STORE_NUMBER_PATH = "config/.number.properties";
     private static final String HEADER_PATH = "config/header/.header.ini";
     private static final String OBJECT_PATH = "config/object/.object.ini";
     private static final String DEFAULT_FOLDER_PATH = "config/default/folder.properties";
@@ -174,6 +175,32 @@ public class Config {
         file.setWritable(true);
         Files.setAttribute(file.toPath(), "dos:hidden", false, LinkOption.NOFOLLOW_LINKS);
         removePropertiesItem(SYSTEM_PATH, getSystemFile(), keyValues);
+        Files.setAttribute(file.toPath(), "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
+        file.setReadOnly();
+    }
+
+    public static Properties getStoreNumberFile() throws IOException {
+        return getPropertiesFile(STORE_NUMBER_PATH);
+    }
+
+    public static String getStoreNumber(String key) throws IOException {
+        return getStoreNumberFile().getProperty(key);
+    }
+
+    public static void setStoreNumber(HashMap<String, String> keyValues) throws IOException {
+        File file = new File(STORE_NUMBER_PATH);
+        file.setWritable(true);
+        Files.setAttribute(file.toPath(), "dos:hidden", false, LinkOption.NOFOLLOW_LINKS);
+        setPropertiesItem(STORE_NUMBER_PATH, getStoreNumberFile(), keyValues);
+        Files.setAttribute(file.toPath(), "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
+        file.setReadOnly();
+    }
+
+    public static void removeStoreNumber(HashMap<String, String> keyValues) throws IOException {
+        File file = new File(STORE_NUMBER_PATH);
+        file.setWritable(true);
+        Files.setAttribute(file.toPath(), "dos:hidden", false, LinkOption.NOFOLLOW_LINKS);
+        removePropertiesItem(STORE_NUMBER_PATH, getSystemFile(), keyValues);
         Files.setAttribute(file.toPath(), "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
         file.setReadOnly();
     }

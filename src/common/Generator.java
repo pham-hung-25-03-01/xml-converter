@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 
 public class Generator {
     public enum Type {
@@ -21,6 +21,7 @@ public class Generator {
         CURRENT_TIME_HH_mm_ss,
         CURRENT_TIME_HH_mm_ss_COLON,
         DAY_OF_YEAR,
+        NUMBER,
         SOURCE_FILE_NAME
     }
 
@@ -52,6 +53,8 @@ public class Generator {
                     return generateCurrentTime("HH:mm:ss");
                 case DAY_OF_YEAR:
                     return generateDayOfYear();
+                case NUMBER:
+                    return generateNumber();
                 case SOURCE_FILE_NAME:
                     return generateSourceFileName();
                 default:
@@ -59,6 +62,8 @@ public class Generator {
             }
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid generate type: " + dataName);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Cannot generate data: " + dataName);
         }
     }
 
@@ -103,17 +108,7 @@ public class Generator {
             throw new IllegalArgumentException("Invalid file name output: " + fileNameOutputPattern);
         }
 
-        // random unique string
-        int leftLimit = 97; // letter 'a'
-        int rightLimit = 122; // letter 'z'
-        int targetStringLength = 10;
-        Random random = new Random();
-        String generatedString = random.ints(leftLimit, rightLimit + 1)
-            .limit(targetStringLength)
-            .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-            .toString();
-
-        return fileNameOutput + "." + generatedString;
+        return fileNameOutput;
     }
 
     private String generateCurrentDate(String format) {
@@ -126,6 +121,20 @@ public class Generator {
 
     private String generateDayOfYear() {
         return String.valueOf(Calendar.getInstance().get(Calendar.DAY_OF_YEAR));
+    }
+
+    private String generateNumber() throws IOException {
+        String number = Config.getStoreNumber(CurrentValues.StoreNumber);
+        HashMap<String, String> result = new HashMap<String, String>();
+        int numberInt = 0;
+        if (number != null && !number.isBlank()) {
+            numberInt = Integer.parseInt(number);
+        }
+        numberInt++;
+        number = String.format("%05d", numberInt);
+        result.put(CurrentValues.StoreNumber, number);
+        Config.setStoreNumber(result);
+        return number;
     }
 
     private String generateSourceFileName() {

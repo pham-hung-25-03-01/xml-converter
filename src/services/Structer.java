@@ -34,6 +34,7 @@ public class Structer {
             throw new IllegalArgumentException("Struct with name " + structName + " does not exist");
         }
         HashMap<String, String> struct = new HashMap<String, String>(Config.getStructFile().get(structName));
+        struct.put("FILE_NAME_OUTPUT", struct.get("FILE_NAME_OUTPUT").substring(1, struct.get("FILE_NAME_OUTPUT").length() - 1));
         struct.put("STRUCT_NAME", structName);
         return struct;
     }
