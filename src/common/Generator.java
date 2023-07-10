@@ -125,6 +125,9 @@ public class Generator {
 
     private String generateNumber() throws IOException {
         String number = Config.getStoreNumber(CurrentValues.StoreNumber);
+        if (CurrentValues.IsGeneratedNumber) {
+            return number;
+        }
         HashMap<String, String> result = new HashMap<String, String>();
         int numberInt = 0;
         if (number != null && !number.isBlank()) {
@@ -134,6 +137,7 @@ public class Generator {
         number = String.format("%05d", numberInt);
         result.put(CurrentValues.StoreNumber, number);
         Config.setStoreNumber(result);
+        CurrentValues.IsGeneratedNumber = true;
         return number;
     }
 

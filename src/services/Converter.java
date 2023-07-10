@@ -128,6 +128,7 @@ public class Converter {
         } finally {
             CurrentValues.SourceFile = null;
             CurrentValues.StoreNumber = null;
+            CurrentValues.IsGeneratedNumber = false;
             CurrentValues.setDefaultAttributes();
         }
     }

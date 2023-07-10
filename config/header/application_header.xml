@@ -4,6 +4,6 @@
     <Sender>*{SENDER}</Sender>
     <CreationDate>#{CURRENT_DATE_yyyy_MM_dd_HYPHEN}</CreationDate>
     <CreationTime>#{CURRENT_TIME_HH_mm_ss_COLON}</CreationTime>
-    <Number>@{NUMBER}</Number>
+    <Number>#{NUMBER}</Number>
     <Institution>*{INSTITUTION}</Institution>
 </FileHeader>

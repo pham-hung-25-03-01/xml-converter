@@ -6,6 +6,7 @@ import java.util.HashMap;
 public class CurrentValues {
     public static File SourceFile;
     public static String StoreNumber;
+    public static boolean IsGeneratedNumber = false;
     public static HashMap<String, String> Attributes = new HashMap<String, String>() {{
         put("TYPE", "DEFAULT");
         put("USE", "DEFAULT");
