@@ -111,6 +111,8 @@ public class Converter {
 
             return outputFileAbsolutePath;
         } catch (Exception e) {
+            CurrentValues.decreaseNumber();
+
             String message = e.getMessage() + "::" + CurrentValues.SourceFile.getName();
             Logger.writeLogError(message, LogType.SEVERE);
             
@@ -127,8 +129,10 @@ public class Converter {
             return "";
         } finally {
             CurrentValues.SourceFile = null;
+            CurrentValues.RowNumber = 0;
             CurrentValues.StoreNumber = null;
             CurrentValues.IsGeneratedNumber = false;
+            CurrentValues.AutoIncrement = 0;
             CurrentValues.setDefaultAttributes();
         }
     }
@@ -333,6 +337,8 @@ public class Converter {
         XMLEventReader objectTemplate = Config.getObjectTemplate(object);
 
         for (String[] row : rows) {
+            CurrentValues.RowNumber++;
+
             writeDataObject(writer, objectTemplate, headersInputFile, row);
 
             objectTemplate = Config.getObjectTemplate(object);

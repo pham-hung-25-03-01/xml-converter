@@ -9,17 +9,19 @@ import java.util.List;
 
 public class Generator {
     public enum Type {
-        CURRENT_DATE_dd_MM_yyyy,
-        CURRENT_DATE_yyyy_MM_dd,
-        CURRENT_DATE_MM_dd_yyyy,
-        CURRENT_DATE_dd_MM_yyyy_HYPHEN,
-        CURRENT_DATE_yyyy_MM_dd_HYPHEN,
-        CURRENT_DATE_MM_dd_yyyy_HYPHEN,
-        CURRENT_DATE_dd_MM_yyyy_SLASH,
-        CURRENT_DATE_yyyy_MM_dd_SLASH,
-        CURRENT_DATE_MM_dd_yyyy_SLASH,
-        CURRENT_TIME_HH_mm_ss,
-        CURRENT_TIME_HH_mm_ss_COLON,
+        CURRENT_DATE_DD_MM_YYYY,
+        CURRENT_DATE_YYYY_MM_DD,
+        CURRENT_DATE_MM_DD_YYYY,
+        CURRENT_DATE_DD_MM_YYYY_HYPHEN,
+        CURRENT_DATE_YYYY_MM_DD_HYPHEN,
+        CURRENT_DATE_MM_DD_YYYY_HYPHEN,
+        CURRENT_DATE_DD_MM_YYYY_SLASH,
+        CURRENT_DATE_YYYY_MM_DD_SLASH,
+        CURRENT_DATE_MM_DD_YYYY_SLASH,
+        CURRENT_TIME_HH_MM_SS,
+        CURRENT_TIME_HH_MM_SS_COLON,
+        ROW_NUMBER,
+        AUTO_INCREMENT,
         DAY_OF_YEAR,
         NUMBER,
         SOURCE_FILE_NAME
@@ -29,28 +31,32 @@ public class Generator {
         try {
             Type type = Type.valueOf(dataName);
             switch (type) {
-                case CURRENT_DATE_dd_MM_yyyy:
+                case CURRENT_DATE_DD_MM_YYYY:
                     return generateCurrentDate("ddMMyyyy");
-                case CURRENT_DATE_yyyy_MM_dd:
+                case CURRENT_DATE_YYYY_MM_DD:
                     return generateCurrentDate("yyyyMMdd");
-                case CURRENT_DATE_MM_dd_yyyy:
+                case CURRENT_DATE_MM_DD_YYYY:
                     return generateCurrentDate("MMddyyyy");
-                case CURRENT_DATE_dd_MM_yyyy_HYPHEN:
+                case CURRENT_DATE_DD_MM_YYYY_HYPHEN:
                     return generateCurrentDate("dd-MM-yyyy");
-                case CURRENT_DATE_yyyy_MM_dd_HYPHEN:
+                case CURRENT_DATE_YYYY_MM_DD_HYPHEN:
                     return generateCurrentDate("yyyy-MM-dd");
-                case CURRENT_DATE_MM_dd_yyyy_HYPHEN:
+                case CURRENT_DATE_MM_DD_YYYY_HYPHEN:
                     return generateCurrentDate("MM-dd-yyyy");
-                case CURRENT_DATE_dd_MM_yyyy_SLASH:
+                case CURRENT_DATE_DD_MM_YYYY_SLASH:
                     return generateCurrentDate("dd/MM/yyyy");
-                case CURRENT_DATE_yyyy_MM_dd_SLASH:
+                case CURRENT_DATE_YYYY_MM_DD_SLASH:
                     return generateCurrentDate("yyyy/MM/dd");
-                case CURRENT_DATE_MM_dd_yyyy_SLASH:
+                case CURRENT_DATE_MM_DD_YYYY_SLASH:
                     return generateCurrentDate("MM/dd/yyyy");
-                case CURRENT_TIME_HH_mm_ss:
+                case CURRENT_TIME_HH_MM_SS:
                     return generateCurrentTime("HHmmss");
-                case CURRENT_TIME_HH_mm_ss_COLON:
+                case CURRENT_TIME_HH_MM_SS_COLON:
                     return generateCurrentTime("HH:mm:ss");
+                case ROW_NUMBER:
+                    return generateRowNumber();
+                case AUTO_INCREMENT:
+                    return generateAutoIncrement();
                 case DAY_OF_YEAR:
                     return generateDayOfYear();
                 case NUMBER:
@@ -117,6 +123,15 @@ public class Generator {
 
     private String generateCurrentTime(String format) {
         return new SimpleDateFormat(format).format(Calendar.getInstance().getTime());
+    }
+
+    private String generateRowNumber() {
+        return String.format("%09d", CurrentValues.RowNumber);
+    }
+
+    private String generateAutoIncrement() {
+        CurrentValues.AutoIncrement++;
+        return String.format("%09d", CurrentValues.AutoIncrement);
     }
 
     private String generateDayOfYear() {

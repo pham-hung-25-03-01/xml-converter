@@ -21,17 +21,17 @@ public class Validator {
         LETTERS,
         EMAIL,
         PHONE,
-        DATE_dd_MM_yyyy,
-        DATE_yyyy_MM_dd,
-        DATE_MM_dd_yyyy,
-        DATE_dd_MM_yyyy_HYPHEN,
-        DATE_yyyy_MM_dd_HYPHEN,
-        DATE_MM_dd_yyyy_HYPHEN,
-        DATE_dd_MM_yyyy_SLASH,
-        DATE_yyyy_MM_dd_SLASH,
-        DATE_MM_dd_yyyy_SLASH,
-        TIME_HH_mm_ss,
-        TIME_HH_mm_ss_COLON,
+        DATE_DD_MM_YYYY,
+        DATE_YYYY_MM_DD,
+        DATE_MM_DD_YYYY,
+        DATE_DD_MM_YYYY_HYPHEN,
+        DATE_YYYY_MM_DD_HYPHEN,
+        DATE_MM_DD_YYYY_HYPHEN,
+        DATE_DD_MM_YYYY_SLASH,
+        DATE_YYYY_MM_DD_SLASH,
+        DATE_MM_DD_YYYY_SLASH,
+        TIME_HH_MM_SS,
+        TIME_HH_MM_SS_COLON,
     }
 
     // if add new use type, please add it to last position
@@ -114,27 +114,27 @@ public class Validator {
                     return isValidEmail(value);
                 case PHONE:
                     return isValidPhone(value);
-                case DATE_dd_MM_yyyy:
+                case DATE_DD_MM_YYYY:
                     return isValidDate(value, "ddMMyyyy");
-                case DATE_yyyy_MM_dd:
+                case DATE_YYYY_MM_DD:
                     return isValidDate(value, "yyyyMMdd");
-                case DATE_MM_dd_yyyy:
+                case DATE_MM_DD_YYYY:
                     return isValidDate(value, "MMddyyyy");
-                case DATE_dd_MM_yyyy_HYPHEN:
+                case DATE_DD_MM_YYYY_HYPHEN:
                     return isValidDate(value, "dd-MM-yyyy");
-                case DATE_yyyy_MM_dd_HYPHEN:
+                case DATE_YYYY_MM_DD_HYPHEN:
                     return isValidDate(value, "yyyy-MM-dd");
-                case DATE_MM_dd_yyyy_HYPHEN:
+                case DATE_MM_DD_YYYY_HYPHEN:
                     return isValidDate(value, "MM-dd-yyyy");
-                case DATE_dd_MM_yyyy_SLASH:
+                case DATE_DD_MM_YYYY_SLASH:
                     return isValidDate(value, "dd/MM/yyyy");
-                case DATE_yyyy_MM_dd_SLASH:
+                case DATE_YYYY_MM_DD_SLASH:
                     return isValidDate(value, "yyyy/MM/dd");
-                case DATE_MM_dd_yyyy_SLASH:
+                case DATE_MM_DD_YYYY_SLASH:
                     return isValidDate(value, "MM/dd/yyyy");
-                case TIME_HH_mm_ss:
+                case TIME_HH_MM_SS:
                     return isValidTime(value, "HHmmss");
-                case TIME_HH_mm_ss_COLON:
+                case TIME_HH_MM_SS_COLON:
                     return isValidTime(value, "HH:mm:ss");
                 default:
                     return true;

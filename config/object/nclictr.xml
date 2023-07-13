@@ -1,62 +1,62 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Application>
-    <RegNumber type="default" use="required">CLI*{REG_NUMBER}*{NUMBER}</RegNumber>
-    <OrderDprt>*{ORDER_DPRT}</OrderDprt>
-    <ObjectType>Client</ObjectType>
-    <ActionType>Add</ActionType>
-    <Data>
-        <Client>
-            <ClientType>PR</ClientType>
-            <ClientInfo>
-                <RegNumberType>${OLD_ID_NUMBER}</RegNumberType>
-                <RegNumber>${ID_NUMBER}</RegNumber>
-                <RegNumberDetails>220720</RegNumberDetails>
-                <SocialNumber>${FAMILY_BOOK_NUMBER}</SocialNumber>
-                <ShortName>${CLIENT_NAME}</ShortName>
-                <TaxpayerIdentifier>${TAX_ID}</TaxpayerIdentifier>
-                <TaxPosition>${INCOME}</TaxPosition>
-                <MiddleName>${SPOUSE_TAX_ID}</MiddleName>
-                <SecurityName>${SPOUSE_NAME}</SecurityName>
-                <Citizenship>${NATIONALITY}</Citizenship>
-                <MaritalStatus>${MARITAL_STATUS}</MaritalStatus>
-                <Position>${OCCUPATION}</Position>
-                <CompanyName>${COMPANY_NAME}</CompanyName>
-                <CompanyDepartment>${DIVISION}</CompanyDepartment>
-                <BirthDate>${DOB}</BirthDate>
-                <Gender>${SEX}</Gender>
+    <RegNumber use="required">CLI#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}*{INSTITUTION}#{ROW_NUMBER}</RegNumber>
+    <OrderDprt use="required" type="number">*{ORDER_DPRT}</OrderDprt>
+    <ObjectType use="required">Client</ObjectType>
+    <ActionType use="required">Add</ActionType>
+    <Data use="required">
+        <Client use="required">
+            <ClientType use="required">PR</ClientType>
+            <ClientInfo use="required">
+                <RegNumberType use="required" type="number">${OLD_ID_NUMBER}</RegNumberType>
+                <RegNumber use="required" type="number">${ID_NUMBER}</RegNumber>
+                <RegNumberDetails use="required">${ID_ISSUED_DATE}</RegNumberDetails>
+                <SocialNumber use="required" type="number">${FAMILY_BOOK_NUMBER}</SocialNumber>
+                <ShortName use="required" type="letters">${CLIENT_NAME}</ShortName>
+                <TaxpayerIdentifier use="required" type="number">${TAX_ID}</TaxpayerIdentifier>
+                <TaxPosition use="required" type="number">${INCOME}</TaxPosition>
+                <MiddleName use="required">${SPOUSE_TAX_ID}</MiddleName>
+                <SecurityName use="required">${SPOUSE_NAME}</SecurityName>
+                <Citizenship use="required">${NATIONALITY}</Citizenship>
+                <MaritalStatus use="required">${MARITAL_STATUS}</MaritalStatus>
+                <Position use="required">${OCCUPATION}</Position>
+                <CompanyName use="required">${COMPANY_NAME}</CompanyName>
+                <CompanyDepartment use="required">${DIVISION}</CompanyDepartment>
+                <BirthDate use="required" type="date_yyyy_mm_dd_hyphen">${DOB}</BirthDate>
+                <Gender use="required">${SEX}</Gender>
             </ClientInfo>
-            <PlasticInfo>
-                <FirstName>${EMBOSSING_FIRST_NAME}</FirstName>
-                <LastName>${EMBOSSING_LAST_NAME}</LastName>
+            <PlasticInfo use="required">
+                <FirstName use="required" type="letters">${EMBOSSING_FIRST_NAME}</FirstName>
+                <LastName use="required" type="letters">${EMBOSSING_LAST_NAME}</LastName>
             </PlasticInfo>
-            <PhoneList>
+            <PhoneList use="required">
                 <Phone ref="COMPANY_PHONE;">
                     <PhoneType>Work</PhoneType>
-                    <PhoneNumber type="number" use="default">${COMPANY_PHONE}</PhoneNumber>
+                    <PhoneNumber type="phone">${COMPANY_PHONE}</PhoneNumber>
                 </Phone>
                 <Phone ref="PHONE;">
                     <PhoneType>Home</PhoneType>
-                    <PhoneNumber>${PHONE}</PhoneNumber>
+                    <PhoneNumber type="phone">${PHONE}</PhoneNumber>
                 </Phone>
                 <Phone ref="MOBILE_PHONE;">
                     <PhoneType>Mobile</PhoneType>
-                    <PhoneNumber ref="MOBILE_PHONE;" type="number" use="required">${MOBILE_PHONE}</PhoneNumber>
+                    <PhoneNumber type="phone">${MOBILE_PHONE}</PhoneNumber>
                 </Phone>
             </PhoneList>
-            <DateOpen>${OPEN_DATE}</DateOpen>
-            <BaseAddress>
-                <AddressType>PIN</AddressType>
-                <Email>${EMAIL}</Email>
-                <City>${PIN_CITY}</City>
-                <AddressLine1>${RESIDENT_ADDR_L1}</AddressLine1>
+            <DateOpen use="required" type="date_yyyy_mm_dd_hyphen">${OPEN_DATE}</DateOpen>
+            <BaseAddress use="required">
+                <AddressType use="required">PIN</AddressType>
+                <EMail use="required" type="email">${EMAIL}</EMail>
+                <City use="required" type="number">${PIN_CITY}</City>
+                <AddressLine1 use="required">${RESIDENT_ADDR_L1}</AddressLine1>
                 <AddressLine2>${RESIDENT_ADDR_L2}</AddressLine2>
                 <AddressLine3>${RESIDENT_ADDR_L3}</AddressLine3>
                 <AddressLine4>${RESIDENT_ADDR_L4}</AddressLine4>
             </BaseAddress>
             <AddInfo>
-                <AddInfo01>${NO_OF_DEPENDANTS}</AddInfo01>
-                <AddInfo02>RES_PERIOD=23;OCC_PERIOD=2;DEPEND_NO=2;SP_ID_CARD=5555555;SP_ID_DATE=22/11/2021;</AddInfo02>
-                <AddInfo03>${TYPE_OF_RESIDENCE}</AddInfo03>
+                <AddInfo01 type="number">${NO_OF_DEPENDANTS}</AddInfo01>
+                <AddInfo02 format="add_info">RES_PERIOD=23;OCC_PERIOD=2;DEPEND_NO=2;SP_ID_CARD=5555555;SP_ID_DATE=22/11/2021;</AddInfo02>
+                <AddInfo03 type="number">${TYPE_OF_RESIDENCE}</AddInfo03>
             </AddInfo>
         </Client>
     </Data>
@@ -65,14 +65,14 @@
     </AddData>
     <SubApplList>
         <Application>
-            <RegNumber>ADD*{REG_NUMBER}*{NUMBER}00001</RegNumber>
-            <OrderDprt>*{ORDER_DPRT}</OrderDprt>
+            <RegNumber>ADD#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}*{INSTITUTION}000000001</RegNumber>
+            <OrderDprt type="number">*{ORDER_DPRT}</OrderDprt>
             <ObjectType>ClientAddress</ObjectType>
             <ActionType>Add</ActionType>
             <Data>
                 <Address>
                     <AddressType>PHS_ADDR</AddressType>
-                    <City>${PIN_CITY}</City>
+                    <City type="number">${PIN_CITY}</City>
                     <AddressLine1>${CORRESPONDENT_ADDR_L1}</AddressLine1>
                     <AddressLine2>${CORRESPONDENT_ADDR_L2}</AddressLine2>
                     <AddressLine3>${CORRESPONDENT_ADDR_L3}</AddressLine3>
@@ -84,14 +84,14 @@
             </AddData>
         </Application>
         <Application>
-            <RegNumber>ADD*{REG_NUMBER}*{NUMBER}00002</RegNumber>
-            <OrderDprt>*{ORDER_DPRT}</OrderDprt>
+            <RegNumber>ADD#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}*{INSTITUTION}000000002</RegNumber>
+            <OrderDprt type="number">*{ORDER_DPRT}</OrderDprt>
             <ObjectType>ClientAddress</ObjectType>
             <ActionType>Add</ActionType>
             <Data>
                 <Address>
                     <AddressType>PST_ADDR</AddressType>
-                    <City>${PIN_CITY}</City>
+                    <City type="number">${PIN_CITY}</City>
                     <AddressLine1>${PIN_ADDR_L1}</AddressLine1>
                     <AddressLine2>${PIN_ADDR_L2}</AddressLine2>
                     <AddressLine3>${PIN_ADDR_L3}</AddressLine3>
@@ -103,14 +103,14 @@
             </AddData>
         </Application>
         <Application>
-            <RegNumber>ADD*{REG_NUMBER}*{NUMBER}00003</RegNumber>
-            <OrderDprt>*{ORDER_DPRT}</OrderDprt>
+            <RegNumber>ADD#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}*{INSTITUTION}000000003</RegNumber>
+            <OrderDprt type="number">*{ORDER_DPRT}</OrderDprt>
             <ObjectType>ClientAddress</ObjectType>
             <ActionType>Add</ActionType>
             <Data>
                 <Address>
                     <AddressType>WRK_ADDR</AddressType>
-                    <City>${PIN_CITY}</City>
+                    <City type="number">${PIN_CITY}</City>
                     <AddressLine1>${COMPANY_ADDR_L1}</AddressLine1>
                     <AddressLine2>${COMPANY_ADDR_L2}</AddressLine2>
                     <AddressLine3>${COMPANY_ADDR_L3}</AddressLine3>
@@ -122,8 +122,8 @@
             </AddData>
         </Application>
         <Application>
-            <RegNumber>LIB*{REG_NUMBER}*{NUMBER}</RegNumber>
-            <OrderDprt>*{ORDER_DPRT}</OrderDprt>
+            <RegNumber>LIB#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}*{INSTITUTION}000000001</RegNumber>
+            <OrderDprt type="number">*{ORDER_DPRT}</OrderDprt>
             <ObjectType>Contract</ObjectType>
             <ActionType>Add</ActionType>
             <Data>
@@ -138,8 +138,8 @@
             </AddData>
             <SubApplList>
                 <Application>
-                    <RegNumber>ISS*{REG_NUMBER}*{NUMBER}</RegNumber>
-                    <OrderDprt>*{ORDER_DPRT}</OrderDprt>
+                    <RegNumber>ISS#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}*{INSTITUTION}000000001</RegNumber>
+                    <OrderDprt type="number">*{ORDER_DPRT}</OrderDprt>
                     <ObjectType>Contract</ObjectType>
                     <ActionType>Add</ActionType>
                     <Data>
@@ -154,13 +154,13 @@
                     </AddData>
                     <SubApplList>
                         <Application>
-                            <RegNumber>CLS*{REG_NUMBER}*{NUMBER}</RegNumber>
-                            <OrderDprt>*{ORDER_DPRT}</OrderDprt>
+                            <RegNumber>CLS#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}*{INSTITUTION}000000001</RegNumber>
+                            <OrderDprt type="number">*{ORDER_DPRT}</OrderDprt>
                             <ObjectType>ContractClassifier</ObjectType>
                             <ActionType>AddOrUpdate</ActionType>
                             <Data>
                                 <CustomerClassifiers>
-                                    <Classifier>
+                                    <Classifier ref="DUE_DATE;">
                                         <Code>BILL_CYCLE</Code>
                                         <Value>${DUE_DATE}</Value>
                                     </Classifier>
@@ -171,8 +171,8 @@
                             </AddData>
                         </Application>
                         <Application>
-                            <RegNumber>CRD*{REG_NUMBER}*{NUMBER}</RegNumber>
-                            <OrderDprt>*{ORDER_DPRT}</OrderDprt>
+                            <RegNumber>CRD#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}*{INSTITUTION}000000001</RegNumber>
+                            <OrderDprt type="number">*{ORDER_DPRT}</OrderDprt>
                             <ObjectType>Contract</ObjectType>
                             <ActionType>Add</ActionType>
                             <Data>
@@ -191,8 +191,8 @@
                             </AddData>
                             <SubApplList>
                                 <Application>
-                                    <RegNumber>EVT*{REG_NUMBER}*{NUMBER}</RegNumber>
-                                    <OrderDprt>*{ORDER_DPRT}</OrderDprt>
+                                    <RegNumber>EVT#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}*{INSTITUTION}000000001</RegNumber>
+                                    <OrderDprt type="number">*{ORDER_DPRT}</OrderDprt>
                                     <ObjectType>Event</ObjectType>
                                     <ActionType>Add</ActionType>
                                     <Data>
@@ -206,8 +206,8 @@
                                     </AddData>
                                 </Application>
                                 <Application>
-                                    <RegNumber>TRF*{REG_NUMBER}*{NUMBER}00001</RegNumber>
-                                    <OrderDprt>*{ORDER_DPRT}</OrderDprt>
+                                    <RegNumber>TRF#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}*{INSTITUTION}000000001</RegNumber>
+                                    <OrderDprt type="number">*{ORDER_DPRT}</OrderDprt>
                                     <ObjectType>Tariff</ObjectType>
                                     <ActionType>Add</ActionType>
                                     <Data>
@@ -218,8 +218,8 @@
                                                         <TariffCode>ECOM_USG_DLY_NMBR_LMT</TariffCode>
                                                     </TariffType>
                                                     <ApplyMode>Active</ApplyMode>
-                                                    <DateFrom>2023-04-27</DateFrom>
-                                                    <MaxAmount>${ECOM_DAILY_LIMIT}</MaxAmount>
+                                                    <DateFrom>#{CURRENT_DATE_YYYY_MM_DD_HYPHEN}</DateFrom>
+                                                    <MaxAmount type="number">${ECOM_DAILY_LIMIT}</MaxAmount>
                                                     <Currency>VND</Currency>
                                                 </UsageTariff>
                                             </Tariff>
@@ -230,8 +230,8 @@
                                     </AddData>
                                 </Application>
                                 <Application>
-                                    <RegNumber>TRF*{REG_NUMBER}*{NUMBER}00002</RegNumber>
-                                    <OrderDprt>*{ORDER_DPRT}</OrderDprt>
+                                    <RegNumber>TRF#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}*{INSTITUTION}000000002</RegNumber>
+                                    <OrderDprt type="number">*{ORDER_DPRT}</OrderDprt>
                                     <ObjectType>Tariff</ObjectType>
                                     <ActionType>Add</ActionType>
                                     <Data>
@@ -242,7 +242,7 @@
                                                         <TariffCode>ATM_USG_DLY_NMBR_LMT</TariffCode>
                                                     </TariffType>
                                                     <ApplyMode>Active</ApplyMode>
-                                                    <DateFrom>2023-04-27</DateFrom>
+                                                    <DateFrom>#{CURRENT_DATE_YYYY_MM_DD_HYPHEN}</DateFrom>
                                                     <MaxAmount>${CASH_DAILY_LIMIT}</MaxAmount>
                                                     <Currency>VND</Currency>
                                                 </UsageTariff>
@@ -254,8 +254,8 @@
                                     </AddData>
                                 </Application>
                                 <Application>
-                                    <RegNumber>TRFTRF*{REG_NUMBER}*{NUMBER}00003</RegNumber>
-                                    <OrderDprt>*{ORDER_DPRT}</OrderDprt>
+                                    <RegNumber>TRF#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}*{INSTITUTION}000000003</RegNumber>
+                                    <OrderDprt type="number">*{ORDER_DPRT}</OrderDprt>
                                     <ObjectType>Tariff</ObjectType>
                                     <ActionType>Add</ActionType>
                                     <Data>
@@ -266,7 +266,7 @@
                                                         <TariffCode>POS_USG_DLY_NMBR_LMT</TariffCode>
                                                     </TariffType>
                                                     <ApplyMode>Active</ApplyMode>
-                                                    <DateFrom>2023-04-27</DateFrom>
+                                                    <DateFrom>#{CURRENT_DATE_YYYY_MM_DD_HYPHEN}</DateFrom>
                                                     <MaxAmount>${RETAIL_DAILY_LIMIT}</MaxAmount>
                                                     <Currency>VND</Currency>
                                                 </UsageTariff>
