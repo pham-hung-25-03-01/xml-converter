@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Application>
-    <RegNumber use="required">CLI#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}*{INSTITUTION}#{ROW_NUMBER}</RegNumber>
+    <RegNumber use="required">CLI#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}#{ROW_NUMBER}#{AUTO_INCREMENT}</RegNumber>
     <OrderDprt use="required" type="number">*{ORDER_DPRT}</OrderDprt>
     <ObjectType use="required">Client</ObjectType>
     <ActionType use="required">Add</ActionType>
@@ -65,7 +65,7 @@
     </AddData>
     <SubApplList>
         <Application>
-            <RegNumber>ADD#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}*{INSTITUTION}000000001</RegNumber>
+            <RegNumber>ADD#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}#{ROW_NUMBER}#{AUTO_INCREMENT}</RegNumber>
             <OrderDprt type="number">*{ORDER_DPRT}</OrderDprt>
             <ObjectType>ClientAddress</ObjectType>
             <ActionType>Add</ActionType>
@@ -84,7 +84,7 @@
             </AddData>
         </Application>
         <Application>
-            <RegNumber>ADD#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}*{INSTITUTION}000000002</RegNumber>
+            <RegNumber>ADD#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}#{ROW_NUMBER}#{AUTO_INCREMENT}</RegNumber>
             <OrderDprt type="number">*{ORDER_DPRT}</OrderDprt>
             <ObjectType>ClientAddress</ObjectType>
             <ActionType>Add</ActionType>
@@ -103,7 +103,7 @@
             </AddData>
         </Application>
         <Application>
-            <RegNumber>ADD#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}*{INSTITUTION}000000003</RegNumber>
+            <RegNumber>ADD#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}#{ROW_NUMBER}#{AUTO_INCREMENT}</RegNumber>
             <OrderDprt type="number">*{ORDER_DPRT}</OrderDprt>
             <ObjectType>ClientAddress</ObjectType>
             <ActionType>Add</ActionType>
@@ -122,7 +122,7 @@
             </AddData>
         </Application>
         <Application>
-            <RegNumber>LIB#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}*{INSTITUTION}000000001</RegNumber>
+            <RegNumber>LIB#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}#{ROW_NUMBER}#{AUTO_INCREMENT}</RegNumber>
             <OrderDprt type="number">*{ORDER_DPRT}</OrderDprt>
             <ObjectType>Contract</ObjectType>
             <ActionType>Add</ActionType>
@@ -138,7 +138,7 @@
             </AddData>
             <SubApplList>
                 <Application>
-                    <RegNumber>ISS#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}*{INSTITUTION}000000001</RegNumber>
+                    <RegNumber>ISS#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}#{ROW_NUMBER}#{AUTO_INCREMENT}</RegNumber>
                     <OrderDprt type="number">*{ORDER_DPRT}</OrderDprt>
                     <ObjectType>Contract</ObjectType>
                     <ActionType>Add</ActionType>
@@ -154,7 +154,7 @@
                     </AddData>
                     <SubApplList>
                         <Application>
-                            <RegNumber>CLS#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}*{INSTITUTION}000000001</RegNumber>
+                            <RegNumber>CLS#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}#{ROW_NUMBER}#{AUTO_INCREMENT}</RegNumber>
                             <OrderDprt type="number">*{ORDER_DPRT}</OrderDprt>
                             <ObjectType>ContractClassifier</ObjectType>
                             <ActionType>AddOrUpdate</ActionType>
@@ -171,7 +171,7 @@
                             </AddData>
                         </Application>
                         <Application>
-                            <RegNumber>CRD#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}*{INSTITUTION}000000001</RegNumber>
+                            <RegNumber>CRD#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}#{ROW_NUMBER}#{AUTO_INCREMENT}</RegNumber>
                             <OrderDprt type="number">*{ORDER_DPRT}</OrderDprt>
                             <ObjectType>Contract</ObjectType>
                             <ActionType>Add</ActionType>
@@ -191,7 +191,7 @@
                             </AddData>
                             <SubApplList>
                                 <Application>
-                                    <RegNumber>EVT#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}*{INSTITUTION}000000001</RegNumber>
+                                    <RegNumber>EVT#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}#{ROW_NUMBER}#{AUTO_INCREMENT}</RegNumber>
                                     <OrderDprt type="number">*{ORDER_DPRT}</OrderDprt>
                                     <ObjectType>Event</ObjectType>
                                     <ActionType>Add</ActionType>
@@ -206,7 +206,7 @@
                                     </AddData>
                                 </Application>
                                 <Application>
-                                    <RegNumber>TRF#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}*{INSTITUTION}000000001</RegNumber>
+                                    <RegNumber>TRF#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}#{ROW_NUMBER}#{AUTO_INCREMENT}</RegNumber>
                                     <OrderDprt type="number">*{ORDER_DPRT}</OrderDprt>
                                     <ObjectType>Tariff</ObjectType>
                                     <ActionType>Add</ActionType>
@@ -230,7 +230,7 @@
                                     </AddData>
                                 </Application>
                                 <Application>
-                                    <RegNumber>TRF#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}*{INSTITUTION}000000002</RegNumber>
+                                    <RegNumber>TRF#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}#{ROW_NUMBER}#{AUTO_INCREMENT}</RegNumber>
                                     <OrderDprt type="number">*{ORDER_DPRT}</OrderDprt>
                                     <ObjectType>Tariff</ObjectType>
                                     <ActionType>Add</ActionType>
@@ -254,7 +254,7 @@
                                     </AddData>
                                 </Application>
                                 <Application>
-                                    <RegNumber>TRF#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}*{INSTITUTION}000000003</RegNumber>
+                                    <RegNumber>TRF#{CURRENT_DATE_YYYY_MM_DD}#{NUMBER}#{ROW_NUMBER}#{AUTO_INCREMENT}</RegNumber>
                                     <OrderDprt type="number">*{ORDER_DPRT}</OrderDprt>
                                     <ObjectType>Tariff</ObjectType>
                                     <ActionType>Add</ActionType>
